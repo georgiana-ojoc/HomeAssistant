@@ -13,6 +13,8 @@
 ## Nonfunctional requirements
 - can be used by thousands of customers (small families)  
 - each customer can add up to 5 houses, 50 rooms and 150 smart devices in his account
+## Architectural decisions
+1. [Diagrams](https://github.com/georgiana-ojoc/HomeAssistant/tree/documentation/Diagrams/1)
 ## AI/ML
  - personalized schedules, based on collected information
 ## CI/CD
