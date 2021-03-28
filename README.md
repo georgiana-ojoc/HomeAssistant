@@ -18,4 +18,4 @@
 ## AI/ML
  - personalized schedules, based on collected information
 ## CI/CD
- - Heroku
+ - Heroku with Docker
