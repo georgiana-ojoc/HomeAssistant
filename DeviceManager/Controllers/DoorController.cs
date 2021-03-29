@@ -16,17 +16,23 @@ namespace DeviceManager.Controllers
     [Route("users/{id_user}/houses/{id_house}/rooms/{id_room}/doors")]
     public class DoorController
     {
+        private readonly HomeAssistantContext _context;
+
+        public DoorController(HomeAssistantContext context)
+        {
+            _context = context;
+        }
+        
         [HttpGet]
         public async Task<List<Door>> Get(int id_user, int id_house, int id_room)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
-                List<Door> door = homeAssistantContext.Doors.Where(lb => lb.RoomId == room.Id).ToList();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
+                 List<Door> door =  _context.Doors.Where(lb => lb.RoomId == room.Id).ToList();
                 return door;
             }
             catch
@@ -38,15 +44,14 @@ namespace DeviceManager.Controllers
         [HttpGet("{id}")]
         public async Task<Door> Get(int id_user, int id_house, int id_room, int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
-                Door door = homeAssistantContext.Doors.Where(lb => lb.RoomId == room.Id).Where(lb => lb.Id == id)
-                    .FirstOrDefault();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
+                Door door = _context.Doors.Where(lb => lb.RoomId == room.Id)
+                    .FirstOrDefault(lb => lb.Id == id);
                 return door;
             }
             catch
@@ -58,16 +63,15 @@ namespace DeviceManager.Controllers
         [HttpPost]
         public async Task<Door> Post(int id_user, int id_house, int id_room, [FromBody] Door door)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
                 door.RoomId = room.Id;
-                Door _door_ = homeAssistantContext.Doors.Add(door).Entity;
-                await homeAssistantContext.SaveChangesAsync();
+                Door _door_ = _context.Doors.Add(door).Entity;
+                await _context.SaveChangesAsync();
                 return _door_;
             }
             catch (Exception e)
@@ -80,18 +84,17 @@ namespace DeviceManager.Controllers
         [HttpDelete("{id}")]
         public async Task<HttpResponseMessage> Delete(int id_user, int id_house, int id_room, int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
-                Door door = homeAssistantContext.Doors.Where(lb => lb.RoomId == room.Id).Where(lb => lb.Id == id)
-                    .FirstOrDefault();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
+                Door door = _context.Doors.Where(lb => lb.RoomId == room.Id)
+                    .FirstOrDefault(lb => lb.Id == id);
 
-                homeAssistantContext.Doors.Remove(door);
-                homeAssistantContext.SaveChanges();
+                _context.Doors.Remove(door);
+                _context.SaveChanges();
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }
             catch

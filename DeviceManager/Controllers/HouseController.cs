@@ -16,14 +16,20 @@ namespace DeviceManager.Controllers
     [Route("users/{id_user}/houses")]
     public class HouseController
     {
+        private readonly HomeAssistantContext _context;
+
+        public HouseController(HomeAssistantContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public async Task<List<House>> Get(int id_user)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                User user = homeAssistantContext.Users.Find(id_user);
-                List<House> houses = homeAssistantContext.Houses.Where(h => h.UserId == user.Id).ToList();
+                User user = _context.Users.Find(id_user);
+                List<House> houses = _context.Houses.Where(h => h.UserId == user.Id).ToList();
                 return houses;
             }
             catch
@@ -35,12 +41,11 @@ namespace DeviceManager.Controllers
         [HttpGet("{id}")]
         public async Task<House> Get(int id_user, int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                User user = homeAssistantContext.Users.Find(id_user);
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == user.Id).Where(h => h.Id == id)
-                    .FirstOrDefault();
+                User user = _context.Users.Find(id_user);
+                House house = _context.Houses.Where(h => h.UserId == user.Id)
+                    .FirstOrDefault(h => h.Id == id);
                 return house;
             }
             catch
@@ -50,15 +55,14 @@ namespace DeviceManager.Controllers
         }
 
         [HttpPost]
-        public async Task<House> Post(int id_user, [FromBody] House House)
+        public async Task<House> Post(int id_user, [FromBody] House house)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House.UserId = id_user;
-                House House1 = homeAssistantContext.Houses.Add(House).Entity;
-                await homeAssistantContext.SaveChangesAsync();
-                return House1;
+                house.UserId = id_user;
+                House newHouse = _context.Houses.Add(house).Entity;
+                await _context.SaveChangesAsync();
+                return newHouse;
             }
             catch (Exception e)
             {
@@ -70,14 +74,13 @@ namespace DeviceManager.Controllers
         [HttpDelete("{id}")]
         public async Task<HttpResponseMessage> Delete(int id_user, int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                User user = homeAssistantContext.Users.Find(id_user);
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == user.Id).Where(h => h.Id == id)
-                    .FirstOrDefault();
-                homeAssistantContext.Houses.Remove(house);
-                homeAssistantContext.SaveChanges();
+                User user = _context.Users.Find(id_user);
+                House house = _context.Houses.Where(h => h.UserId == user.Id)
+                    .FirstOrDefault(h => h.Id == id);
+                _context.Houses.Remove(house);
+                _context.SaveChanges();
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }
             catch

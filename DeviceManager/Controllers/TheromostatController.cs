@@ -16,18 +16,24 @@ namespace DeviceManager.Controllers
     [Route("users/{id_user}/houses/{id_house}/rooms/{id_room}/thermostats")]
     public class ThermostatController
     {
+        private readonly HomeAssistantContext _context;
+
+        public ThermostatController(HomeAssistantContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public async Task<List<Thermostat>> Get(int id_user, int id_house, int id_room)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
                 List<Thermostat> thermostat =
-                    homeAssistantContext.Thermostats.Where(lb => lb.RoomId == room.Id).ToList();
+                    _context.Thermostats.Where(lb => lb.RoomId == room.Id).ToList();
                 return thermostat;
             }
             catch
@@ -39,15 +45,15 @@ namespace DeviceManager.Controllers
         [HttpGet("{id}")]
         public async Task<Thermostat> Get(int id_user, int id_house, int id_room, int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
+            
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
-                Thermostat thermostat = homeAssistantContext.Thermostats.Where(lb => lb.RoomId == room.Id)
-                    .Where(lb => lb.Id == id).FirstOrDefault();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
+                Thermostat thermostat = _context.Thermostats
+                    .Where(lb => lb.RoomId == room.Id).FirstOrDefault(lb => lb.Id == id);
                 return thermostat;
             }
             catch
@@ -59,17 +65,16 @@ namespace DeviceManager.Controllers
         [HttpPost]
         public async Task<Thermostat> Post(int id_user, int id_house, int id_room, [FromBody] Thermostat thermostat)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
                 thermostat.RoomId = room.Id;
-                Thermostat _thermostat_ = homeAssistantContext.Thermostats.Add(thermostat).Entity;
-                await homeAssistantContext.SaveChangesAsync();
-                return _thermostat_;
+                Thermostat newThermostat = _context.Thermostats.Add(thermostat).Entity;
+                await _context.SaveChangesAsync();
+                return newThermostat;
             }
             catch (Exception e)
             {
@@ -81,18 +86,17 @@ namespace DeviceManager.Controllers
         [HttpDelete("{id}")]
         public async Task<HttpResponseMessage> Delete(int id_user, int id_house, int id_room, int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                House house = homeAssistantContext.Houses.Where(h => h.UserId == id_user).Where(h => h.Id == id_house)
-                    .FirstOrDefault();
-                Room room = homeAssistantContext.Rooms.Where(h => h.HouseId == house.Id)
-                    .Where(r => r.Id == id_room).FirstOrDefault();
-                Thermostat thermostat = homeAssistantContext.Thermostats.Where(lb => lb.RoomId == room.Id)
-                    .Where(lb => lb.Id == id).FirstOrDefault();
+                House house = _context.Houses.Where(h => h.UserId == id_user)
+                    .FirstOrDefault(h => h.Id == id_house);
+                Room room = _context.Rooms
+                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
+                Thermostat thermostat = _context.Thermostats
+                    .Where(lb => lb.RoomId == room.Id).FirstOrDefault(lb => lb.Id == id);
 
-                homeAssistantContext.Thermostats.Remove(thermostat);
-                homeAssistantContext.SaveChanges();
+                _context.Thermostats.Remove(thermostat);
+                _context.SaveChanges();
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }
             catch

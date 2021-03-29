@@ -16,28 +16,32 @@ namespace DeviceManager.Controllers
     [Route("/users")]
     public class UserController
     {
+        private readonly HomeAssistantContext _context;
+
+        public UserController(HomeAssistantContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
         public async Task<List<User>> Get()
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
-            return await homeAssistantContext.Users.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<User> Get(int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
-            return await homeAssistantContext.Users.FindAsync(id);
+            return await _context.Users.FindAsync(id);
         }
 
         [HttpPost]
         public async Task<User> Post([FromBody] User user)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                User user1 = homeAssistantContext.Users.Add(user).Entity;
-                await homeAssistantContext.SaveChangesAsync();
+                User user1 = _context.Users.Add(user).Entity;
+                await _context.SaveChangesAsync();
                 return user1;
             }
             catch (Exception e)
@@ -50,12 +54,11 @@ namespace DeviceManager.Controllers
         [HttpDelete("{id}")]
         public async Task<HttpResponseMessage> Delete(int id)
         {
-            HomeAssistantContext homeAssistantContext = new HomeAssistantContext();
             try
             {
-                User user = homeAssistantContext.Users.Find(id);
-                homeAssistantContext.Users.Remove(user);
-                await homeAssistantContext.SaveChangesAsync();
+                User user = _context.Users.Find(id);
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }
             catch (Exception e)
