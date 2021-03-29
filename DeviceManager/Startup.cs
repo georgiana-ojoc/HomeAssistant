@@ -12,6 +12,7 @@ namespace DeviceManager
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            ConnectionService.Connection = Configuration["ConnectionString"];
         }
 
         public IConfiguration Configuration { get; }

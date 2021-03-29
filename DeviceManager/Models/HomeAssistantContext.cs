@@ -30,7 +30,7 @@ namespace DeviceManager.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=ConnectionString");
+                optionsBuilder.UseSqlServer(ConnectionService.Connection);
             }
         }
 
