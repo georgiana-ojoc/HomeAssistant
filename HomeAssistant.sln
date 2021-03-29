@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Interface.csproj", "{CEFCC980-EE64-40E8-A51A-BF01AACEB2B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceManager", "DeviceManager\DeviceManager.csproj", "{AE31DC0E-039F-4929-8642-8E9BFE635701}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CEFCC980-EE64-40E8-A51A-BF01AACEB2B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEFCC980-EE64-40E8-A51A-BF01AACEB2B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEFCC980-EE64-40E8-A51A-BF01AACEB2B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEFCC980-EE64-40E8-A51A-BF01AACEB2B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE31DC0E-039F-4929-8642-8E9BFE635701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE31DC0E-039F-4929-8642-8E9BFE635701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE31DC0E-039F-4929-8642-8E9BFE635701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE31DC0E-039F-4929-8642-8E9BFE635701}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
