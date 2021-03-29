@@ -18,7 +18,9 @@ namespace DeviceManager.Models
         public int Color { get; set; }
         public byte Intensity { get; set; }
 
+        [System.Text.Json.Serialization.JsonIgnore]
         public Room Room { get; set; }
+
         public ICollection<LightBulbCommand> LightBulbCommands { get; set; }
     }
 }

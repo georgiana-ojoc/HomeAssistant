@@ -17,7 +17,9 @@ namespace DeviceManager.Models
         public bool? Status { get; set; }
         public bool Locked { get; set; }
 
+        [System.Text.Json.Serialization.JsonIgnore]
         public Room Room { get; set; }
+
         public ICollection<DoorCommand> DoorCommands { get; set; }
     }
 }
