@@ -15,8 +15,8 @@ namespace API.Models
         public int RoomId { get; set; }
         public string Name { get; set; }
         public bool? Status { get; set; }
-        public int Color { get; set; }
-        public byte Intensity { get; set; }
+        public int? Color { get; set; }
+        public byte? Intensity { get; set; }
 
         [System.Text.Json.Serialization.JsonIgnore]
         public Room Room { get; set; }
