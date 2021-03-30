@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interface", "Interface\Interface.csproj", "{CEFCC980-EE64-40E8-A51A-BF01AACEB2B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceManager", "DeviceManager\DeviceManager.csproj", "{AE31DC0E-039F-4929-8642-8E9BFE635701}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{AE31DC0E-039F-4929-8642-8E9BFE635701}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
