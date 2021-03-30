@@ -2,24 +2,25 @@
 
 #nullable disable
 
-namespace DeviceManager.Models
+namespace API.Models
 {
-    public class Door
+    public class LightBulb
     {
-        public Door()
+        public LightBulb()
         {
-            DoorCommands = new HashSet<DoorCommand>();
+            LightBulbCommands = new HashSet<LightBulbCommand>();
         }
 
         public int Id { get; set; }
         public int RoomId { get; set; }
         public string Name { get; set; }
         public bool? Status { get; set; }
-        public bool Locked { get; set; }
+        public int Color { get; set; }
+        public byte Intensity { get; set; }
 
         [System.Text.Json.Serialization.JsonIgnore]
         public Room Room { get; set; }
 
-        public ICollection<DoorCommand> DoorCommands { get; set; }
+        public ICollection<LightBulbCommand> LightBulbCommands { get; set; }
     }
 }

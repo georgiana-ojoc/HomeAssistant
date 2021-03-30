@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace DeviceManager.Models
+namespace API.Models
 {
     public class ThermostatCommand
     {

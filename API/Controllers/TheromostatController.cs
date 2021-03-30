@@ -4,27 +4,24 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DeviceManager.Models;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Logging;
 
-namespace DeviceManager.Controllers
+namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{id_user}/houses/{id_house}/rooms/{id_room}/doors")]
-    public class DoorController
+    [Route("users/{id_user}/houses/{id_house}/rooms/{id_room}/thermostats")]
+    public class ThermostatController
     {
         private readonly HomeAssistantContext _context;
 
-        public DoorController(HomeAssistantContext context)
+        public ThermostatController(HomeAssistantContext context)
         {
             _context = context;
         }
-        
+
         [HttpGet]
-        public async Task<List<Door>> Get(int id_user, int id_house, int id_room)
+        public async Task<List<Thermostat>> Get(int id_user, int id_house, int id_room)
         {
             try
             {
@@ -32,8 +29,9 @@ namespace DeviceManager.Controllers
                     .FirstOrDefault(h => h.Id == id_house);
                 Room room = _context.Rooms
                     .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
-                 List<Door> door =  _context.Doors.Where(lb => lb.RoomId == room.Id).ToList();
-                return door;
+                List<Thermostat> thermostat =
+                    _context.Thermostats.Where(lb => lb.RoomId == room.Id).ToList();
+                return thermostat;
             }
             catch
             {
@@ -42,17 +40,18 @@ namespace DeviceManager.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Door> Get(int id_user, int id_house, int id_room, int id)
+        public async Task<Thermostat> Get(int id_user, int id_house, int id_room, int id)
         {
+            
             try
             {
                 House house = _context.Houses.Where(h => h.UserId == id_user)
                     .FirstOrDefault(h => h.Id == id_house);
                 Room room = _context.Rooms
                     .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
-                Door door = _context.Doors.Where(lb => lb.RoomId == room.Id)
-                    .FirstOrDefault(lb => lb.Id == id);
-                return door;
+                Thermostat thermostat = _context.Thermostats
+                    .Where(lb => lb.RoomId == room.Id).FirstOrDefault(lb => lb.Id == id);
+                return thermostat;
             }
             catch
             {
@@ -61,7 +60,7 @@ namespace DeviceManager.Controllers
         }
 
         [HttpPost]
-        public async Task<Door> Post(int id_user, int id_house, int id_room, [FromBody] Door door)
+        public async Task<Thermostat> Post(int id_user, int id_house, int id_room, [FromBody] Thermostat thermostat)
         {
             try
             {
@@ -69,10 +68,10 @@ namespace DeviceManager.Controllers
                     .FirstOrDefault(h => h.Id == id_house);
                 Room room = _context.Rooms
                     .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
-                door.RoomId = room.Id;
-                Door _door_ = _context.Doors.Add(door).Entity;
+                thermostat.RoomId = room.Id;
+                Thermostat newThermostat = _context.Thermostats.Add(thermostat).Entity;
                 await _context.SaveChangesAsync();
-                return _door_;
+                return newThermostat;
             }
             catch (Exception e)
             {
@@ -90,10 +89,10 @@ namespace DeviceManager.Controllers
                     .FirstOrDefault(h => h.Id == id_house);
                 Room room = _context.Rooms
                     .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
-                Door door = _context.Doors.Where(lb => lb.RoomId == room.Id)
-                    .FirstOrDefault(lb => lb.Id == id);
+                Thermostat thermostat = _context.Thermostats
+                    .Where(lb => lb.RoomId == room.Id).FirstOrDefault(lb => lb.Id == id);
 
-                _context.Doors.Remove(door);
+                _context.Thermostats.Remove(thermostat);
                 _context.SaveChanges();
                 return new HttpResponseMessage(HttpStatusCode.OK);
             }

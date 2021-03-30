@@ -1,4 +1,4 @@
-using DeviceManager.Models;
+using API.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
-namespace DeviceManager
+namespace API
 {
     public class Startup
     {
@@ -25,7 +25,7 @@ namespace DeviceManager
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "DeviceManager", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "API", Version = "v1"});
             });
         }
 
@@ -36,7 +36,7 @@ namespace DeviceManager
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "DeviceManager v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
 
             app.UseHttpsRedirection();

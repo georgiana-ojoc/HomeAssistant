@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace DeviceManager.Models
+namespace API.Models
 {
     public class Schedule
     {

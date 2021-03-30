@@ -4,13 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DeviceManager.Models;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Logging;
 
-namespace DeviceManager.Controllers
+namespace API.Controllers
 {
     [ApiController]
     [Route("users/{id_user}/houses/{id_house}/rooms")]

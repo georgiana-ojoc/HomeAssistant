@@ -1,4 +1,4 @@
-﻿namespace DeviceManager
+﻿namespace API
 {
     public static class ConnectionService
     {
