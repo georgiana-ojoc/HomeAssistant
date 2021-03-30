@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{id_user}/houses/{id_house}/rooms/{id_room}/doors")]
+    [Route("users/{user_id}/houses/{house_id}/rooms/{room_id}/doors")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class DoorController
     {
         private readonly HomeAssistantContext _context;
@@ -19,84 +21,119 @@ namespace API.Controllers
         {
             _context = context;
         }
-        
+
         [HttpGet]
-        public async Task<List<Door>> Get(int id_user, int id_house, int id_room)
+        public async Task<ActionResult<IEnumerable<Door>>> Get(int user_id, int house_id, int room_id)
         {
-            try
+            House house = await _context.Houses.Where(h => h.UserId == user_id)
+                .FirstOrDefaultAsync(h => h.Id == house_id);
+            if (house == null)
             {
-                House house = _context.Houses.Where(h => h.UserId == id_user)
-                    .FirstOrDefault(h => h.Id == id_house);
-                Room room = _context.Rooms
-                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
-                 List<Door> door =  _context.Doors.Where(lb => lb.RoomId == room.Id).ToList();
-                return door;
+                return new NotFoundResult();
             }
-            catch
+
+            Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
+                .FirstOrDefaultAsync(r => r.Id == room_id);
+            if (room == null)
             {
-                return null;
+                return new NotFoundResult();
             }
+
+            return await _context.Doors.Where(d => d.RoomId == room.Id).ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<Door> Get(int id_user, int id_house, int id_room, int id)
+        public async Task<ActionResult<Door>> Get(int user_id, int house_id, int room_id, int id)
         {
-            try
+            House house = await _context.Houses.Where(h => h.UserId == user_id)
+                .FirstOrDefaultAsync(h => h.Id == house_id);
+            if (house == null)
             {
-                House house = _context.Houses.Where(h => h.UserId == id_user)
-                    .FirstOrDefault(h => h.Id == id_house);
-                Room room = _context.Rooms
-                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
-                Door door = _context.Doors.Where(lb => lb.RoomId == room.Id)
-                    .FirstOrDefault(lb => lb.Id == id);
-                return door;
+                return new NotFoundResult();
             }
-            catch
+
+            Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
+                .FirstOrDefaultAsync(r => r.Id == room_id);
+            if (room == null)
             {
-                return null;
+                return new NotFoundResult();
             }
+
+            Door door = await _context.Doors.Where(d => d.RoomId == room.Id)
+                .FirstOrDefaultAsync(d => d.Id == id);
+            if (door == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return door;
         }
 
         [HttpPost]
-        public async Task<Door> Post(int id_user, int id_house, int id_room, [FromBody] Door door)
+        public async Task<ActionResult<Door>> Post(int user_id, int house_id, int room_id, [FromBody] Door door)
         {
             try
             {
-                House house = _context.Houses.Where(h => h.UserId == id_user)
-                    .FirstOrDefault(h => h.Id == id_house);
-                Room room = _context.Rooms
-                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
+                House house = await _context.Houses.Where(h => h.UserId == user_id)
+                    .FirstOrDefaultAsync(h => h.Id == house_id);
+                if (house == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
+                    .FirstOrDefaultAsync(r => r.Id == room_id);
+                if (room == null)
+                {
+                    return new NotFoundResult();
+                }
+
                 door.RoomId = room.Id;
-                Door _door_ = _context.Doors.Add(door).Entity;
+                Door newDoor = (await _context.Doors.AddAsync(door)).Entity;
                 await _context.SaveChangesAsync();
-                return _door_;
+                return newDoor;
             }
             catch (Exception e)
             {
                 Console.Write(e.Message);
-                return null;
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<HttpResponseMessage> Delete(int id_user, int id_house, int id_room, int id)
+        public async Task<ActionResult> Delete(int user_id, int house_id, int room_id, int id)
         {
             try
             {
-                House house = _context.Houses.Where(h => h.UserId == id_user)
-                    .FirstOrDefault(h => h.Id == id_house);
-                Room room = _context.Rooms
-                    .Where(h => h.HouseId == house.Id).FirstOrDefault(r => r.Id == id_room);
-                Door door = _context.Doors.Where(lb => lb.RoomId == room.Id)
-                    .FirstOrDefault(lb => lb.Id == id);
+                House house = await _context.Houses.Where(h => h.UserId == user_id)
+                    .FirstOrDefaultAsync(h => h.Id == house_id);
+                if (house == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
+                    .FirstOrDefaultAsync(r => r.Id == room_id);
+                if (room == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                Door door = await _context.Doors.Where(d => d.RoomId == room.Id)
+                    .FirstOrDefaultAsync(d => d.Id == id);
+                if (door == null)
+                {
+                    return new NotFoundResult();
+                }
 
                 _context.Doors.Remove(door);
-                _context.SaveChanges();
-                return new HttpResponseMessage(HttpStatusCode.OK);
+                await _context.SaveChangesAsync();
+                return new NoContentResult();
             }
-            catch
+            catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                Console.Write(e.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }

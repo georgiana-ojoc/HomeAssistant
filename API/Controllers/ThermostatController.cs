@@ -11,19 +11,19 @@ using Microsoft.EntityFrameworkCore;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{user_id}/houses/{house_id}/rooms/{room_id}/light_bulbs")]
+    [Route("users/{user_id}/houses/{house_id}/rooms/{room_id}/thermostats")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class LightBulbController
+    public class ThermostatController
     {
         private readonly HomeAssistantContext _context;
 
-        public LightBulbController(HomeAssistantContext context)
+        public ThermostatController(HomeAssistantContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LightBulb>>> Get(int user_id, int house_id, int room_id)
+        public async Task<ActionResult<IEnumerable<Thermostat>>> Get(int user_id, int house_id, int room_id)
         {
             House house = await _context.Houses.Where(h => h.UserId == user_id)
                 .FirstOrDefaultAsync(h => h.Id == house_id);
@@ -39,11 +39,11 @@ namespace API.Controllers
                 return new NotFoundResult();
             }
 
-            return await _context.LightBulbs.Where(lb => lb.RoomId == room.Id).ToListAsync();
+            return await _context.Thermostats.Where(t => t.RoomId == room.Id).ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<LightBulb>> Get(int user_id, int house_id, int room_id, int id)
+        public async Task<ActionResult<Thermostat>> Get(int user_id, int house_id, int room_id, int id)
         {
             House house = await _context.Houses.Where(h => h.UserId == user_id)
                 .FirstOrDefaultAsync(h => h.Id == house_id);
@@ -59,19 +59,19 @@ namespace API.Controllers
                 return new NotFoundResult();
             }
 
-            LightBulb lightBulb = await _context.LightBulbs.Where(lb => lb.RoomId == room.Id)
-                .FirstOrDefaultAsync(lb => lb.Id == id);
-            if (lightBulb == null)
+            Thermostat thermostat = await _context.Thermostats.Where(t => t.RoomId == room.Id)
+                .FirstOrDefaultAsync(d => d.Id == id);
+            if (thermostat == null)
             {
                 return new NotFoundResult();
             }
 
-            return lightBulb;
+            return thermostat;
         }
 
         [HttpPost]
-        public async Task<ActionResult<LightBulb>> Post(int user_id, int house_id, int room_id,
-            [FromBody] LightBulb lightBulb)
+        public async Task<ActionResult<Thermostat>> Post(int user_id, int house_id, int room_id,
+            [FromBody] Thermostat thermostat)
         {
             try
             {
@@ -89,10 +89,10 @@ namespace API.Controllers
                     return new NotFoundResult();
                 }
 
-                lightBulb.RoomId = room.Id;
-                LightBulb newLightBulb = (await _context.LightBulbs.AddAsync(lightBulb)).Entity;
+                thermostat.RoomId = room.Id;
+                Thermostat newThermostat = (await _context.Thermostats.AddAsync(thermostat)).Entity;
                 await _context.SaveChangesAsync();
-                return newLightBulb;
+                return newThermostat;
             }
             catch (Exception e)
             {
@@ -120,14 +120,14 @@ namespace API.Controllers
                     return new NotFoundResult();
                 }
 
-                LightBulb lightBulb = await _context.LightBulbs.Where(lb => lb.RoomId == room.Id)
-                    .FirstOrDefaultAsync(lb => lb.Id == id);
-                if (lightBulb == null)
+                Thermostat thermostat = await _context.Thermostats.Where(t => t.RoomId == room.Id)
+                    .FirstOrDefaultAsync(t => t.Id == id);
+                if (thermostat == null)
                 {
                     return new NotFoundResult();
                 }
 
-                _context.LightBulbs.Remove(lightBulb);
+                _context.Thermostats.Remove(thermostat);
                 await _context.SaveChangesAsync();
                 return new NoContentResult();
             }

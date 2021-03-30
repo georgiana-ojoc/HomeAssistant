@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,47 +20,58 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<User>> Get()
+        public async Task<ActionResult<IEnumerable<User>>> Get()
         {
             return await _context.Users.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<User> Get(int id)
+        public async Task<ActionResult<User>> Get(int id)
         {
-            return await _context.Users.FindAsync(id);
+            User user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return user;
         }
 
         [HttpPost]
-        public async Task<User> Post([FromBody] User user)
+        public async Task<ActionResult<User>> Post([FromBody] User user)
         {
             try
             {
-                User user1 = _context.Users.Add(user).Entity;
+                User newUser = (await _context.Users.AddAsync(user)).Entity;
                 await _context.SaveChangesAsync();
-                return user1;
+                return newUser;
             }
             catch (Exception e)
             {
                 Console.Write(e.Message);
-                return null;
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<HttpResponseMessage> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             try
             {
-                User user = _context.Users.Find(id);
+                User user = await _context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return new NotFoundResult();
+                }
+
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
-                return new HttpResponseMessage(HttpStatusCode.OK);
+                return new NoContentResult();
             }
             catch (Exception e)
             {
                 Console.Write(e.Message);
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }

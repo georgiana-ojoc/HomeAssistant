@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using API.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{id_user}/houses")]
+    [Route("users/{user_id}/houses")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class HouseController
     {
         private readonly HomeAssistantContext _context;
@@ -21,68 +23,73 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<House>> Get(int id_user)
+        public async Task<ActionResult<IEnumerable<House>>> Get(int user_id)
         {
-            try
+            User user = await _context.Users.FindAsync(user_id);
+            if (user == null)
             {
-                User user = _context.Users.Find(id_user);
-                List<House> houses = _context.Houses.Where(h => h.UserId == user.Id).ToList();
-                return houses;
+                return new NotFoundResult();
             }
-            catch
-            {
-                return null;
-            }
+
+            return await _context.Houses.Where(h => h.UserId == user.Id).ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<House> Get(int id_user, int id)
+        public async Task<ActionResult<House>> Get(int user_id, int id)
         {
-            try
+            House house = await _context.Houses.Where(h => h.UserId == user_id)
+                .FirstOrDefaultAsync(h => h.Id == id);
+            if (house == null)
             {
-                User user = _context.Users.Find(id_user);
-                House house = _context.Houses.Where(h => h.UserId == user.Id)
-                    .FirstOrDefault(h => h.Id == id);
-                return house;
+                return new NotFoundResult();
             }
-            catch
-            {
-                return null;
-            }
+
+            return house;
         }
 
         [HttpPost]
-        public async Task<House> Post(int id_user, [FromBody] House house)
+        public async Task<ActionResult<House>> Post(int user_id, [FromBody] House house)
         {
             try
             {
-                house.UserId = id_user;
-                House newHouse = _context.Houses.Add(house).Entity;
+                User user = await _context.Users.FindAsync(user_id);
+                if (user == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                house.UserId = user.Id;
+                House newHouse = (await _context.Houses.AddAsync(house)).Entity;
                 await _context.SaveChangesAsync();
                 return newHouse;
             }
             catch (Exception e)
             {
                 Console.Write(e.Message);
-                return null;
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<HttpResponseMessage> Delete(int id_user, int id)
+        public async Task<ActionResult> Delete(int user_id, int id)
         {
             try
             {
-                User user = _context.Users.Find(id_user);
-                House house = _context.Houses.Where(h => h.UserId == user.Id)
-                    .FirstOrDefault(h => h.Id == id);
+                House house = await _context.Houses.Where(h => h.UserId == user_id)
+                    .FirstOrDefaultAsync(h => h.Id == id);
+                if (house == null)
+                {
+                    return new NotFoundResult();
+                }
+
                 _context.Houses.Remove(house);
-                _context.SaveChanges();
-                return new HttpResponseMessage(HttpStatusCode.OK);
+                await _context.SaveChangesAsync();
+                return new NoContentResult();
             }
-            catch
+            catch (Exception e)
             {
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                Console.Write(e.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
     }

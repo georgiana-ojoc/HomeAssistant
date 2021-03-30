@@ -146,7 +146,7 @@ namespace API.Models
 
                 entity.Property(e => e.RoomId).HasColumnName("room_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status).HasDefaultValue(false).HasColumnName("status");
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.LightBulbs)
@@ -176,7 +176,7 @@ namespace API.Models
 
                 entity.Property(e => e.RoomId).HasColumnName("room_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status).HasDefaultValue(false).HasColumnName("status");
 
                 entity.HasOne(d => d.Room)
                     .WithMany(p => p.Doors)
@@ -195,7 +195,7 @@ namespace API.Models
                 entity.HasIndex(e => e.Id, "thermostats_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id).HasDefaultValue(false).HasColumnName("id");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
