@@ -1,0 +1,32 @@
+﻿@page "/House"
+<div class="row">
+    @foreach (var room in rooms)
+    {
+        <div class="card" style="width: 16rem; margin: 1rem">
+            <h3 class="card-header" style="text-align: center"> @room </h3>
+            <div class="card-body" style="margin: auto">
+                <a class="btn btn-dark" href="Room"> Manage room </a>
+            </div>
+        </div>
+    }
+</div>
+<div class="input-group">
+    <input class="form-control" placeholder="Room name" @bind="_newRoom" aria-describedby="add-room-addon"/>
+    <div class="input-group-append">
+        <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom">Add room</span>
+    </div>
+</div>
+
+@code {
+    private IList<string> rooms = new List<string>();
+    private string _newRoom;
+
+    private void AddRoom()
+    {
+        if (!string.IsNullOrWhiteSpace(_newRoom))
+        {
+            rooms.Add(_newRoom);
+            _newRoom = string.Empty;
+        }
+    }
+}
