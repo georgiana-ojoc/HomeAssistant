@@ -9,22 +9,22 @@
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home" aria-hidden="true"></span>Home
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="ManageDevices">
-                <span class="oi oi-wifi" aria-hidden="true"></span> Manager
+            <NavLink class="nav-link" href="Devices">
+                <span class="oi oi-wifi" aria-hidden="true"></span>Manager
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="Schedules">
-                <span class="oi oi-calendar" aria-hidden="true"></span> Schedules
+                <span class="oi oi-calendar" aria-hidden="true"></span>Schedules
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" @onclick="Logout">
-                <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+            <NavLink class="nav-link" @onclick="SignOut">
+                <span class="oi oi-account-logout" aria-hidden="true"></span>Sign out
             </NavLink>
         </li>
     </ul>
@@ -40,9 +40,8 @@
         _collapseNavMenu = !_collapseNavMenu;
     }
 
-    private void Logout()
+    private void SignOut()
     {
-    //do log out
     }
 
 }

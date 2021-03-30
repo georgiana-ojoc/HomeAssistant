@@ -2,11 +2,11 @@
 <div class="row">
     <div class="col">
         <ul class="list-group list-group-vertical">
-            @foreach (var lightBulb in lightBulbs)
+            @foreach (var lightBulb in _lightBulbs)
             {
                 <li class="list-group-item">
                     <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @lightBulb </h3>
+                        <h3 class="card-header" style="text-align: center">@lightBulb</h3>
                         <div class="card-body" style="margin: auto">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                 <button type="button" class="btn btn-danger">Off</button>
@@ -19,7 +19,8 @@
             }
         </ul>
         <div class="input-group">
-            <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulb" aria-describedby="add-light-bulb-addon"/>
+            <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulb"
+                   aria-describedby="add-light-bulb-addon"/>
             <div class="input-group-append">
                 <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb">Add light bulb</span>
             </div>
@@ -27,11 +28,11 @@
     </div>
     <div class="col">
         <ul class="list-group list-group-vertical">
-            @foreach (var door in doors)
+            @foreach (var door in _doors)
             {
                 <li class="list-group-item">
                     <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @door </h3>
+                        <h3 class="card-header" style="text-align: center">@door</h3>
                         <div class="card-body" style="margin: auto">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                 <button type="button" class="btn btn-danger">Lock</button>
@@ -51,11 +52,11 @@
     </div>
     <div class="col">
         <ul class="list-group list-group-vertical">
-            @foreach (var thermostat in thermostats)
+            @foreach (var thermostat in _thermostats)
             {
                 <li class="list-group-item">
                     <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @thermostat </h3>
+                        <h3 class="card-header" style="text-align: center">@thermostat</h3>
                         <div class="card-body" style="margin: auto">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                 <input type="range" class="form-range" min="7" max="30" id="temp">
@@ -66,7 +67,8 @@
             }
         </ul>
         <div class="input-group">
-            <input class="form-control" placeholder="Thermostat name" @bind="_newThermostat" aria-describedby="add-thermostat-addon"/>
+            <input class="form-control" placeholder="Thermostat name" @bind="_newThermostat"
+                   aria-describedby="add-thermostat-addon"/>
             <div class="input-group-append">
                 <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat">Add thermostat</span>
             </div>
@@ -75,39 +77,43 @@
 </div>
 
 @code {
-    private IList<string> lightBulbs = new List<string>();
+    private readonly IList<string> _lightBulbs = new List<string>();
     private string _newLightBulb;
 
     private void AddLightBulb()
     {
-        if (!string.IsNullOrWhiteSpace(_newLightBulb))
+        if (string.IsNullOrWhiteSpace(_newLightBulb))
         {
-            lightBulbs.Add(_newLightBulb);
-            _newLightBulb = string.Empty;
+            return;
         }
+        _lightBulbs.Add(_newLightBulb);
+        _newLightBulb = string.Empty;
     }
 
-    private IList<string> doors = new List<string>();
+    private readonly IList<string> _doors = new List<string>();
     private string _newDoor;
 
     private void AddDoor()
     {
-        if (!string.IsNullOrWhiteSpace(_newDoor))
+        if (string.IsNullOrWhiteSpace(_newDoor))
         {
-            doors.Add(_newDoor);
-            _newDoor = string.Empty;
+            return;
         }
+        _doors.Add(_newDoor);
+        _newDoor = string.Empty;
     }
 
-    private IList<string> thermostats = new List<string>();
+    private readonly IList<string> _thermostats = new List<string>();
     private string _newThermostat;
 
     private void AddThermostat()
     {
-        if (!string.IsNullOrWhiteSpace(_newThermostat))
+        if (string.IsNullOrWhiteSpace(_newThermostat))
         {
-            thermostats.Add(_newThermostat);
-            _newThermostat = string.Empty;
+            return;
         }
+        _thermostats.Add(_newThermostat);
+        _newThermostat = string.Empty;
     }
+
 }

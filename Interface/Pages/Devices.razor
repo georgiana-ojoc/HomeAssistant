@@ -1,12 +1,12 @@
-﻿@page "/ManageDevices"
+﻿@page "/Devices"
 @inject HttpClient Http
 <div class="row">
-    @foreach (var house in houses)
+    @foreach (var house in _houses)
     {
         <div class="card" style="width: 16rem; margin: 1rem">
             <h3 class="card-header" style="text-align: center"> @house </h3>
             <div class="card-body" style="margin: auto">
-                <a class="btn btn-dark" href="House"> Manage house </a>
+                <a class="btn btn-dark" href="House">Manage house</a>
             </div>
         </div>
     }
@@ -19,15 +19,17 @@
 </div>
 
 @code {
-    private IList<string> houses = new List<string>();
+    private readonly IList<string> _houses = new List<string>();
     private string _newHouse;
 
     private void AddHouse()
     {
-        if (!string.IsNullOrWhiteSpace(_newHouse))
+        if (string.IsNullOrWhiteSpace(_newHouse))
         {
-            houses.Add(_newHouse);
-            _newHouse = string.Empty;
+            return;
         }
+        _houses.Add(_newHouse);
+        _newHouse = string.Empty;
     }
+
 }

@@ -1,6 +1,6 @@
 ﻿@page "/House"
 <div class="row">
-    @foreach (var room in rooms)
+    @foreach (var room in _rooms)
     {
         <div class="card" style="width: 16rem; margin: 1rem">
             <h3 class="card-header" style="text-align: center"> @room </h3>
@@ -18,15 +18,17 @@
 </div>
 
 @code {
-    private IList<string> rooms = new List<string>();
+    private readonly IList<string> _rooms = new List<string>();
     private string _newRoom;
 
     private void AddRoom()
     {
-        if (!string.IsNullOrWhiteSpace(_newRoom))
+        if (string.IsNullOrWhiteSpace(_newRoom))
         {
-            rooms.Add(_newRoom);
-            _newRoom = string.Empty;
+            return;
         }
+        _rooms.Add(_newRoom);
+        _newRoom = string.Empty;
     }
+
 }
