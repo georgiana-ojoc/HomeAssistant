@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Reflection;
+using System.Security.Claims;
 using API.Interfaces;
 using API.Models;
 using API.Repositories;
@@ -6,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,6 +38,19 @@ namespace API
                     policy => { policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
             });
 
+            services.AddHttpContextAccessor();
+            services.AddScoped(sp =>
+            {
+                HttpContext context = sp.GetService<IHttpContextAccessor>()?.HttpContext;
+                Identity identity = new Identity();
+                if (context?.User.Identity != null && context.User.Identity.IsAuthenticated)
+                {
+                    identity.Email = context.User.FindFirst("emails")?.Value;
+                }
+
+                return identity;
+            });
+            
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddControllers();
             services.AddSingleton<HomeAssistantContext>();
