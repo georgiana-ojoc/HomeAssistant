@@ -7,12 +7,26 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MediatR" Version="9.0.0" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Commands\Door\Handlers" />
+      <Folder Include="Commands\House\Handlers" />
+      <Folder Include="Commands\LightBulb\Handlers" />
+      <Folder Include="Commands\Room\Handlers" />
+      <Folder Include="Commands\Thermostat\Handlers" />
+      <Folder Include="Queries\House\Handlers" />
+      <Folder Include="Queries\LightBulb\Handlers" />
+      <Folder Include="Queries\Room\Handlers" />
+      <Folder Include="Queries\Thermostat\Handlers" />
     </ItemGroup>
 
 </Project>

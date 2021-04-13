@@ -1,4 +1,8 @@
+using System.Reflection;
+using API.Interfaces;
 using API.Models;
+using API.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,8 +25,17 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<HomeAssistantContext>();
+            
+            services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddControllers();
+            services.AddSingleton<HomeAssistantContext>();
+            services.AddScoped<IUserRepository,UserRepository>();
+            services.AddScoped<IHouseRepository,HouseRepository>();
+            services.AddScoped<IRoomRepository,RoomRepository>();
+            services.AddScoped<IDoorRepository,DoorRepository>();
+            services.AddScoped<ILightBulbRepository,LightBulbRepository>();
+            services.AddScoped<IThermostatRepository,ThermostatRepository>();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using API.Commands;
 using API.Models;
+using API.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,29 +15,25 @@ namespace API.Controllers
     [Route("/users")]
     public class UserController
     {
-        private readonly HomeAssistantContext _context;
+        private readonly IMediator _mediator;
 
-        public UserController(HomeAssistantContext context)
+        public UserController(IMediator mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            return await _context.Users.ToListAsync();
+            var result = await _mediator.Send(new UsersQuery());
+            return new ActionResult<IEnumerable<User>>(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> Get(int id)
         {
-            User user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return new NotFoundResult();
-            }
-
-            return user;
+            var result = await _mediator.Send(new UserByIdQuery(id));
+            return result;
         }
 
         [HttpPost]
@@ -42,9 +41,8 @@ namespace API.Controllers
         {
             try
             {
-                User newUser = (await _context.Users.AddAsync(user)).Entity;
-                await _context.SaveChangesAsync();
-                return newUser;
+                User addedUser = await _mediator.Send(new AddUser(user));
+                return addedUser;
             }
             catch (Exception e)
             {
@@ -58,14 +56,11 @@ namespace API.Controllers
         {
             try
             {
-                User user = await _context.Users.FindAsync(id);
+                User user = await _mediator.Send(new DeleteUser(id));
                 if (user == null)
                 {
                     return new NotFoundResult();
                 }
-
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
                 return new NoContentResult();
             }
             catch (Exception e)
