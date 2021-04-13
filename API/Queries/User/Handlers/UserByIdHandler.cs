@@ -6,14 +6,14 @@ using MediatR;
 
 namespace API.Queries.Handlers
 {
-    public class UserByIdQueryHandler: IRequestHandler<UserByIdQuery,User>
+    public class UserByIdHandler: IRequestHandler<UserById,User>
     {
         private readonly IUserRepository _repository;
-        public UserByIdQueryHandler(IUserRepository repository)
+        public UserByIdHandler(IUserRepository repository)
         {
             _repository = repository;
         }
-        public async Task<User> Handle(UserByIdQuery request, CancellationToken cancellationToken)
+        public async Task<User> Handle(UserById request, CancellationToken cancellationToken)
         {
             User user = await _repository.GetUserByIdAsync(request.Id);
             return user;

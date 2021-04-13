@@ -32,7 +32,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> Get(int id)
         {
-            var result = await _mediator.Send(new UserByIdQuery(id));
+            var result = await _mediator.Send(new UserById(id));
             return result;
         }
 

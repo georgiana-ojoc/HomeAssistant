@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Commands;
+using API.Commands.Room;
 using API.Models;
+using API.Queries.Room;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,38 +19,29 @@ namespace API.Controllers
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class RoomController
     {
-        private readonly HomeAssistantContext _context;
+        private readonly IMediator _mediator;
 
-        public RoomController(HomeAssistantContext context)
+        public RoomController(IMediator mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> Get(int user_id, int house_id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == user_id)
-                .FirstOrDefaultAsync(h => h.Id == house_id);
-            if (house == null)
+            IEnumerable<Room> rooms = await _mediator.Send(new RoomsQuery(user_id, house_id));
+            if (rooms == null)
             {
                 return new NotFoundResult();
             }
 
-            return await _context.Rooms.Where(r => r.HouseId == house.Id).ToListAsync();
+            return new ActionResult<IEnumerable<Room>>(rooms);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> Get(int user_id, int house_id, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == user_id)
-                .FirstOrDefaultAsync(h => h.Id == house_id);
-            if (house == null)
-            {
-                return new NotFoundResult();
-            }
-
-            Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            Room room = await _mediator.Send(new RoomById(user_id, house_id, id));
             if (room == null)
             {
                 return new NotFoundResult();
@@ -60,16 +55,11 @@ namespace API.Controllers
         {
             try
             {
-                House house = await _context.Houses.Where(h => h.UserId == user_id)
-                    .FirstOrDefaultAsync(h => h.Id == house_id);
-                if (house == null)
+                Room newRoom = await _mediator.Send(new AddRoom(user_id, house_id, room));
+                if (newRoom == null)
                 {
                     return new NotFoundResult();
                 }
-
-                room.HouseId = house.Id;
-                Room newRoom = (await _context.Rooms.AddAsync(room)).Entity;
-                await _context.SaveChangesAsync();
                 return newRoom;
             }
             catch (Exception e)
@@ -84,22 +74,12 @@ namespace API.Controllers
         {
             try
             {
-                House house = await _context.Houses.Where(h => h.UserId == user_id)
-                    .FirstOrDefaultAsync(h => h.Id == house_id);
-                if (house == null)
-                {
-                    return new NotFoundResult();
-                }
 
-                Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                    .FirstOrDefaultAsync(r => r.Id == id);
+                Room room = await _mediator.Send(new DeleteRoom(user_id, house_id, id));
                 if (room == null)
                 {
                     return new NotFoundResult();
                 }
-
-                _context.Rooms.Remove(room);
-                await _context.SaveChangesAsync();
                 return new NoContentResult();
             }
             catch (Exception e)
