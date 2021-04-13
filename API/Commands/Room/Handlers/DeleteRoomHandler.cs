@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Commands.Room.Handlers
 {
-    public class DeleteRoomHandler: IRequestHandler<DeleteRoom,Models.Room>
+    public class DeleteRoomHandler : IRequestHandler<DeleteRoom, Models.Room>
     {
         private readonly IRoomRepository _repository;
 

@@ -3,11 +3,13 @@ using API.Interfaces;
 using API.Models;
 using API.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 
 namespace API
@@ -22,20 +24,28 @@ namespace API
 
         private IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAdB2C"));
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    policy => { policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); });
+            });
+
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddControllers();
             services.AddSingleton<HomeAssistantContext>();
-            services.AddScoped<IUserRepository,UserRepository>();
-            services.AddScoped<IHouseRepository,HouseRepository>();
-            services.AddScoped<IRoomRepository,RoomRepository>();
-            services.AddScoped<IDoorRepository,DoorRepository>();
-            services.AddScoped<ILightBulbRepository,LightBulbRepository>();
-            services.AddScoped<IThermostatRepository,ThermostatRepository>();
-            
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IHouseRepository, HouseRepository>();
+            services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IDoorRepository, DoorRepository>();
+            services.AddScoped<ILightBulbRepository, LightBulbRepository>();
+            services.AddScoped<IThermostatRepository, ThermostatRepository>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -46,7 +56,6 @@ namespace API
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -60,7 +69,10 @@ namespace API
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

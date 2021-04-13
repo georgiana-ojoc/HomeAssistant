@@ -1,11 +1,14 @@
-﻿@page "/House"
+﻿@page "/Rooms"
+
+@attribute [Authorize]
+
 <div class="row">
     @foreach (var room in _rooms)
     {
         <div class="card" style="width: 16rem; margin: 1rem">
             <h3 class="card-header" style="text-align: center"> @room </h3>
             <div class="card-body" style="margin: auto">
-                <a class="btn btn-dark" href="Room"> Manage room </a>
+                <a class="btn btn-dark" href="Devices"> Manage room </a>
             </div>
         </div>
     }
@@ -13,7 +16,7 @@
 <div class="input-group">
     <input class="form-control" placeholder="Room name" @bind="_newRoom" aria-describedby="add-room-addon"/>
     <div class="input-group-append">
-        <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom">Add room</span>
+        <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom"> Add room </span>
     </div>
 </div>
 

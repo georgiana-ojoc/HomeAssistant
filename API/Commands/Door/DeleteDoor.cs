@@ -3,7 +3,7 @@ using MediatR;
 
 namespace API.Commands
 {
-    public class DeleteDoor: IRequest<Door>
+    public class DeleteDoor : IRequest<Door>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

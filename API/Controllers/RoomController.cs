@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
-using API.Commands;
 using API.Commands.Room;
 using API.Models;
 using API.Queries.Room;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -60,6 +57,7 @@ namespace API.Controllers
                 {
                     return new NotFoundResult();
                 }
+
                 return newRoom;
             }
             catch (Exception e)
@@ -74,12 +72,12 @@ namespace API.Controllers
         {
             try
             {
-
                 Room room = await _mediator.Send(new DeleteRoom(user_id, house_id, id));
                 if (room == null)
                 {
                     return new NotFoundResult();
                 }
+
                 return new NoContentResult();
             }
             catch (Exception e)

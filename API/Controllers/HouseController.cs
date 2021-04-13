@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using API.Commands.House;
 using API.Models;
@@ -9,7 +8,6 @@ using API.Queries.House;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -32,15 +30,14 @@ namespace API.Controllers
             if (result == null)
             {
                 return new NotFoundResult();
-                
             }
+
             return new ActionResult<IEnumerable<House>>(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<House>> Get(int user_id, int id)
         {
-
             House house = await _mediator.Send(new HouseById(user_id, id));
             if (house == null)
             {
@@ -60,6 +57,7 @@ namespace API.Controllers
                 {
                     return new NotFoundResult();
                 }
+
                 return newHouse;
             }
             catch (Exception e)
@@ -79,6 +77,7 @@ namespace API.Controllers
                 {
                     return new NotFoundResult();
                 }
+
                 return new NoContentResult();
             }
             catch (Exception e)

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace API.Queries.Room.Handlers
 {
-    public class RoomsQueryHandler: IRequestHandler<RoomsQuery,IEnumerable<Models.Room>>
+    public class RoomsQueryHandler : IRequestHandler<RoomsQuery, IEnumerable<Models.Room>>
     {
         private readonly IRoomRepository _repository;
 

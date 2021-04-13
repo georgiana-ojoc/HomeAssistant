@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
 {
-    public class HouseRepository: IHouseRepository
+    public class HouseRepository : IHouseRepository
     {
         private readonly HomeAssistantContext _context;
 
@@ -65,13 +65,13 @@ namespace API.Repositories
             _context.Houses.Remove(house);
             await _context.SaveChangesAsync();
             return house;
-
         }
 
         public Task<House> UpdateHouse(int userId, House house)
         {
             throw new System.NotImplementedException();
         }
+
         public void Dispose()
         {
             //_context.Dispose();

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
 {
-    public class DoorRepository: IDoorRepository
+    public class DoorRepository : IDoorRepository
     {
         private readonly HomeAssistantContext _context;
 
@@ -16,7 +16,7 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async  Task<IEnumerable<Door>> GetDoorsAsync(int userId, int houseId, int roomId)
+        public async Task<IEnumerable<Door>> GetDoorsAsync(int userId, int houseId, int roomId)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -105,7 +105,6 @@ namespace API.Repositories
             _context.Doors.Remove(door);
             await _context.SaveChangesAsync();
             return door;
-
         }
 
         public Task<Door> UpdateDoor(int userId, int houseId, int roomId, Door door)
@@ -115,7 +114,7 @@ namespace API.Repositories
 
         public void Dispose()
         {
-           // _context?.Dispose();
+            // _context?.Dispose();
         }
     }
 }

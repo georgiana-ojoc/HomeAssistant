@@ -3,7 +3,7 @@ using MediatR;
 
 namespace API.Commands
 {
-    public class AddUser: IRequest<User>
+    public class AddUser : IRequest<User>
     {
         public User User { get; set; }
 

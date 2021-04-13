@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
 {
-    public class UserRepository: IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly HomeAssistantContext _context;
 
@@ -40,6 +40,7 @@ namespace API.Repositories
             {
                 return null;
             }
+
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return user;

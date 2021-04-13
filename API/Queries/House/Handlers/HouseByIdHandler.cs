@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Queries.House.Handlers
 {
-    public class HouseByIdHandler: IRequestHandler<HouseById,Models.House>
+    public class HouseByIdHandler : IRequestHandler<HouseById, Models.House>
     {
         private readonly IHouseRepository _repository;
 

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace API.Queries
 {
-    public class UserById:  IRequest<User>
+    public class UserById : IRequest<User>
     {
         public int Id { get; set; }
 

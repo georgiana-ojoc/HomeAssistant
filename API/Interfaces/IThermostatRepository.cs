@@ -5,13 +5,12 @@ using API.Models;
 
 namespace API.Interfaces
 {
-    public interface IThermostatRepository: IDisposable
+    public interface IThermostatRepository : IDisposable
     {
         Task<IEnumerable<Thermostat>> GetThermostatsAsync(int userId, int houseId, int roomId);
-        Task<Thermostat> GetThermostatByIdAsync(int userId, int houseId, int roomId,int id);
-        Task<Thermostat> CreateThermostat(int userId, int houseId, int roomId,Thermostat thermostat);
-        Task<Thermostat> DeleteThermostat(int userId, int houseId, int roomId,int id);
-        Task<Thermostat> UpdateThermostat(int userId, int houseId, int roomId,Thermostat thermostat);
-        
+        Task<Thermostat> GetThermostatByIdAsync(int userId, int houseId, int roomId, int id);
+        Task<Thermostat> CreateThermostat(int userId, int houseId, int roomId, Thermostat thermostat);
+        Task<Thermostat> DeleteThermostat(int userId, int houseId, int roomId, int id);
+        Task<Thermostat> UpdateThermostat(int userId, int houseId, int roomId, Thermostat thermostat);
     }
 }

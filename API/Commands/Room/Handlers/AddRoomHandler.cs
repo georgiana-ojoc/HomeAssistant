@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Commands.Room.Handlers
 {
-    public class AddRoomHandler: IRequestHandler<AddRoom,Models.Room>
+    public class AddRoomHandler : IRequestHandler<AddRoom, Models.Room>
     {
         private readonly IRoomRepository _repository;
 

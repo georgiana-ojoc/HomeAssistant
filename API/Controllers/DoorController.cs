@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using API.Commands;
 using API.Models;
@@ -9,7 +8,6 @@ using API.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -35,7 +33,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Door>> Get(int user_id, int house_id, int room_id, int id)
         {
-            Door door = await _mediator.Send(new DoorById(user_id, house_id, room_id,id));
+            Door door = await _mediator.Send(new DoorById(user_id, house_id, room_id, id));
             if (door == null)
                 return new NotFoundResult();
             return door;

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using API.Interfaces;
 using API.Models;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
@@ -38,7 +37,7 @@ namespace API.Repositories
 
         public async Task<Thermostat> GetThermostatByIdAsync(int userId, int houseId, int roomId, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId ==  userId)
+            House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -56,7 +55,6 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(d => d.Id == id);
 
             return thermostat;
-            
         }
 
         public async Task<Thermostat> CreateThermostat(int userId, int houseId, int roomId, Thermostat thermostat)
@@ -107,7 +105,6 @@ namespace API.Repositories
             _context.Thermostats.Remove(thermostat);
             await _context.SaveChangesAsync();
             return thermostat;
-
         }
 
         public Task<Thermostat> UpdateThermostat(int userId, int houseId, int roomId, Thermostat thermostat)

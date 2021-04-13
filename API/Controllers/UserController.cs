@@ -5,12 +5,13 @@ using API.Commands;
 using API.Models;
 using API.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("/users")]
     public class UserController
@@ -61,6 +62,7 @@ namespace API.Controllers
                 {
                     return new NotFoundResult();
                 }
+
                 return new NoContentResult();
             }
             catch (Exception e)

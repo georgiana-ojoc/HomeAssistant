@@ -1,0 +1,38 @@
+﻿@page "/Houses"
+@inject HttpClient Http
+
+@attribute [Authorize]
+
+<div class="row">
+    @foreach (var house in _houses)
+    {
+        <div class="card" style="width: 16rem; margin: 1rem">
+            <h3 class="card-header" style="text-align: center"> @house </h3>
+            <div class="card-body" style="margin: auto">
+                <a class="btn btn-dark" href="Rooms"> Manage house </a>
+            </div>
+        </div>
+    }
+</div>
+<div class="input-group">
+    <input class="form-control" placeholder="House name" @bind="_newHouse" aria-describedby="add-house-addon"/>
+    <div class="input-group-append">
+        <span class="btn btn-info" id="add-house-addon" @onclick="AddHouse"> Add house </span>
+    </div>
+</div>
+
+@code {
+    private readonly IList<string> _houses = new List<string>();
+    private string _newHouse;
+
+    private void AddHouse()
+    {
+        if (string.IsNullOrWhiteSpace(_newHouse))
+        {
+            return;
+        }
+        _houses.Add(_newHouse);
+        _newHouse = string.Empty;
+    }
+
+}

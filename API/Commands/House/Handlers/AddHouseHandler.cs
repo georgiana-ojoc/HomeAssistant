@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Commands.House.Handlers
 {
-    public class AddHouseHandler: IRequestHandler<AddHouse,Models.House>
+    public class AddHouseHandler : IRequestHandler<AddHouse, Models.House>
     {
         private readonly IHouseRepository _repository;
 
@@ -16,7 +16,7 @@ namespace API.Commands.House.Handlers
 
         public async Task<Models.House> Handle(AddHouse request, CancellationToken cancellationToken)
         {
-            Models.House house = await _repository.CreateHouse(request.UserId,request.House);
+            Models.House house = await _repository.CreateHouse(request.UserId, request.House);
             return house;
         }
     }

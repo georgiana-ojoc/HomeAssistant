@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Repositories
 {
-    public class LightBulbRepository: ILightBulbRepository
+    public class LightBulbRepository : ILightBulbRepository
     {
         private readonly HomeAssistantContext _context;
 
@@ -15,7 +15,7 @@ namespace API.Repositories
         {
             _context = context;
         }
-        
+
         public async Task<IEnumerable<LightBulb>> GetLightBulbsAsync(int userId, int houseId, int roomId)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)

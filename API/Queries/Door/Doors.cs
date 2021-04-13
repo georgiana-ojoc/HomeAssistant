@@ -4,7 +4,7 @@ using MediatR;
 
 namespace API.Queries
 {
-    public class Doors: IRequest<IEnumerable<Door>>
+    public class Doors : IRequest<IEnumerable<Door>>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

@@ -4,11 +4,10 @@ using MediatR;
 
 namespace API.Queries
 {
-    public class UsersQuery: IRequest<IEnumerable<User>>
+    public class UsersQuery : IRequest<IEnumerable<User>>
     {
         public UsersQuery()
         {
-
         }
     }
 }
