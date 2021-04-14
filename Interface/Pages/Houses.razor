@@ -1,7 +1,10 @@
 ﻿@page "/Houses"
 @inject HttpClient Http
-
+@inject IAccessTokenProvider AccessTokenProvider
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @attribute [Authorize]
+
+<p>@_token</p>
 
 <div class="row">
     @foreach (var house in _houses)
@@ -22,8 +25,14 @@
 </div>
 
 @code {
+    private string _token;
     private readonly IList<string> _houses = new List<string>();
     private string _newHouse;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _token = await GetAccessTokenAsync();
+    }
 
     private void AddHouse()
     {
@@ -33,6 +42,23 @@
         }
         _houses.Add(_newHouse);
         _newHouse = string.Empty;
+    }
+
+    async Task<string> GetAccessTokenAsync()
+    {
+        var request = await AccessTokenProvider.RequestAccessToken(new AccessTokenRequestOptions
+        {
+            Scopes = new[]
+            {
+                Configuration["AzureAdB2C:Scope"]
+            }
+        });
+        var result = request.TryGetToken(out var accessToken);
+        if (result)
+        {
+            return accessToken.Value;
+        }
+        return null;
     }
 
 }
