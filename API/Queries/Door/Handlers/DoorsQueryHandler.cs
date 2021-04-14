@@ -7,7 +7,7 @@ using MediatR;
 
 namespace API.Queries.Handlers
 {
-    public class DoorsHandler : IRequestHandler<Doors, IEnumerable<Door>>
+    public class DoorsHandler : IRequestHandler<DoorsQuery, IEnumerable<Door>>
     {
         private readonly IDoorRepository _repository;
 
@@ -16,7 +16,7 @@ namespace API.Queries.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Door>> Handle(Doors request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Door>> Handle(DoorsQuery request, CancellationToken cancellationToken)
         {
             var result = await _repository.GetDoorsAsync(request.UserId,
                 request.HouseId, request.RoomId);

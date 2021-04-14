@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Commands.LightBulb;
 using API.Models;
+using API.Queries.LightBulb;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,57 +18,35 @@ namespace API.Controllers
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class LightBulbController
     {
-        private readonly HomeAssistantContext _context;
+        private readonly IMediator _mediator;
 
-        public LightBulbController(HomeAssistantContext context)
+        public LightBulbController(IMediator mediator)
         {
-            _context = context;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LightBulb>>> Get(int user_id, int house_id, int room_id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == user_id)
-                .FirstOrDefaultAsync(h => h.Id == house_id);
-            if (house == null)
+            IEnumerable<LightBulb> lightBulbs = await _mediator.Send(new LightBulbsQuery(user_id,
+                house_id, room_id));
+            if (lightBulbs == null)
             {
                 return new NotFoundResult();
             }
 
-            Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == room_id);
-            if (room == null)
-            {
-                return new NotFoundResult();
-            }
-
-            return await _context.LightBulbs.Where(lb => lb.RoomId == room.Id).ToListAsync();
+            return new ActionResult<IEnumerable<LightBulb>>(lightBulbs);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<LightBulb>> Get(int user_id, int house_id, int room_id, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == user_id)
-                .FirstOrDefaultAsync(h => h.Id == house_id);
-            if (house == null)
-            {
-                return new NotFoundResult();
-            }
-
-            Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == room_id);
-            if (room == null)
-            {
-                return new NotFoundResult();
-            }
-
-            LightBulb lightBulb = await _context.LightBulbs.Where(lb => lb.RoomId == room.Id)
-                .FirstOrDefaultAsync(lb => lb.Id == id);
+            LightBulb lightBulb = await _mediator.Send(new LightBulbById(user_id, house_id,
+                room_id, id));
             if (lightBulb == null)
             {
                 return new NotFoundResult();
             }
-
             return lightBulb;
         }
 
@@ -75,23 +56,12 @@ namespace API.Controllers
         {
             try
             {
-                House house = await _context.Houses.Where(h => h.UserId == user_id)
-                    .FirstOrDefaultAsync(h => h.Id == house_id);
-                if (house == null)
+                LightBulb newLightBulb = await _mediator.Send(new AddLightBulb(user_id, house_id
+                    , room_id, lightBulb));
+                if (newLightBulb == null)
                 {
                     return new NotFoundResult();
                 }
-
-                Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                    .FirstOrDefaultAsync(r => r.Id == room_id);
-                if (room == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                lightBulb.RoomId = room.Id;
-                LightBulb newLightBulb = (await _context.LightBulbs.AddAsync(lightBulb)).Entity;
-                await _context.SaveChangesAsync();
                 return newLightBulb;
             }
             catch (Exception e)
@@ -106,29 +76,12 @@ namespace API.Controllers
         {
             try
             {
-                House house = await _context.Houses.Where(h => h.UserId == user_id)
-                    .FirstOrDefaultAsync(h => h.Id == house_id);
-                if (house == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                    .FirstOrDefaultAsync(r => r.Id == room_id);
-                if (room == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                LightBulb lightBulb = await _context.LightBulbs.Where(lb => lb.RoomId == room.Id)
-                    .FirstOrDefaultAsync(lb => lb.Id == id);
+                LightBulb lightBulb = await _mediator.Send(new DeleteLightBulb(user_id,
+                    house_id, room_id, id));
                 if (lightBulb == null)
                 {
                     return new NotFoundResult();
                 }
-
-                _context.LightBulbs.Remove(lightBulb);
-                await _context.SaveChangesAsync();
                 return new NoContentResult();
             }
             catch (Exception e)
