@@ -1,3 +1,40 @@
 ﻿@page "/"
+@using System.Net.Http.Headers
+@inject HttpClient Http
+@inject IAccessTokenProvider AccessTokenProvider
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@attribute [Authorize]
 
 <h1>Home Assistant</h1>
+
+<p>Token:</p>
+<p>@_token</p>
+
+
+@code
+{
+    private string _token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _token = await GetAccessTokenAsync();
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
+    }
+    
+    async Task<string> GetAccessTokenAsync()
+    {
+        var request = await AccessTokenProvider.RequestAccessToken(new AccessTokenRequestOptions
+        {
+            Scopes = new[]
+            {
+                Configuration["AzureAdB2C:Scope"]
+            }
+        });
+        var result = request.TryGetToken(out var accessToken);
+        if (result)
+        {
+            return accessToken.Value;
+        }
+        return null;
+    }
+}

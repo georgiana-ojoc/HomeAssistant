@@ -1,64 +1,72 @@
 ﻿@page "/Houses"
+@using global::Shared.Models
+@using System.Diagnostics
 @inject HttpClient Http
 @inject IAccessTokenProvider AccessTokenProvider
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @attribute [Authorize]
 
-<p>@_token</p>
+@* <p>@_token</p> *@
 
 <div class="row">
-    @foreach (var house in _houses)
+    @if(!(_houses is null))
     {
-        <div class="card" style="width: 16rem; margin: 1rem">
-            <h3 class="card-header" style="text-align: center"> @house </h3>
-            <div class="card-body" style="margin: auto">
-                <a class="btn btn-dark" href="Rooms"> Manage house </a>
+        foreach (var house in _houses)
+        {
+            <div class="card" style="width: 16rem; margin: 1rem">
+                <h3 class="card-header" style="text-align: center"> @house.Name </h3>
+                <div class="card-body" style="margin: auto">
+                    <a class="btn btn-dark" href="Rooms" @onclick="@(() => SetHouseId(house.Id))"> Manage house </a>
+                </div>
             </div>
-        </div>
+        }
     }
 </div>
 <div class="input-group">
-    <input class="form-control" placeholder="House name" @bind="_newHouse" aria-describedby="add-house-addon"/>
+    <input class="form-control" placeholder="House name" @bind="_newHouseName" aria-describedby="add-house-addon"/>
     <div class="input-group-append">
-        <span class="btn btn-info" id="add-house-addon" @onclick="AddHouse"> Add house </span>
+        <button class="btn btn-info" id="add-house-addon" @onclick="AddHouse"> Add house </button>
     </div>
 </div>
 
+@inject IJSRuntime JsRuntime;
+
 @code {
-    private string _token;
-    private readonly IList<string> _houses = new List<string>();
-    private string _newHouse;
+    // private string _token;
+    private IList<House> _houses;
+    private string _newHouseName;
 
     protected override async Task OnInitializedAsync()
     {
-        _token = await GetAccessTokenAsync();
+        _houses = await Http.GetFromJsonAsync<IList<House>>("houses");
     }
-
-    async Task<string> GetAccessTokenAsync()
+    
+    private async void AddHouse()
     {
-        var request = await AccessTokenProvider.RequestAccessToken(new AccessTokenRequestOptions
-        {
-            Scopes = new[]
-            {
-                Configuration["AzureAdB2C:Scope"]
-            }
-        });
-        var result = request.TryGetToken(out var accessToken);
-        if (result)
-        {
-            return accessToken.Value;
-        }
-        return null;
-    }
-
-    private void AddHouse()
-    {
-        if (string.IsNullOrWhiteSpace(_newHouse))
+        if (string.IsNullOrWhiteSpace(_newHouseName))
         {
             return;
         }
-        _houses.Add(_newHouse);
-        _newHouse = string.Empty;
+        
+        HttpResponseMessage response = await Http.PostAsJsonAsync("houses", new House()
+        {
+            Name = _newHouseName
+        });
+        House newHouse = await response.Content.ReadFromJsonAsync<House>();
+        _houses.Add(newHouse);
+
+        if (newHouse != null) ManagerId.HouseId = newHouse.Id;
+        await JsRuntime.InvokeVoidAsync("alert", ManagerId.HouseId);
+
+        _newHouseName = string.Empty;
+        StateHasChanged();
+    }
+
+    private async void SetHouseId(int houseId)
+    {
+        ManagerId.HouseId = houseId;
+        Debug.WriteLine(ManagerId.HouseId);
+        await JsRuntime.InvokeVoidAsync("alert", ManagerId.HouseId);
     }
 
 }

@@ -8,6 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Interface
 {
+    public static class ManagerId
+    {
+        public static int HouseId = 0;
+        public static int RoomId = 0;
+    }
     public class Program
     {
         public static async Task Main(string[] args)
@@ -27,7 +32,6 @@ namespace Interface
                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
                     .ConfigureHandler(new[] {builder.Configuration["ApiUrl"]},
                         new[] {builder.Configuration["AzureAdB2C:Scope"]}));
-
 
             builder.Services.AddMsalAuthentication(options =>
             {
