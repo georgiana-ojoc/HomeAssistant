@@ -20,9 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Commands\LightBulb\Handlers" />
       <Folder Include="Commands\Thermostat\Handlers" />
-      <Folder Include="Queries\LightBulb\Handlers" />
       <Folder Include="Queries\Thermostat\Handlers" />
     </ItemGroup>
 

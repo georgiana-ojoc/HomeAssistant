@@ -26,7 +26,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Door>>> Get(int user_id, int house_id, int room_id)
         {
-            var result = await _mediator.Send(new Doors(user_id, house_id, room_id));
+            var result = await _mediator.Send(new DoorsQuery(user_id, house_id, room_id));
             return result == null ? new NotFoundResult() : new ActionResult<IEnumerable<Door>>(result);
         }
 
