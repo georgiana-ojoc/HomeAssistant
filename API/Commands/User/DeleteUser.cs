@@ -1,9 +1,8 @@
-using API.Models;
 using MediatR;
 
-namespace API.Commands
+namespace API.Commands.User
 {
-    public class DeleteUser : IRequest<User>
+    public class DeleteUser : IRequest<Shared.Models.User>
     {
         public int Id { get; set; }
 

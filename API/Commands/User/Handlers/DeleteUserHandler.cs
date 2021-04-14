@@ -1,12 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using MediatR;
 
-namespace API.Commands.Handlers
+namespace API.Commands.User.Handlers
 {
-    public class DeleteUserHandler : IRequestHandler<DeleteUser, User>
+    public class DeleteUserHandler : IRequestHandler<DeleteUser, Shared.Models.User>
     {
         private readonly IUserRepository _repository;
 
@@ -15,9 +14,9 @@ namespace API.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task<User> Handle(DeleteUser request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.User> Handle(DeleteUser request, CancellationToken cancellationToken)
         {
-            var result = await _repository.DeleteUser(request.Id);
+            var result = await _repository.DeleteUserAsync(request.Id);
             return result;
         }
     }

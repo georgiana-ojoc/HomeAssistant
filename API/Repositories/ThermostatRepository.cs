@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 namespace API.Repositories
 {
@@ -57,7 +57,7 @@ namespace API.Repositories
             return thermostat;
         }
 
-        public async Task<Thermostat> CreateThermostat(int userId, int houseId, int roomId, Thermostat thermostat)
+        public async Task<Thermostat> CreateThermostatAsync(int userId, int houseId, int roomId, Thermostat thermostat)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -79,7 +79,7 @@ namespace API.Repositories
             return newThermostat;
         }
 
-        public async Task<Thermostat> DeleteThermostat(int userId, int houseId, int roomId, int id)
+        public async Task<Thermostat> DeleteThermostatAsync(int userId, int houseId, int roomId, int id)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -107,7 +107,7 @@ namespace API.Repositories
             return thermostat;
         }
 
-        public Task<Thermostat> UpdateThermostat(int userId, int houseId, int roomId, Thermostat thermostat)
+        public Task<Thermostat> UpdateThermostatAsync(int userId, int houseId, int roomId, Thermostat thermostat)
         {
             throw new System.NotImplementedException();
         }

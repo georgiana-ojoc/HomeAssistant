@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using MediatR;
 
-namespace API.Queries.Handlers
+namespace API.Queries.User.Handlers
 {
-    public class UsersQueryHandler : IRequestHandler<UsersQuery, IEnumerable<User>>
+    public class UsersQueryHandler : IRequestHandler<UsersQuery, IEnumerable<Shared.Models.User>>
     {
         private readonly IUserRepository _repository;
 
@@ -16,9 +15,9 @@ namespace API.Queries.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<User>> Handle(UsersQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.User>> Handle(UsersQuery request, CancellationToken cancellationToken)
         {
-            IEnumerable<User> users = await _repository.GetUsersAsync();
+            IEnumerable<Shared.Models.User> users = await _repository.GetUsersAsync();
             return users;
         }
     }

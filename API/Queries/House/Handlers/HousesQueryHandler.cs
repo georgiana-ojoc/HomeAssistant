@@ -6,7 +6,7 @@ using MediatR;
 
 namespace API.Queries.House.Handlers
 {
-    public class HousesQueryHandler : IRequestHandler<HousesQuery, IEnumerable<Models.House>>
+    public class HousesQueryHandler : IRequestHandler<HousesQuery, IEnumerable<Shared.Models.House>>
     {
         private readonly IHouseRepository _repository;
 
@@ -15,7 +15,7 @@ namespace API.Queries.House.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Models.House>> Handle(HousesQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.House>> Handle(HousesQuery request, CancellationToken cancellationToken)
         {
             var houses = await _repository.GetHousesAsync(request.Id);
             return houses;

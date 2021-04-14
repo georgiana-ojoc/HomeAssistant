@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 namespace API.Repositories
 {
@@ -26,14 +26,14 @@ namespace API.Repositories
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<User> CreateUser(User user)
+        public async Task<User> CreateUserAsync(User user)
         {
             User newUser = (await _context.Users.AddAsync(user)).Entity;
             await _context.SaveChangesAsync();
             return newUser;
         }
 
-        public async Task<User> DeleteUser(int id)
+        public async Task<User> DeleteUserAsync(int id)
         {
             User user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -46,7 +46,7 @@ namespace API.Repositories
             return user;
         }
 
-        public Task<User> UpdateUser(User user)
+        public Task<User> UpdateUserAsync(User user)
         {
             throw new NotImplementedException();
         }

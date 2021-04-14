@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using API.Models;
+using Shared.Models;
 
 namespace API.Interfaces
 {
@@ -9,8 +9,8 @@ namespace API.Interfaces
     {
         Task<IEnumerable<House>> GetHousesAsync(int userId);
         Task<House> GetHouseByIdAsync(int userId, int id);
-        Task<House> CreateHouse(int userId, House house);
-        Task<House> DeleteHouse(int userId, int id);
-        Task<House> UpdateHouse(int userId, House house);
+        Task<House> CreateHouseAsync(int userId, House house);
+        Task<House> DeleteHouseAsync(int userId, int id);
+        Task<House> UpdateHouseAsync(int userId, House house);
     }
 }

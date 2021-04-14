@@ -1,12 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using MediatR;
 
-namespace API.Commands.Handlers
+namespace API.Commands.User.Handlers
 {
-    public class AddUserHandler : IRequestHandler<AddUser, User>
+    public class AddUserHandler : IRequestHandler<AddUser, Shared.Models.User>
     {
         private readonly IUserRepository _repository;
 
@@ -15,9 +14,9 @@ namespace API.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task<User> Handle(AddUser request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.User> Handle(AddUser request, CancellationToken cancellationToken)
         {
-            var result = await _repository.CreateUser(request.User);
+            var result = await _repository.CreateUserAsync(request.User);
             return result;
         }
     }

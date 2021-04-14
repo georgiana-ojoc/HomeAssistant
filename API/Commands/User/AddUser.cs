@@ -1,13 +1,12 @@
-using API.Models;
 using MediatR;
 
-namespace API.Commands
+namespace API.Commands.User
 {
-    public class AddUser : IRequest<User>
+    public class AddUser : IRequest<Shared.Models.User>
     {
-        public User User { get; set; }
+        public Shared.Models.User User { get; set; }
 
-        public AddUser(User user)
+        public AddUser(Shared.Models.User user)
         {
             User = user;
         }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Queries.House.Handlers
 {
-    public class HouseByIdHandler : IRequestHandler<HouseById, Models.House>
+    public class HouseByIdHandler : IRequestHandler<HouseById, Shared.Models.House>
     {
         private readonly IHouseRepository _repository;
 
@@ -14,9 +14,9 @@ namespace API.Queries.House.Handlers
             _repository = repository;
         }
 
-        public async Task<Models.House> Handle(HouseById request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.House> Handle(HouseById request, CancellationToken cancellationToken)
         {
-            Models.House house = await _repository.GetHouseByIdAsync(request.UserId, request.Id);
+            Shared.Models.House house = await _repository.GetHouseByIdAsync(request.UserId, request.Id);
             return house;
         }
     }

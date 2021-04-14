@@ -6,7 +6,7 @@ using MediatR;
 
 namespace API.Queries.LightBulb.Handlers
 {
-    public class LightBulbsQueryHandler: IRequestHandler<LightBulbsQuery,IEnumerable<Models.LightBulb>>
+    public class LightBulbsQueryHandler: IRequestHandler<LightBulbsQuery,IEnumerable<Shared.Models.LightBulb>>
     {
         private readonly ILightBulbRepository _repository;
 
@@ -15,7 +15,7 @@ namespace API.Queries.LightBulb.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Models.LightBulb>> Handle(LightBulbsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.LightBulb>> Handle(LightBulbsQuery request, CancellationToken cancellationToken)
         {
             var result = await _repository.GetLightBulbsAsync(request.UserId,
                 request.HouseId, request.RoomId);

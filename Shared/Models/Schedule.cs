@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace API.Models
+namespace Shared.Models
 {
     public class Schedule
     {

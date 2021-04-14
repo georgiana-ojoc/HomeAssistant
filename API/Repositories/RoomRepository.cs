@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 namespace API.Repositories
 {
@@ -47,7 +47,7 @@ namespace API.Repositories
             return room;
         }
 
-        public async Task<Room> CreateRoom(int userId, int houseId, Room room)
+        public async Task<Room> CreateRoomAsync(int userId, int houseId, Room room)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -62,7 +62,7 @@ namespace API.Repositories
             return newRoom;
         }
 
-        public async Task<Room> DeleteRoom(int userId, int houseId, int id)
+        public async Task<Room> DeleteRoomAsync(int userId, int houseId, int id)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -83,7 +83,7 @@ namespace API.Repositories
             return room;
         }
 
-        public Task<Room> UpdateRoom(int userId, int houseId, Room room)
+        public Task<Room> UpdateRoomAsync(int userId, int houseId, Room room)
         {
             throw new System.NotImplementedException();
         }

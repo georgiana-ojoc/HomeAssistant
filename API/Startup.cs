@@ -1,8 +1,5 @@
-using System.Diagnostics;
 using System.Reflection;
-using System.Security.Claims;
 using API.Interfaces;
-using API.Models;
 using API.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using Shared.Models;
 
 namespace API
 {

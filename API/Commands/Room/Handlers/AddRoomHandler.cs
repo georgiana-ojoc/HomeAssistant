@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Commands.Room.Handlers
 {
-    public class AddRoomHandler : IRequestHandler<AddRoom, Models.Room>
+    public class AddRoomHandler : IRequestHandler<AddRoom, Shared.Models.Room>
     {
         private readonly IRoomRepository _repository;
 
@@ -14,9 +14,9 @@ namespace API.Commands.Room.Handlers
             _repository = repository;
         }
 
-        public async Task<Models.Room> Handle(AddRoom request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.Room> Handle(AddRoom request, CancellationToken cancellationToken)
         {
-            Models.Room room = await _repository.CreateRoom(request.UserId, request.HouseId, request.Room);
+            Shared.Models.Room room = await _repository.CreateRoomAsync(request.UserId, request.HouseId, request.Room);
             return room;
         }
     }

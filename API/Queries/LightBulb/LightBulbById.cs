@@ -2,7 +2,7 @@ using MediatR;
 
 namespace API.Queries.LightBulb
 {
-    public class LightBulbById: IRequest<Models.LightBulb>
+    public class LightBulbById: IRequest<Shared.Models.LightBulb>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

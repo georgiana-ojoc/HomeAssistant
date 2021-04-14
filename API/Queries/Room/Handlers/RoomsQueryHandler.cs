@@ -6,7 +6,7 @@ using MediatR;
 
 namespace API.Queries.Room.Handlers
 {
-    public class RoomsQueryHandler : IRequestHandler<RoomsQuery, IEnumerable<Models.Room>>
+    public class RoomsQueryHandler : IRequestHandler<RoomsQuery, IEnumerable<Shared.Models.Room>>
     {
         private readonly IRoomRepository _repository;
 
@@ -15,9 +15,9 @@ namespace API.Queries.Room.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Models.Room>> Handle(RoomsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.Room>> Handle(RoomsQuery request, CancellationToken cancellationToken)
         {
-            IEnumerable<Models.Room> rooms = await _repository.GetRoomsAsync(request.UserId, request.HouseId);
+            IEnumerable<Shared.Models.Room> rooms = await _repository.GetRoomsAsync(request.UserId, request.HouseId);
             return rooms;
         }
     }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Commands.LightBulb.Handlers
 {
-    public class DeleteLightBulbHandler: IRequestHandler<DeleteLightBulb,Models.LightBulb>
+    public class DeleteLightBulbHandler: IRequestHandler<DeleteLightBulb,Shared.Models.LightBulb>
     {
         private readonly ILightBulbRepository _repository;
 
@@ -14,9 +14,9 @@ namespace API.Commands.LightBulb.Handlers
             _repository = repository;
         }
 
-        public async Task<Models.LightBulb> Handle(DeleteLightBulb request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.LightBulb> Handle(DeleteLightBulb request, CancellationToken cancellationToken)
         {
-            Models.LightBulb lightBulb = await _repository.DeleteLightBulb(request.UserId, request.HouseId,
+            Shared.Models.LightBulb lightBulb = await _repository.DeleteLightBulbAsync(request.UserId, request.HouseId,
                 request.RoomId, request.Id);
             return lightBulb;
         }

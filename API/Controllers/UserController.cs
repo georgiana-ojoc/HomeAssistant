@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using API.Commands;
-using API.Models;
-using API.Queries;
+using API.Commands.User;
+using API.Queries.User;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Models;
 
 namespace API.Controllers
 {

@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using API.Models;
 using MediatR;
 
-namespace API.Queries
+namespace API.Queries.Door
 {
-    public class DoorsQuery : IRequest<IEnumerable<Door>>
+    public class DoorsQuery : IRequest<IEnumerable<Shared.Models.Door>>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

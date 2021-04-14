@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 namespace API.Repositories
 {
@@ -39,7 +39,7 @@ namespace API.Repositories
             return house;
         }
 
-        public async Task<House> CreateHouse(int userId, House house)
+        public async Task<House> CreateHouseAsync(int userId, House house)
         {
             User user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -53,7 +53,7 @@ namespace API.Repositories
             return newHouse;
         }
 
-        public async Task<House> DeleteHouse(int userId, int id)
+        public async Task<House> DeleteHouseAsync(int userId, int id)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == id);
@@ -67,7 +67,7 @@ namespace API.Repositories
             return house;
         }
 
-        public Task<House> UpdateHouse(int userId, House house)
+        public Task<House> UpdateHouseAsync(int userId, House house)
         {
             throw new System.NotImplementedException();
         }

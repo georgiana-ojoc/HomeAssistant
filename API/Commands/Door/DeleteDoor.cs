@@ -1,9 +1,8 @@
-using API.Models;
 using MediatR;
 
-namespace API.Commands
+namespace API.Commands.Door
 {
-    public class DeleteDoor : IRequest<Door>
+    public class DeleteDoor : IRequest<Shared.Models.Door>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

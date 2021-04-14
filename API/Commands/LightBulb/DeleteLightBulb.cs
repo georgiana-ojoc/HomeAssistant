@@ -2,7 +2,7 @@ using MediatR;
 
 namespace API.Commands.LightBulb
 {
-    public class DeleteLightBulb: IRequest<Models.LightBulb>
+    public class DeleteLightBulb: IRequest<Shared.Models.LightBulb>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

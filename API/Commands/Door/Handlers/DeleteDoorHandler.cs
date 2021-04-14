@@ -1,12 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using MediatR;
 
-namespace API.Commands.Handlers
+namespace API.Commands.Door.Handlers
 {
-    public class DeleteDoorHandler : IRequestHandler<DeleteDoor, Door>
+    public class DeleteDoorHandler : IRequestHandler<DeleteDoor, Shared.Models.Door>
     {
         private readonly IDoorRepository _repository;
 
@@ -15,9 +14,9 @@ namespace API.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task<Door> Handle(DeleteDoor request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.Door> Handle(DeleteDoor request, CancellationToken cancellationToken)
         {
-            Door door = await _repository.DeleteDoor(request.UserId,
+            Shared.Models.Door door = await _repository.DeleteDoorAsync(request.UserId,
                 request.HouseId, request.RoomId, request.Id);
             return door;
         }

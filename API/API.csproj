@@ -24,4 +24,8 @@
       <Folder Include="Queries\Thermostat\Handlers" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Shared\Shared.csproj" />
+    </ItemGroup>
+
 </Project>

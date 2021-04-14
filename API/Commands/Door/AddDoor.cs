@@ -1,17 +1,16 @@
-using API.Models;
 using MediatR;
 
-namespace API.Commands
+namespace API.Commands.Door
 {
-    public class AddDoor : IRequest<Door>
+    public class AddDoor : IRequest<Shared.Models.Door>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }
         public int RoomId { get; set; }
 
-        public Door Door { get; set; }
+        public Shared.Models.Door Door { get; set; }
 
-        public AddDoor(int userId, int houseId, int roomId, Door door)
+        public AddDoor(int userId, int houseId, int roomId, Shared.Models.Door door)
         {
             UserId = userId;
             HouseId = houseId;

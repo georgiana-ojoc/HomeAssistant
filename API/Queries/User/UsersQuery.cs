@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using API.Models;
 using MediatR;
 
-namespace API.Queries
+namespace API.Queries.User
 {
-    public class UsersQuery : IRequest<IEnumerable<User>>
+    public class UsersQuery : IRequest<IEnumerable<Shared.Models.User>>
     {
         public UsersQuery()
         {

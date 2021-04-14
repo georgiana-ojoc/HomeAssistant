@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using MediatR;
 
-namespace API.Queries.Handlers
+namespace API.Queries.Door.Handlers
 {
-    public class DoorsHandler : IRequestHandler<DoorsQuery, IEnumerable<Door>>
+    public class DoorsHandler : IRequestHandler<DoorsQuery, IEnumerable<Shared.Models.Door>>
     {
         private readonly IDoorRepository _repository;
 
@@ -16,7 +15,7 @@ namespace API.Queries.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Door>> Handle(DoorsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.Door>> Handle(DoorsQuery request, CancellationToken cancellationToken)
         {
             var result = await _repository.GetDoorsAsync(request.UserId,
                 request.HouseId, request.RoomId);

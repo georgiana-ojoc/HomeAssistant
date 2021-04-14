@@ -1,9 +1,8 @@
-using API.Models;
 using MediatR;
 
-namespace API.Queries
+namespace API.Queries.User
 {
-    public class UserById : IRequest<User>
+    public class UserById : IRequest<Shared.Models.User>
     {
         public int Id { get; set; }
 

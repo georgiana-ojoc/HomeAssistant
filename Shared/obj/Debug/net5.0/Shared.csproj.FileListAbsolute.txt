@@ -1,0 +1,15 @@
+E:\GitHubProject\HomeAssistant\Shared\bin\Debug\net5.0\Shared.deps.json
+E:\GitHubProject\HomeAssistant\Shared\bin\Debug\net5.0\Shared.runtimeconfig.json
+E:\GitHubProject\HomeAssistant\Shared\bin\Debug\net5.0\Shared.runtimeconfig.dev.json
+E:\GitHubProject\HomeAssistant\Shared\bin\Debug\net5.0\Shared.dll
+E:\GitHubProject\HomeAssistant\Shared\bin\Debug\net5.0\ref\Shared.dll
+E:\GitHubProject\HomeAssistant\Shared\bin\Debug\net5.0\Shared.pdb
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.csprojAssemblyReference.cache
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.GeneratedMSBuildEditorConfig.editorconfig
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.AssemblyInfoInputs.cache
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.AssemblyInfo.cs
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.csproj.CoreCompileInputs.cache
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.dll
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\ref\Shared.dll
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.pdb
+E:\GitHubProject\HomeAssistant\Shared\obj\Debug\net5.0\Shared.genruntimeconfig.cache

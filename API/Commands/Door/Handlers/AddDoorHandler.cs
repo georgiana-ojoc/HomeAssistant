@@ -1,12 +1,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using MediatR;
 
-namespace API.Commands.Handlers
+namespace API.Commands.Door.Handlers
 {
-    public class AddDoorHandler : IRequestHandler<AddDoor, Door>
+    public class AddDoorHandler : IRequestHandler<AddDoor, Shared.Models.Door>
     {
         private readonly IDoorRepository _repository;
 
@@ -15,9 +14,9 @@ namespace API.Commands.Handlers
             _repository = repository;
         }
 
-        public async Task<Door> Handle(AddDoor request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.Door> Handle(AddDoor request, CancellationToken cancellationToken)
         {
-            Door door = await _repository.CreateDoor(request.UserId,
+            Shared.Models.Door door = await _repository.CreateDoorAsync(request.UserId,
                 request.HouseId, request.RoomId, request.Door);
             return door;
         }

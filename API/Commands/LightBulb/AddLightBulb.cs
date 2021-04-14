@@ -2,15 +2,15 @@ using MediatR;
 
 namespace API.Commands.LightBulb
 {
-    public class AddLightBulb: IRequest<Models.LightBulb>
+    public class AddLightBulb: IRequest<Shared.Models.LightBulb>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }
         public int RoomId { get; set; }
 
-        public Models.LightBulb LightBulb;
+        public Shared.Models.LightBulb LightBulb;
 
-        public AddLightBulb( int userId, int houseId, int roomId,Models.LightBulb lightBulb)
+        public AddLightBulb( int userId, int houseId, int roomId,Shared.Models.LightBulb lightBulb)
         {
             LightBulb = lightBulb;
             UserId = userId;

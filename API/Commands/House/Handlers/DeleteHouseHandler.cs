@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Commands.House.Handlers
 {
-    public class DeleteHouseHandler : IRequestHandler<DeleteHouse, Models.House>
+    public class DeleteHouseHandler : IRequestHandler<DeleteHouse, Shared.Models.House>
     {
         private readonly IHouseRepository _repository;
 
@@ -14,9 +14,9 @@ namespace API.Commands.House.Handlers
             _repository = repository;
         }
 
-        public async Task<Models.House> Handle(DeleteHouse request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.House> Handle(DeleteHouse request, CancellationToken cancellationToken)
         {
-            Models.House house = await _repository.DeleteHouse(request.UserId, request.Id);
+            Shared.Models.House house = await _repository.DeleteHouseAsync(request.UserId, request.Id);
             return house;
         }
     }

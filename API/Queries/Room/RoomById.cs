@@ -2,7 +2,7 @@ using MediatR;
 
 namespace API.Queries.Room
 {
-    public class RoomById : IRequest<Models.Room>
+    public class RoomById : IRequest<Shared.Models.Room>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

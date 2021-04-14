@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 namespace API.Repositories
 {
@@ -57,7 +57,7 @@ namespace API.Repositories
             return lightBulb;
         }
 
-        public async Task<LightBulb> CreateLightBulb(int userId, int houseId, int roomId, LightBulb lightBulb)
+        public async Task<LightBulb> CreateLightBulbAsync(int userId, int houseId, int roomId, LightBulb lightBulb)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -79,7 +79,7 @@ namespace API.Repositories
             return newLightBulb;
         }
 
-        public async Task<LightBulb> DeleteLightBulb(int userId, int houseId, int roomId, int id)
+        public async Task<LightBulb> DeleteLightBulbAsync(int userId, int houseId, int roomId, int id)
         {
             House house = await _context.Houses.Where(h => h.UserId == userId)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -107,7 +107,7 @@ namespace API.Repositories
             return lightBulb;
         }
 
-        public Task<LightBulb> UpdateLightBulb(int userId, int houseId, int roomId, LightBulb lightBulb)
+        public Task<LightBulb> UpdateLightBulbAsync(int userId, int houseId, int roomId, LightBulb lightBulb)
         {
             throw new System.NotImplementedException();
         }

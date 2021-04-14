@@ -1,9 +1,8 @@
-using API.Models;
 using MediatR;
 
-namespace API.Queries
+namespace API.Queries.Door
 {
-    public class DoorById : IRequest<Door>
+    public class DoorById : IRequest<Shared.Models.Door>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

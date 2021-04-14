@@ -3,7 +3,7 @@ using MediatR;
 
 namespace API.Queries.Room
 {
-    public class RoomsQuery : IRequest<IEnumerable<Models.Room>>
+    public class RoomsQuery : IRequest<IEnumerable<Shared.Models.Room>>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }

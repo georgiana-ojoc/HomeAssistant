@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace API.Models
+namespace Shared.Models
 {
     public class Thermostat
     {

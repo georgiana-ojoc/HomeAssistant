@@ -2,7 +2,7 @@ using MediatR;
 
 namespace API.Commands.Room
 {
-    public class DeleteRoom : IRequest<Models.Room>
+    public class DeleteRoom : IRequest<Shared.Models.Room>
     {
         public int UserId { get; set; }
         public int HouseId { get; set; }
