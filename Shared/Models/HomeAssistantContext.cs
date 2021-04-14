@@ -1,5 +1,4 @@
-﻿using API;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -16,7 +15,6 @@ namespace Shared.Models
         {
         }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<House> Houses { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<LightBulb> LightBulbs { get; set; }
@@ -39,38 +37,6 @@ namespace Shared.Models
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasKey(e => e.Id)
-                    .HasName("users_pk")
-                    .IsClustered(false);
-
-                entity.ToTable("users");
-
-                entity.HasIndex(e => e.Email, "users_email_uindex")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.Id, "users_id_uindex")
-                    .IsUnique();
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasMaxLength(256)
-                    .HasColumnName("email");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(128)
-                    .HasColumnName("name");
-
-                entity.Property(e => e.Password)
-                    .IsRequired()
-                    .HasMaxLength(256)
-                    .HasColumnName("password");
-            });
-
             modelBuilder.Entity<House>(entity =>
             {
                 entity.HasKey(e => e.Id)
@@ -84,17 +50,15 @@ namespace Shared.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .HasColumnName("email");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Houses)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("houses_users_id_fk");
             });
 
             modelBuilder.Entity<Room>(entity =>
@@ -232,19 +196,17 @@ namespace Shared.Models
 
                 entity.Property(e => e.Frequency).HasColumnName("frequency");
 
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .HasColumnName("email");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
 
                 entity.Property(e => e.Time).HasColumnName("time");
-
-                entity.Property(e => e.UserId).HasColumnName("user_id");
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Schedules)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("schedules_users_id_fk");
             });
 
             modelBuilder.Entity<LightBulbCommand>(entity =>

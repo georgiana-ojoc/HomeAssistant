@@ -7,10 +7,9 @@ namespace API.Interfaces
 {
     public interface IDoorRepository : IDisposable
     {
-        Task<IEnumerable<Door>> GetDoorsAsync(int userId, int houseId, int roomId);
-        Task<Door> GetDoorByIdAsync(int userId, int houseId, int roomId, int id);
-        Task<Door> CreateDoorAsync(int userId, int houseId, int roomId, Door door);
-        Task<Door> DeleteDoorAsync(int userId, int houseId, int roomId, int id);
-        Task<Door> UpdateDoorAsync(int userId, int houseId, int roomId, Door door);
+        Task<IEnumerable<Door>> GetDoorsAsync(string email, int houseId, int roomId);
+        Task<Door> GetDoorByIdAsync(string email, int houseId, int roomId, int id);
+        Task<Door> CreateDoorAsync(string email, int houseId, int roomId, Door door);
+        Task<Door> DeleteDoorAsync(string email, int houseId, int roomId, int id);
     }
 }

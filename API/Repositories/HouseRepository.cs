@@ -16,46 +16,28 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<House>> GetHousesAsync(int userId)
+        public async Task<IEnumerable<House>> GetHousesAsync(string email)
         {
-            User user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                return null;
-            }
-
-            return await _context.Houses.Where(h => h.UserId == user.Id).ToListAsync();
+            return await _context.Houses.Where(house => house.Email == email).ToListAsync();
         }
 
-        public async Task<House> GetHouseByIdAsync(int userId, int id)
+        public async Task<House> GetHouseByIdAsync(string email, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
-                .FirstOrDefaultAsync(h => h.Id == id);
-            if (house == null)
-            {
-                return null;
-            }
-
-            return house;
+            return await _context.Houses.Where(house => house.Email == email)
+                .FirstOrDefaultAsync(house => house.Id == id);
         }
 
-        public async Task<House> CreateHouseAsync(int userId, House house)
+        public async Task<House> CreateHouseAsync(string email, House house)
         {
-            User user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                return null;
-            }
-
-            house.UserId = user.Id;
+            house.Email = email;
             House newHouse = (await _context.Houses.AddAsync(house)).Entity;
             await _context.SaveChangesAsync();
             return newHouse;
         }
 
-        public async Task<House> DeleteHouseAsync(int userId, int id)
+        public async Task<House> DeleteHouseAsync(string email, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == id);
             if (house == null)
             {
@@ -67,14 +49,8 @@ namespace API.Repositories
             return house;
         }
 
-        public Task<House> UpdateHouseAsync(int userId, House house)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public void Dispose()
         {
-            //_context.Dispose();
         }
     }
 }

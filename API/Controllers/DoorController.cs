@@ -12,63 +12,79 @@ using Shared.Models;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{user_id}/houses/{house_id}/rooms/{room_id}/doors")]
+    [Route("houses/{house_id}/rooms/{room_id}/doors")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class DoorController
     {
+        private readonly Identity _identity;
         private readonly IMediator _mediator;
 
-        public DoorController(IMediator mediator)
+        public DoorController(Identity identity, IMediator mediator)
         {
+            _identity = identity;
             _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Door>>> Get(int user_id, int house_id, int room_id)
+        public async Task<ActionResult<IEnumerable<Door>>> GetAsync(int house_id, int room_id)
         {
-            var result = await _mediator.Send(new DoorsQuery(user_id, house_id, room_id));
-            return result == null ? new NotFoundResult() : new ActionResult<IEnumerable<Door>>(result);
+            IEnumerable<Door> doors = await _mediator.Send(new DoorsQuery(_identity.Email, house_id, room_id));
+            if (doors == null)
+            {
+                return new NotFoundResult();
+            }
+
+            return new ActionResult<IEnumerable<Door>>(doors);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Door>> Get(int user_id, int house_id, int room_id, int id)
+        public async Task<ActionResult<Door>> GetAsync(int house_id, int room_id, int id)
         {
-            Door door = await _mediator.Send(new DoorById(user_id, house_id, room_id, id));
+            Door door = await _mediator.Send(new DoorByIdQuery(_identity.Email, house_id, room_id, id));
             if (door == null)
+            {
                 return new NotFoundResult();
+            }
+
             return door;
         }
 
         [HttpPost]
-        public async Task<ActionResult<Door>> Post(int user_id, int house_id, int room_id, [FromBody] Door door)
+        public async Task<ActionResult<Door>> PostAsync(int house_id, int room_id, [FromBody] Door door)
         {
             try
             {
-                Door addedDoor = await _mediator.Send(new AddDoor(user_id, house_id, room_id, door));
-                if (addedDoor == null)
+                Door newDoor = await _mediator.Send(new AddDoorCommand(_identity.Email, house_id, room_id, door));
+                if (newDoor == null)
+                {
                     return new NotFoundResult();
-                return addedDoor;
+                }
+
+                return new CreatedResult($"houses/{house_id}/rooms/{room_id}/doors", newDoor);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int user_id, int house_id, int room_id, int id)
+        public async Task<ActionResult> DeleteAsync(int house_id, int room_id, int id)
         {
             try
             {
-                Door door = await _mediator.Send(new DeleteDoor(user_id, house_id, room_id, id));
+                Door door = await _mediator.Send(new DeleteDoorCommand(_identity.Email, house_id, room_id, id));
                 if (door == null)
+                {
                     return new NotFoundResult();
+                }
+
                 return new NoContentResult();
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

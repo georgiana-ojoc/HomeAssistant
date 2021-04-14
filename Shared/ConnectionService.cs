@@ -1,4 +1,4 @@
-﻿namespace API
+﻿namespace Shared
 {
     public static class ConnectionService
     {

@@ -20,11 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Commands\Thermostat\Handlers" />
-      <Folder Include="Queries\Thermostat\Handlers" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 

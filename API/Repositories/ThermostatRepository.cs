@@ -16,9 +16,9 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Thermostat>> GetThermostatsAsync(int userId, int houseId, int roomId)
+        public async Task<IEnumerable<Thermostat>> GetThermostatsAsync(string email, int houseId, int roomId)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -32,12 +32,12 @@ namespace API.Repositories
                 return null;
             }
 
-            return await _context.Thermostats.Where(t => t.RoomId == room.Id).ToListAsync();
+            return await _context.Thermostats.Where(thermostat => thermostat.RoomId == room.Id).ToListAsync();
         }
 
-        public async Task<Thermostat> GetThermostatByIdAsync(int userId, int houseId, int roomId, int id)
+        public async Task<Thermostat> GetThermostatByIdAsync(string email, int houseId, int roomId, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -51,15 +51,14 @@ namespace API.Repositories
                 return null;
             }
 
-            Thermostat thermostat = await _context.Thermostats.Where(t => t.RoomId == room.Id)
+            return await _context.Thermostats.Where(thermostat => thermostat.RoomId == room.Id)
                 .FirstOrDefaultAsync(d => d.Id == id);
-
-            return thermostat;
         }
 
-        public async Task<Thermostat> CreateThermostatAsync(int userId, int houseId, int roomId, Thermostat thermostat)
+        public async Task<Thermostat> CreateThermostatAsync(string email, int houseId, int roomId,
+            Thermostat thermostat)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -79,9 +78,9 @@ namespace API.Repositories
             return newThermostat;
         }
 
-        public async Task<Thermostat> DeleteThermostatAsync(int userId, int houseId, int roomId, int id)
+        public async Task<Thermostat> DeleteThermostatAsync(string email, int houseId, int roomId, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -107,14 +106,8 @@ namespace API.Repositories
             return thermostat;
         }
 
-        public Task<Thermostat> UpdateThermostatAsync(int userId, int houseId, int roomId, Thermostat thermostat)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public void Dispose()
         {
-            //_context.Dispose();
         }
     }
 }

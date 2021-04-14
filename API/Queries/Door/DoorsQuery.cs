@@ -5,13 +5,13 @@ namespace API.Queries.Door
 {
     public class DoorsQuery : IRequest<IEnumerable<Shared.Models.Door>>
     {
-        public int UserId { get; set; }
+        public string Email { get; set; }
         public int HouseId { get; set; }
         public int RoomId { get; set; }
 
-        public DoorsQuery(int userId, int houseId, int roomId)
+        public DoorsQuery(string email, int houseId, int roomId)
         {
-            UserId = userId;
+            Email = email;
             HouseId = houseId;
             RoomId = roomId;
         }

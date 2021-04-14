@@ -15,11 +15,10 @@ namespace API.Queries.Door.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Shared.Models.Door>> Handle(DoorsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.Door>> Handle(DoorsQuery request,
+            CancellationToken cancellationToken)
         {
-            var result = await _repository.GetDoorsAsync(request.UserId,
-                request.HouseId, request.RoomId);
-            return result;
+            return await _repository.GetDoorsAsync(request.Email, request.HouseId, request.RoomId);
         }
     }
 }

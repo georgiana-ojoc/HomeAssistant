@@ -12,21 +12,23 @@ using Shared.Models;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{user_id}/houses/{house_id}/rooms/{room_id}/light_bulbs")]
+    [Route("houses/{house_id}/rooms/{room_id}/light_bulbs")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class LightBulbController
     {
+        private readonly Identity _identity;
         private readonly IMediator _mediator;
 
-        public LightBulbController(IMediator mediator)
+        public LightBulbController(Identity identity, IMediator mediator)
         {
+            _identity = identity;
             _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LightBulb>>> Get(int user_id, int house_id, int room_id)
+        public async Task<ActionResult<IEnumerable<LightBulb>>> GetAsync(int house_id, int room_id)
         {
-            IEnumerable<LightBulb> lightBulbs = await _mediator.Send(new LightBulbsQuery(user_id,
+            IEnumerable<LightBulb> lightBulbs = await _mediator.Send(new LightBulbsQuery(_identity.Email,
                 house_id, room_id));
             if (lightBulbs == null)
             {
@@ -37,54 +39,56 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<LightBulb>> Get(int user_id, int house_id, int room_id, int id)
+        public async Task<ActionResult<LightBulb>> GetAsync(int house_id, int room_id, int id)
         {
-            LightBulb lightBulb = await _mediator.Send(new LightBulbById(user_id, house_id,
+            LightBulb lightBulb = await _mediator.Send(new LightBulbByIdQuery(_identity.Email, house_id,
                 room_id, id));
             if (lightBulb == null)
             {
                 return new NotFoundResult();
             }
+
             return lightBulb;
         }
 
         [HttpPost]
-        public async Task<ActionResult<LightBulb>> Post(int user_id, int house_id, int room_id,
-            [FromBody] LightBulb lightBulb)
+        public async Task<ActionResult<LightBulb>> PostAsync(int house_id, int room_id, [FromBody] LightBulb lightBulb)
         {
             try
             {
-                LightBulb newLightBulb = await _mediator.Send(new AddLightBulb(user_id, house_id
-                    , room_id, lightBulb));
+                LightBulb newLightBulb = await _mediator.Send(new AddLightBulbCommand(_identity.Email, house_id,
+                    room_id, lightBulb));
                 if (newLightBulb == null)
                 {
                     return new NotFoundResult();
                 }
-                return newLightBulb;
+
+                return new CreatedResult($"houses/{house_id}/rooms/{room_id}/light_bulbs", newLightBulb);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int user_id, int house_id, int room_id, int id)
+        public async Task<ActionResult> DeleteAsync(int house_id, int room_id, int id)
         {
             try
             {
-                LightBulb lightBulb = await _mediator.Send(new DeleteLightBulb(user_id,
-                    house_id, room_id, id));
+                LightBulb lightBulb = await _mediator.Send(new DeleteLightBulbCommand(_identity.Email, house_id,
+                    room_id, id));
                 if (lightBulb == null)
                 {
                     return new NotFoundResult();
                 }
+
                 return new NoContentResult();
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

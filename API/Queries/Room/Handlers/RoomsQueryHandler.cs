@@ -15,10 +15,10 @@ namespace API.Queries.Room.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Shared.Models.Room>> Handle(RoomsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.Room>> Handle(RoomsQuery request,
+            CancellationToken cancellationToken)
         {
-            IEnumerable<Shared.Models.Room> rooms = await _repository.GetRoomsAsync(request.UserId, request.HouseId);
-            return rooms;
+            return await _repository.GetRoomsAsync(request.Email, request.HouseId);
         }
     }
 }

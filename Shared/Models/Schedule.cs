@@ -15,12 +15,11 @@ namespace Shared.Models
         }
 
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public string Email { get; set; }
         public string Name { get; set; }
         public TimeSpan Time { get; set; }
         public byte Frequency { get; set; }
 
-        public User User { get; set; }
         public ICollection<LightBulbCommand> LightBulbCommands { get; set; }
         public ICollection<DoorCommand> DoorCommands { get; set; }
         public ICollection<ThermostatCommand> ThermostatCommands { get; set; }

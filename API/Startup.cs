@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using Shared;
 using Shared.Models;
 
 namespace API
@@ -37,9 +38,9 @@ namespace API
             });
 
             services.AddHttpContextAccessor();
-            services.AddScoped(sp =>
+            services.AddScoped(serviceProvider =>
             {
-                HttpContext context = sp.GetService<IHttpContextAccessor>()?.HttpContext;
+                HttpContext context = serviceProvider.GetService<IHttpContextAccessor>()?.HttpContext;
                 Identity identity = new Identity();
                 if (context?.User.Identity != null && context.User.Identity.IsAuthenticated)
                 {
@@ -49,11 +50,10 @@ namespace API
                 return identity;
             });
 
-            services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddControllers();
+            services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddSingleton<HomeAssistantContext>();
 
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IHouseRepository, HouseRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IDoorRepository, DoorRepository>();
@@ -78,7 +78,7 @@ namespace API
                     Description =
                         "JWT Authorization header using the Bearer scheme.\n\n" +
                         "Enter \"Bearer\" [space] and then your token in the text input below.\n\n" +
-                        "Example: \"Bearer 12345jwt\""
+                        "Example: \"Bearer 12345token\""
                 });
                 swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
@@ -103,7 +103,8 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+                app.UseSwaggerUI(swagger => swagger.SwaggerEndpoint("/swagger/v1/swagger.json",
+                    "Home Assistant API v1"));
             }
 
             app.UseHttpsRedirection();

@@ -16,9 +16,9 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<LightBulb>> GetLightBulbsAsync(int userId, int houseId, int roomId)
+        public async Task<IEnumerable<LightBulb>> GetLightBulbsAsync(string email, int houseId, int roomId)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -32,12 +32,12 @@ namespace API.Repositories
                 return null;
             }
 
-            return await _context.LightBulbs.Where(lb => lb.RoomId == room.Id).ToListAsync();
+            return await _context.LightBulbs.Where(lightBulb => lightBulb.RoomId == room.Id).ToListAsync();
         }
 
-        public async Task<LightBulb> GetLightBulbByIdAsync(int userId, int houseId, int roomId, int id)
+        public async Task<LightBulb> GetLightBulbByIdAsync(string email, int houseId, int roomId, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -51,15 +51,13 @@ namespace API.Repositories
                 return null;
             }
 
-            LightBulb lightBulb = await _context.LightBulbs.Where(lb => lb.RoomId == room.Id)
-                .FirstOrDefaultAsync(lb => lb.Id == id);
-
-            return lightBulb;
+            return await _context.LightBulbs.Where(lightBulb => lightBulb.RoomId == room.Id)
+                .FirstOrDefaultAsync(lightBulb => lightBulb.Id == id);
         }
 
-        public async Task<LightBulb> CreateLightBulbAsync(int userId, int houseId, int roomId, LightBulb lightBulb)
+        public async Task<LightBulb> CreateLightBulbAsync(string email, int houseId, int roomId, LightBulb lightBulb)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -79,9 +77,9 @@ namespace API.Repositories
             return newLightBulb;
         }
 
-        public async Task<LightBulb> DeleteLightBulbAsync(int userId, int houseId, int roomId, int id)
+        public async Task<LightBulb> DeleteLightBulbAsync(string email, int houseId, int roomId, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == userId)
+            House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
@@ -107,14 +105,8 @@ namespace API.Repositories
             return lightBulb;
         }
 
-        public Task<LightBulb> UpdateLightBulbAsync(int userId, int houseId, int roomId, LightBulb lightBulb)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public void Dispose()
         {
-            //_context?.Dispose();
         }
     }
 }

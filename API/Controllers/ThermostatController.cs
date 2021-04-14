@@ -1,66 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
+using API.Commands.Thermostat;
+using API.Queries.Thermostat;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{user_id}/houses/{house_id}/rooms/{room_id}/thermostats")]
+    [Route("houses/{house_id}/rooms/{room_id}/thermostats")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class ThermostatController
     {
-        private readonly HomeAssistantContext _context;
+        private readonly Identity _identity;
+        private readonly IMediator _mediator;
 
-        public ThermostatController(HomeAssistantContext context)
+        public ThermostatController(Identity identity, IMediator mediator)
         {
-            _context = context;
+            _identity = identity;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Thermostat>>> Get(int user_id, int house_id, int room_id)
+        public async Task<ActionResult<IEnumerable<Thermostat>>> GetAsync(int house_id, int room_id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == user_id)
-                .FirstOrDefaultAsync(h => h.Id == house_id);
-            if (house == null)
+            IEnumerable<Thermostat> thermostats = await _mediator.Send(new ThermostatsQuery(_identity.Email,
+                house_id, room_id));
+            if (thermostats == null)
             {
                 return new NotFoundResult();
             }
 
-            Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == room_id);
-            if (room == null)
-            {
-                return new NotFoundResult();
-            }
-
-            return await _context.Thermostats.Where(t => t.RoomId == room.Id).ToListAsync();
+            return new ActionResult<IEnumerable<Thermostat>>(thermostats);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Thermostat>> Get(int user_id, int house_id, int room_id, int id)
+        public async Task<ActionResult<Thermostat>> GetAsync(int house_id, int room_id, int id)
         {
-            House house = await _context.Houses.Where(h => h.UserId == user_id)
-                .FirstOrDefaultAsync(h => h.Id == house_id);
-            if (house == null)
-            {
-                return new NotFoundResult();
-            }
-
-            Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == room_id);
-            if (room == null)
-            {
-                return new NotFoundResult();
-            }
-
-            Thermostat thermostat = await _context.Thermostats.Where(t => t.RoomId == room.Id)
-                .FirstOrDefaultAsync(d => d.Id == id);
+            Thermostat thermostat = await _mediator.Send(new ThermostatByIdQuery(_identity.Email, house_id,
+                room_id, id));
             if (thermostat == null)
             {
                 return new NotFoundResult();
@@ -70,70 +52,44 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Thermostat>> Post(int user_id, int house_id, int room_id,
+        public async Task<ActionResult<Thermostat>> PostAsync(int house_id, int room_id,
             [FromBody] Thermostat thermostat)
         {
             try
             {
-                House house = await _context.Houses.Where(h => h.UserId == user_id)
-                    .FirstOrDefaultAsync(h => h.Id == house_id);
-                if (house == null)
+                Thermostat newThermostat = await _mediator.Send(new AddThermostatCommand(_identity.Email,
+                    house_id, room_id, thermostat));
+                if (newThermostat == null)
                 {
                     return new NotFoundResult();
                 }
 
-                Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                    .FirstOrDefaultAsync(r => r.Id == room_id);
-                if (room == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                thermostat.RoomId = room.Id;
-                Thermostat newThermostat = (await _context.Thermostats.AddAsync(thermostat)).Entity;
-                await _context.SaveChangesAsync();
-                return newThermostat;
+                return new CreatedResult($"houses/{house_id}/rooms/{room_id}/thermostats", newThermostat);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int user_id, int house_id, int room_id, int id)
+        public async Task<ActionResult> DeleteAsync(int house_id, int room_id, int id)
         {
             try
             {
-                House house = await _context.Houses.Where(h => h.UserId == user_id)
-                    .FirstOrDefaultAsync(h => h.Id == house_id);
-                if (house == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
-                    .FirstOrDefaultAsync(r => r.Id == room_id);
-                if (room == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                Thermostat thermostat = await _context.Thermostats.Where(t => t.RoomId == room.Id)
-                    .FirstOrDefaultAsync(t => t.Id == id);
+                Thermostat thermostat = await _mediator.Send(new DeleteThermostatCommand(_identity.Email,
+                    house_id, room_id, id));
                 if (thermostat == null)
                 {
                     return new NotFoundResult();
                 }
 
-                _context.Thermostats.Remove(thermostat);
-                await _context.SaveChangesAsync();
                 return new NoContentResult();
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

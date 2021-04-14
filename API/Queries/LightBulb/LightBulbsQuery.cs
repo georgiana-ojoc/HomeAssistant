@@ -3,15 +3,15 @@ using MediatR;
 
 namespace API.Queries.LightBulb
 {
-    public class LightBulbsQuery: IRequest<IEnumerable<Shared.Models.LightBulb>>
+    public class LightBulbsQuery : IRequest<IEnumerable<Shared.Models.LightBulb>>
     {
-        public int UserId { get; set; }
+        public string Email { get; set; }
         public int HouseId { get; set; }
         public int RoomId { get; set; }
 
-        public LightBulbsQuery(int userId, int houseId, int roomId)
+        public LightBulbsQuery(string email, int houseId, int roomId)
         {
-            UserId = userId;
+            Email = email;
             HouseId = houseId;
             RoomId = roomId;
         }

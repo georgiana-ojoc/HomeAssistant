@@ -15,10 +15,10 @@ namespace API.Queries.House.Handlers
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Shared.Models.House>> Handle(HousesQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Shared.Models.House>> Handle(HousesQuery request,
+            CancellationToken cancellationToken)
         {
-            var houses = await _repository.GetHousesAsync(request.Id);
-            return houses;
+            return await _repository.GetHousesAsync(request.Email);
         }
     }
 }

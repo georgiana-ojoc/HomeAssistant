@@ -12,33 +12,35 @@ using Shared.Models;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("users/{user_id}/houses")]
+    [Route("houses")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class HouseController
     {
+        private readonly Identity _identity;
         private readonly IMediator _mediator;
 
-        public HouseController(IMediator mediator)
+        public HouseController(Identity identity, IMediator mediator)
         {
+            _identity = identity;
             _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<House>>> Get(int user_id)
+        public async Task<ActionResult<IEnumerable<House>>> GetAsync()
         {
-            var result = await _mediator.Send(new HousesQuery(user_id));
-            if (result == null)
+            IEnumerable<House> houses = await _mediator.Send(new HousesQuery(_identity.Email));
+            if (houses == null)
             {
                 return new NotFoundResult();
             }
 
-            return new ActionResult<IEnumerable<House>>(result);
+            return new ActionResult<IEnumerable<House>>(houses);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<House>> Get(int user_id, int id)
+        public async Task<ActionResult<House>> GetAsync(int id)
         {
-            House house = await _mediator.Send(new HouseById(user_id, id));
+            House house = await _mediator.Send(new HouseByIdQuery(_identity.Email, id));
             if (house == null)
             {
                 return new NotFoundResult();
@@ -48,31 +50,31 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<House>> Post(int user_id, [FromBody] House house)
+        public async Task<ActionResult<House>> PostAsync([FromBody] House house)
         {
             try
             {
-                House newHouse = await _mediator.Send(new AddHouse(user_id, house));
+                House newHouse = await _mediator.Send(new AddHouseCommand(_identity.Email, house));
                 if (newHouse == null)
                 {
                     return new NotFoundResult();
                 }
 
-                return newHouse;
+                return new CreatedResult("houses", newHouse);
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int user_id, int id)
+        public async Task<ActionResult> DeleteAsync(int id)
         {
             try
             {
-                House house = await _mediator.Send(new DeleteHouse(user_id, id));
+                House house = await _mediator.Send(new DeleteHouseCommand(_identity.Email, id));
                 if (house == null)
                 {
                     return new NotFoundResult();
@@ -80,9 +82,9 @@ namespace API.Controllers
 
                 return new NoContentResult();
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
-                Console.Write(e.Message);
+                Console.Write(exception.Message);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

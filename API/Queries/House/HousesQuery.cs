@@ -5,11 +5,11 @@ namespace API.Queries.House
 {
     public class HousesQuery : IRequest<IEnumerable<Shared.Models.House>>
     {
-        public int Id { get; set; }
+        public string Email { get; set; }
 
-        public HousesQuery(int id)
+        public HousesQuery(string email)
         {
-            Id = id;
+            Email = email;
         }
     }
 }
