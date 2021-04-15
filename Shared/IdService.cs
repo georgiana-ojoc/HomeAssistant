@@ -17,7 +17,7 @@ namespace Shared
         {
             _localStorageService = localStorageService;
         }
-        
+
         public async Task SetHouseId(int houseId)
         {
             var idRecord = await GetIdRecord();
@@ -28,7 +28,7 @@ namespace Shared
             };
             await _localStorageService.SetItemAsync("idRecord", newIdRecord);
         }
-        
+
         public async Task SetRoomId(int roomId)
         {
             var idRecord = await GetIdRecord();

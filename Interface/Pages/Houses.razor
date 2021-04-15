@@ -10,7 +10,7 @@
 @* <p>@_token</p> *@
 
 <div class="row">
-    @if(!(_houses is null))
+    @if (!(_houses is null))
     {
         foreach (var house in _houses)
         {
@@ -44,14 +44,14 @@
     {
         _houses = await Http.GetFromJsonAsync<IList<House>>("houses");
     }
-    
+
     private async void AddHouse()
     {
         if (string.IsNullOrWhiteSpace(_newHouseName))
         {
             return;
         }
-        
+
         HttpResponseMessage response = await Http.PostAsJsonAsync("houses", new House()
         {
             Name = _newHouseName
@@ -62,6 +62,7 @@
         _newHouseName = string.Empty;
         StateHasChanged();
     }
+
     private async void DeleteHouse(int id)
     {
         await Http.DeleteAsync("houses/" + id);
