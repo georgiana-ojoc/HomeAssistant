@@ -1,9 +1,10 @@
 ﻿@page "/Houses"
 @using global::Shared.Models
-@using System.Diagnostics
 @inject HttpClient Http
 @inject IAccessTokenProvider AccessTokenProvider
 @inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject global::Shared.IdService IdService
+@inject NavigationManager NavManager
 @attribute [Authorize]
 
 @* <p>@_token</p> *@
@@ -16,7 +17,10 @@
             <div class="card" style="width: 16rem; margin: 1rem">
                 <h3 class="card-header" style="text-align: center"> @house.Name </h3>
                 <div class="card-body" style="margin: auto">
-                    <a class="btn btn-dark" href="Rooms" @onclick="@(() => SetHouseId(house.Id))"> Manage house </a>
+                    <div class="btn-group">
+                        <button class="btn btn-dark" @onclick="@(() => SetHouseId(house.Id))"> Manage house </button>
+                        <button class="btn btn-danger" @onclick="@(() => DeleteHouse(house.Id))"> Delete house </button>
+                    </div>
                 </div>
             </div>
         }
@@ -35,6 +39,7 @@
     // private string _token;
     private IList<House> _houses;
     private string _newHouseName;
+    private int _houseId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,18 +60,22 @@
         House newHouse = await response.Content.ReadFromJsonAsync<House>();
         _houses.Add(newHouse);
 
-        if (newHouse != null) ManagerId.HouseId = newHouse.Id;
-        await JsRuntime.InvokeVoidAsync("alert", ManagerId.HouseId);
-
         _newHouseName = string.Empty;
         StateHasChanged();
     }
-
-    private async void SetHouseId(int houseId)
+    private async void DeleteHouse(int id)
     {
-        ManagerId.HouseId = houseId;
-        Debug.WriteLine(ManagerId.HouseId);
-        await JsRuntime.InvokeVoidAsync("alert", ManagerId.HouseId);
+        await Http.DeleteAsync("houses/" + _houseId);
+        _houses.Remove(_houses.SingleOrDefault(h => h.Id == id));
+        StateHasChanged();
+    }
+
+    private async Task SetHouseId(int houseId)
+    {
+        await IdService.SetHouseId(houseId);
+        _houseId = await IdService.GetHouseId();
+        await JsRuntime.InvokeVoidAsync("alert", "Houses:\nhId = " + _houseId.ToString());
+        NavManager.NavigateTo("Rooms");
     }
 
 }

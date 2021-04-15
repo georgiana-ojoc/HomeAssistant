@@ -1,37 +1,76 @@
 ﻿@page "/Rooms"
-
+@using global::Shared.Models
+@inject HttpClient Http
+@inject IAccessTokenProvider AccessTokenProvider
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject global::Shared.IdService IdService
+@inject NavigationManager NavManager
 @attribute [Authorize]
 
 <div class="row">
-    @foreach (var room in _rooms)
+    @if (!(_rooms is null))
     {
-        <div class="card" style="width: 16rem; margin: 1rem">
-            <h3 class="card-header" style="text-align: center"> @room </h3>
-            <div class="card-body" style="margin: auto">
-                <a class="btn btn-dark" href="Devices"> Manage room </a>
+        @foreach (var room in _rooms)
+        {
+            <div class="card" style="width: 16rem; margin: 1rem">
+                <h3 class="card-header" style="text-align: center"> @room.Name </h3>
+                <div class="card-body" style="margin: auto">
+                    <div class="btn-group">
+                        <button class="btn btn-dark" @onclick="@(() => SetRoomId(room.Id))"> Manage room </button>
+                        <button class="btn btn-danger" @onclick="@(() => DeleteRoom(room.Id))"> Delete room </button>
+                    </div>
+                </div>
             </div>
-        </div>
+        }
     }
 </div>
 <div class="input-group">
-    <input class="form-control" placeholder="Room name" @bind="_newRoom" aria-describedby="add-room-addon"/>
+    <input class="form-control" placeholder="Room name" @bind="_newRoomName" aria-describedby="add-room-addon"/>
     <div class="input-group-append">
         <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom"> Add room </span>
     </div>
 </div>
-
+@inject IJSRuntime JsRuntime;
 @code {
-    private readonly IList<string> _rooms = new List<string>();
-    private string _newRoom;
-
-    private void AddRoom()
+    private IList<Room> _rooms;
+    private string _newRoomName;
+    private int _houseId;
+    private int _roomId;
+    
+    protected override async Task OnInitializedAsync()
     {
-        if (string.IsNullOrWhiteSpace(_newRoom))
+        _houseId = await IdService.GetHouseId();
+        await JsRuntime.InvokeVoidAsync("alert", "Rooms:\nhId = " + _houseId.ToString());
+        _rooms = await Http.GetFromJsonAsync<IList<Room>>("houses/" + _houseId + "/rooms");
+    }
+    private async void AddRoom()
+    {
+        if (string.IsNullOrWhiteSpace(_newRoomName))
         {
             return;
         }
-        _rooms.Add(_newRoom);
-        _newRoom = string.Empty;
+        HttpResponseMessage response = await Http.PostAsJsonAsync("houses/" + _houseId + "/rooms", new Room()
+        {
+            Name = _newRoomName
+        });
+        Room newRoom = await response.Content.ReadFromJsonAsync<Room>();
+        _rooms.Add(newRoom);
+        _newRoomName = string.Empty;
+        StateHasChanged();
     }
+    private async void DeleteRoom(int id)
+    {
+        await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + id);
+        _rooms.Remove(_rooms.SingleOrDefault(r => r.Id == id));
+        StateHasChanged();
+    }
+    
 
+    private async void SetRoomId(int roomId)
+    {
+        await IdService.SetRoomId(roomId);
+        _roomId = await IdService.GetRoomId();
+        await JsRuntime.InvokeVoidAsync("alert", "Rooms:\nrId = " + _roomId.ToString());
+        NavManager.NavigateTo("Devices");
+    }
 }

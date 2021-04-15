@@ -1,18 +1,15 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared;
 
 namespace Interface
 {
-    public static class ManagerId
-    {
-        public static int HouseId = 0;
-        public static int RoomId = 0;
-    }
     public class Program
     {
         public static async Task Main(string[] args)
@@ -38,6 +35,9 @@ namespace Interface
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
                 options.ProviderOptions.DefaultAccessTokenScopes.Add(builder.Configuration["AzureAdB2C:Scope"]);
             });
+
+            builder.Services.AddScoped<IdService>();
+            builder.Services.AddBlazoredLocalStorage();
 
             await builder.Build().RunAsync();
         }
