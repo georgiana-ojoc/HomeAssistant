@@ -21,9 +21,10 @@ namespace Shared
         public async Task SetHouseId(int houseId)
         {
             var idRecord = await GetIdRecord();
-            var newIdRecord = idRecord with
+            var newIdRecord = new IdRecord()
             {
-                HouseId = houseId
+                HouseId = houseId,
+                RoomId = idRecord.RoomId
             };
             await _localStorageService.SetItemAsync("idRecord", newIdRecord);
         }
@@ -31,8 +32,9 @@ namespace Shared
         public async Task SetRoomId(int roomId)
         {
             var idRecord = await GetIdRecord();
-            var newIdRecord = idRecord with
+            var newIdRecord = new IdRecord()
             {
+                HouseId = idRecord.HouseId,
                 RoomId = roomId
             };
             await _localStorageService.SetItemAsync("idRecord", newIdRecord);
