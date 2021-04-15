@@ -8,7 +8,7 @@ namespace API.Commands.LightBulb
         public int HouseId { get; set; }
         public int RoomId { get; set; }
 
-        public Shared.Models.LightBulb LightBulb;
+        public Shared.Models.LightBulb LightBulb { get; set; }
 
         public AddLightBulbCommand(string email, int houseId, int roomId, Shared.Models.LightBulb lightBulb)
         {

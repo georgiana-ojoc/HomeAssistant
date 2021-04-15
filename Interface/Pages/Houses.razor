@@ -1,13 +1,10 @@
 ﻿@page "/Houses"
 @using global::Shared.Models
-@inject HttpClient Http
-@inject IAccessTokenProvider AccessTokenProvider
-@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @inject global::Shared.IdService IdService
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime;
 @inject NavigationManager NavManager
 @attribute [Authorize]
-
-@* <p>@_token</p> *@
 
 <div class="row">
     @if (!(_houses is null))
@@ -33,10 +30,7 @@
     </div>
 </div>
 
-@inject IJSRuntime JsRuntime;
-
 @code {
-    // private string _token;
     private IList<House> _houses;
     private string _newHouseName;
 
@@ -65,14 +59,14 @@
 
     private async void DeleteHouse(int id)
     {
-        await Http.DeleteAsync("houses/" + id);
-        _houses.Remove(_houses.SingleOrDefault(h => h.Id == id));
+        await Http.DeleteAsync($"houses/{id}");
+        _houses.Remove(_houses.SingleOrDefault(house => house.Id == id));
         StateHasChanged();
     }
 
-    private async Task SetHouseId(int houseId)
+    private async Task SetHouseId(int id)
     {
-        await IdService.SetHouseId(houseId);
+        await IdService.SetHouseId(id);
         NavManager.NavigateTo("Rooms");
     }
 

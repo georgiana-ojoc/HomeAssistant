@@ -1,9 +1,8 @@
 ﻿@page "/Rooms"
 @using global::Shared.Models
-@inject HttpClient Http
-@inject IAccessTokenProvider AccessTokenProvider
-@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @inject global::Shared.IdService IdService
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime;
 @inject NavigationManager NavManager
 @attribute [Authorize]
 
@@ -30,18 +29,16 @@
         <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom"> Add room </span>
     </div>
 </div>
-@inject IJSRuntime JsRuntime;
 
 @code {
     private IList<Room> _rooms;
     private string _newRoomName;
     private int _houseId;
-    private int _roomId;
 
     protected override async Task OnInitializedAsync()
     {
         _houseId = await IdService.GetHouseId();
-        _rooms = await Http.GetFromJsonAsync<IList<Room>>("houses/" + _houseId + "/rooms");
+        _rooms = await Http.GetFromJsonAsync<IList<Room>>($"houses/{_houseId}/rooms");
     }
 
     private async void AddRoom()
@@ -50,23 +47,23 @@
         {
             return;
         }
-        HttpResponseMessage response = await Http.PostAsJsonAsync("houses/" + _houseId + "/rooms", new Room()
+        HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms", new Room()
         {
             Name = _newRoomName
         });
         Room newRoom = await response.Content.ReadFromJsonAsync<Room>();
         _rooms.Add(newRoom);
+
         _newRoomName = string.Empty;
         StateHasChanged();
     }
 
     private async void DeleteRoom(int id)
     {
-        await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + id);
-        _rooms.Remove(_rooms.SingleOrDefault(r => r.Id == id));
+        await Http.DeleteAsync($"houses/{_houseId}/rooms/{id}");
+        _rooms.Remove(_rooms.SingleOrDefault(room => room.Id == id));
         StateHasChanged();
     }
-
 
     private async void SetRoomId(int roomId)
     {

@@ -1,9 +1,7 @@
 ﻿@page "/Devices"
 @using global::Shared.Models
-@inject HttpClient Http
-@inject IAccessTokenProvider AccessTokenProvider
-@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @inject global::Shared.IdService IdService
+@inject HttpClient Http
 @inject IJSRuntime JsRuntime
 @attribute [Authorize]
 
@@ -12,31 +10,33 @@
         <ul class="list-group list-group-vertical">
             @if (!(_lightBulbs is null))
             {
-@foreach (var lightBulb in _lightBulbs)
-{
-    <li class="list-group-item">
-        <div class="card">
-            <h3 class="card-header" style="text-align: center">@lightBulb.Name</h3>
-            <div class="card-body" style="margin: auto">
-                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="button" class="btn btn-danger">Off</button>
-                    <input type="range" class="form-range" min="2" max="8" id="LB" style="margin: 0.25rem">
-                    <button type="button" class="btn btn-success">On</button>
-                </div>
-            </div>
-            <div class="card-footer" style="text-align: center">
-                <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(lightBulb.Id))">Delete</button>
-            </div>
-        </div>
-    </li>
-}
+                @foreach (var lightBulb in _lightBulbs)
+                {
+                    <li class="list-group-item">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @lightBulb.Name </h3>
+                            <div class="card-body" style="margin: auto">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-danger"> Off </button>
+                                    <input type="range" class="form-range" min="2" max="8" id="LB" style="margin: 0.25rem">
+                                    <button type="button" class="btn btn-success"> On </button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(lightBulb.Id))">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                }
             }
         </ul>
         <div class="input-group">
             <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulbName"
                    aria-describedby="add-light-bulb-addon"/>
             <div class="input-group-append">
-                <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb">Add light bulb</span>
+                <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb"> Add light bulb </span>
             </div>
         </div>
     </div>
@@ -48,26 +48,25 @@
                 {
                     <li class="list-group-item">
                         <div class="card">
-                            <h3 class="card-header" style="text-align: center">@door.Name</h3>
+                            <h3 class="card-header" style="text-align: center"> @door.Name </h3>
                             <div class="card-body" style="margin: auto">
                                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" class="btn btn-danger">Lock</button>
-                                    <button type="button" class="btn btn-success">Unlock</button>
+                                    <button type="button" class="btn btn-danger"> Lock </button>
+                                    <button type="button" class="btn btn-success"> Unlock </button>
                                 </div>
                             </div>
                             <div class="card-footer" style="text-align: center">
-                                <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))">Delete</button>
+                                <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))"> Delete </button>
                             </div>
                         </div>
                     </li>
                 }
             }
-
         </ul>
         <div class="input-group">
             <input class="form-control" placeholder="Door name" @bind="_newDoorName" aria-describedby="add-door-addon"/>
             <div class="input-group-append">
-                <span class="btn btn-info" id="add-door-addon" @onclick="AddDoor">Add door</span>
+                <span class="btn btn-info" id="add-door-addon" @onclick="AddDoor"> Add door </span>
             </div>
         </div>
     </div>
@@ -75,40 +74,56 @@
         <ul class="list-group list-group-vertical">
             @if (!(_thermostats is null))
             {
-@foreach (var thermostat in _thermostats)
-{
-    <li class="list-group-item">
-        <div class="card">
-            <h3 class="card-header" style="text-align: center">@thermostat.Name</h3>
-            <div class="card-body" style="margin: auto">
-                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <input type="range" class="form-range" min="7" max="30" id="temp">
-                </div>
-            </div>
-            <div class="card-footer" style="text-align: center">
-                <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">Delete</button>
-            </div>
-        </div>
-    </li>
-}
+                @foreach (var thermostat in _thermostats)
+                {
+                    <li class="list-group-item">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
+                            <div class="card-body" style="margin: auto">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <input type="range" class="form-range" min="7" max="30" id="temp">
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                }
             }
-
         </ul>
         <div class="input-group">
             <input class="form-control" placeholder="Thermostat name" @bind="_newThermostatName"
                    aria-describedby="add-thermostat-addon"/>
             <div class="input-group-append">
-                <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat">Add thermostat</span>
+                <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat"> Add thermostat </span>
             </div>
         </div>
     </div>
 </div>
 
 @code {
+    private IList<LightBulb> _lightBulbs;
+    private IList<Door> _doors;
+    private IList<Thermostat> _thermostats;
+    private string _newLightBulbName;
+    private string _newDoorName;
+    private string _newThermostatName;
     private int _houseId;
     private int _roomId;
-    private IList<LightBulb> _lightBulbs;
-    private string _newLightBulbName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _houseId = await IdService.GetHouseId();
+        _roomId = await IdService.GetRoomId();
+        _lightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
+            $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
+        _doors = await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
+        _thermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
+            $"houses/{_houseId}/rooms/{_roomId}/thermostats");
+    }
 
     private async void AddLightBulb()
     {
@@ -116,25 +131,24 @@
         {
             return;
         }
-        HttpResponseMessage response = await Http.PostAsJsonAsync("houses/" + _houseId + "/rooms/" + _roomId + "/light_bulbs", new LightBulb()
-        {
-            Name = _newLightBulbName
-        });
+        HttpResponseMessage response = await Http.PostAsJsonAsync(
+            $"houses/{_houseId}/rooms/{_roomId}/light_bulbs", new LightBulb()
+            {
+                Name = _newLightBulbName
+            });
         LightBulb newLightBulb = await response.Content.ReadFromJsonAsync<LightBulb>();
         _lightBulbs.Add(newLightBulb);
+
         _newLightBulbName = string.Empty;
         StateHasChanged();
     }
 
     private async void DeleteLightBulb(int id)
     {
-        await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + _roomId + "/light_bulbs/" + id);
-        _lightBulbs.Remove(_lightBulbs.SingleOrDefault(l => l.Id == id));
+        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{id}");
+        _lightBulbs.Remove(_lightBulbs.SingleOrDefault(lightBulb => lightBulb.Id == id));
         StateHasChanged();
     }
-
-    private IList<Door> _doors;
-    private string _newDoorName;
 
     private async void AddDoor()
     {
@@ -142,25 +156,24 @@
         {
             return;
         }
-        HttpResponseMessage response = await Http.PostAsJsonAsync("houses/" + _houseId + "/rooms/" + _roomId + "/doors", new Door()
-        {
-            Name = _newDoorName
-        });
+        HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/doors",
+            new Door()
+            {
+                Name = _newDoorName
+            });
         Door newDoor = await response.Content.ReadFromJsonAsync<Door>();
         _doors.Add(newDoor);
+
         _newDoorName = string.Empty;
         StateHasChanged();
     }
 
     private async void DeleteDoor(int id)
     {
-        await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + _roomId + "/doors/" + id);
-        _doors.Remove(_doors.SingleOrDefault(d => d.Id == id));
+        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
+        _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
         StateHasChanged();
     }
-
-    private IList<Thermostat> _thermostats;
-    private string _newThermostatName;
 
     private async void AddThermostat()
     {
@@ -168,31 +181,23 @@
         {
             return;
         }
-        HttpResponseMessage response = await Http.PostAsJsonAsync("houses/" + _houseId + "/rooms/" + _roomId + "/thermostats", new Door()
-        {
-            Name = _newThermostatName
-        });
+        HttpResponseMessage response = await Http.PostAsJsonAsync(
+            $"houses/{_houseId}/rooms/{_roomId}/thermostats", new Thermostat()
+            {
+                Name = _newThermostatName
+            });
         Thermostat newThermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
         _thermostats.Add(newThermostat);
+
         _newThermostatName = string.Empty;
         StateHasChanged();
     }
 
     private async void DeleteThermostat(int id)
     {
-        await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + _roomId + "/thermostats/" + id);
-        _thermostats.Remove(_thermostats.SingleOrDefault(t => t.Id == id));
+        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
+        _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
         StateHasChanged();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        _houseId = await IdService.GetHouseId();
-        _roomId = await IdService.GetRoomId();
-        StateHasChanged();
-        _doors = await Http.GetFromJsonAsync<IList<Door>>("houses/" + _houseId + "/rooms/" + _roomId + "/doors");
-        _lightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>("houses/" + _houseId + "/rooms/" + _roomId + "/light_bulbs");
-        _thermostats = await Http.GetFromJsonAsync<IList<Thermostat>>("houses/" + _houseId + "/rooms/" + _roomId + "/thermostats");
     }
 
 }
