@@ -11,24 +11,26 @@
     <div class="col">
         <ul class="list-group list-group-vertical">
             @if (!(_lightBulbs is null))
-            {@foreach (var lightBulb in _lightBulbs)
             {
-                <li class="list-group-item">
-                    <div class="card">
-                        <h3 class="card-header" style="text-align: center">@lightBulb.Name</h3>
-                        <div class="card-body" style="margin: auto">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-danger">Off</button>
-                                <input type="range" class="form-range" min="2" max="8" id="LB" style="margin: 0.25rem">
-                                <button type="button" class="btn btn-success">On</button>
-                            </div>
-                        </div>
-                        <div class="card-footer" style="text-align: center">
-                            <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(lightBulb.Id))">Delete</button>
-                        </div>
-                    </div>
-                </li>
-            }}   
+@foreach (var lightBulb in _lightBulbs)
+{
+    <li class="list-group-item">
+        <div class="card">
+            <h3 class="card-header" style="text-align: center">@lightBulb.Name</h3>
+            <div class="card-body" style="margin: auto">
+                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                    <button type="button" class="btn btn-danger">Off</button>
+                    <input type="range" class="form-range" min="2" max="8" id="LB" style="margin: 0.25rem">
+                    <button type="button" class="btn btn-success">On</button>
+                </div>
+            </div>
+            <div class="card-footer" style="text-align: center">
+                <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(lightBulb.Id))">Delete</button>
+            </div>
+        </div>
+    </li>
+}
+            }
         </ul>
         <div class="input-group">
             <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulbName"
@@ -41,25 +43,26 @@
     <div class="col">
         <ul class="list-group list-group-vertical">
             @if (!(_doors is null))
-            { @foreach (var door in _doors)
             {
-                <li class="list-group-item">
-                    <div class="card">
-                        <h3 class="card-header" style="text-align: center">@door.Name</h3>
-                        <div class="card-body" style="margin: auto">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-danger">Lock</button>
-                                <button type="button" class="btn btn-success">Unlock</button>
+                @foreach (var door in _doors)
+                {
+                    <li class="list-group-item">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center">@door.Name</h3>
+                            <div class="card-body" style="margin: auto">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-danger">Lock</button>
+                                    <button type="button" class="btn btn-success">Unlock</button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))">Delete</button>
                             </div>
                         </div>
-                        <div class="card-footer" style="text-align: center">
-                             <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))">Delete</button>
-                        </div>
-                    </div>
-                </li>
+                    </li>
+                }
             }
-            }
-           
+
         </ul>
         <div class="input-group">
             <input class="form-control" placeholder="Door name" @bind="_newDoorName" aria-describedby="add-door-addon"/>
@@ -70,25 +73,26 @@
     </div>
     <div class="col">
         <ul class="list-group list-group-vertical">
-             @if (!(_thermostats is null))
-             {@foreach (var thermostat in _thermostats)
-             {
-                 <li class="list-group-item">
-                     <div class="card">
-                         <h3 class="card-header" style="text-align: center">@thermostat.Name</h3>
-                         <div class="card-body" style="margin: auto">
-                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                 <input type="range" class="form-range" min="7" max="30" id="temp">
-                             </div>
-                         </div>
-                        <div class="card-footer" style="text-align: center">
-                             <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">Delete</button>
-                        </div>
-                     </div>
-                 </li>
-             }
-             }
-            
+            @if (!(_thermostats is null))
+            {
+@foreach (var thermostat in _thermostats)
+{
+    <li class="list-group-item">
+        <div class="card">
+            <h3 class="card-header" style="text-align: center">@thermostat.Name</h3>
+            <div class="card-body" style="margin: auto">
+                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                    <input type="range" class="form-range" min="7" max="30" id="temp">
+                </div>
+            </div>
+            <div class="card-footer" style="text-align: center">
+                <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">Delete</button>
+            </div>
+        </div>
+    </li>
+}
+            }
+
         </ul>
         <div class="input-group">
             <input class="form-control" placeholder="Thermostat name" @bind="_newThermostatName"
@@ -105,7 +109,7 @@
     private int _roomId;
     private IList<LightBulb> _lightBulbs;
     private string _newLightBulbName;
-    
+
     private async void AddLightBulb()
     {
         if (string.IsNullOrWhiteSpace(_newLightBulbName))
@@ -121,6 +125,7 @@
         _newLightBulbName = string.Empty;
         StateHasChanged();
     }
+
     private async void DeleteLightBulb(int id)
     {
         await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + _roomId + "/light_bulbs/" + id);
@@ -146,6 +151,7 @@
         _newDoorName = string.Empty;
         StateHasChanged();
     }
+
     private async void DeleteDoor(int id)
     {
         await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + _roomId + "/doors/" + id);
@@ -171,13 +177,14 @@
         _newThermostatName = string.Empty;
         StateHasChanged();
     }
+
     private async void DeleteThermostat(int id)
     {
         await Http.DeleteAsync("houses/" + _houseId + "/rooms/" + _roomId + "/thermostats/" + id);
         _thermostats.Remove(_thermostats.SingleOrDefault(t => t.Id == id));
         StateHasChanged();
     }
-    
+
     protected override async Task OnInitializedAsync()
     {
         _houseId = await IdService.GetHouseId();
@@ -187,4 +194,5 @@
         _lightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>("houses/" + _houseId + "/rooms/" + _roomId + "/light_bulbs");
         _thermostats = await Http.GetFromJsonAsync<IList<Thermostat>>("houses/" + _houseId + "/rooms/" + _roomId + "/thermostats");
     }
+
 }
