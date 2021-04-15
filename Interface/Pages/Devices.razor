@@ -183,9 +183,6 @@
         _houseId = await IdService.GetHouseId();
         _roomId = await IdService.GetRoomId();
         StateHasChanged();
-        await JsRuntime.InvokeVoidAsync("alert", "Devices:" +
-                                                 "\nhId = " + _houseId.ToString() + 
-                                                 "\nrId = " + _roomId.ToString());
         _doors = await Http.GetFromJsonAsync<IList<Door>>("houses/" + _houseId + "/rooms/" + _roomId + "/doors");
         _lightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>("houses/" + _houseId + "/rooms/" + _roomId + "/light_bulbs");
         _thermostats = await Http.GetFromJsonAsync<IList<Thermostat>>("houses/" + _houseId + "/rooms/" + _roomId + "/thermostats");

@@ -40,7 +40,6 @@
     protected override async Task OnInitializedAsync()
     {
         _houseId = await IdService.GetHouseId();
-        await JsRuntime.InvokeVoidAsync("alert", "Rooms:\nhId = " + _houseId.ToString());
         _rooms = await Http.GetFromJsonAsync<IList<Room>>("houses/" + _houseId + "/rooms");
     }
     private async void AddRoom()
@@ -69,8 +68,6 @@
     private async void SetRoomId(int roomId)
     {
         await IdService.SetRoomId(roomId);
-        _roomId = await IdService.GetRoomId();
-        await JsRuntime.InvokeVoidAsync("alert", "Rooms:\nrId = " + _roomId.ToString());
         NavManager.NavigateTo("Devices");
     }
 }

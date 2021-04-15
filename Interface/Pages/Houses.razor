@@ -39,7 +39,6 @@
     // private string _token;
     private IList<House> _houses;
     private string _newHouseName;
-    private int _houseId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,7 +64,7 @@
     }
     private async void DeleteHouse(int id)
     {
-        await Http.DeleteAsync("houses/" + _houseId);
+        await Http.DeleteAsync("houses/" + id);
         _houses.Remove(_houses.SingleOrDefault(h => h.Id == id));
         StateHasChanged();
     }
@@ -73,8 +72,6 @@
     private async Task SetHouseId(int houseId)
     {
         await IdService.SetHouseId(houseId);
-        _houseId = await IdService.GetHouseId();
-        await JsRuntime.InvokeVoidAsync("alert", "Houses:\nhId = " + _houseId.ToString());
         NavManager.NavigateTo("Rooms");
     }
 
