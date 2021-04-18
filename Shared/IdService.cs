@@ -1,12 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Blazored.LocalStorage;
 
 namespace Shared
 {
     internal record IdRecord
     {
-        public int HouseId { get; init; }
-        public int RoomId { get; init; }
+        public Guid HouseId { get; init; }
+        public Guid RoomId { get; init; }
     }
 
     public class IdService
@@ -18,7 +19,7 @@ namespace Shared
             _localStorageService = localStorageService;
         }
 
-        public async Task SetHouseId(int houseId)
+        public async Task SetHouseId(Guid houseId)
         {
             var idRecord = await GetIdRecord();
             var newIdRecord = new IdRecord()
@@ -29,7 +30,7 @@ namespace Shared
             await _localStorageService.SetItemAsync("idRecord", newIdRecord);
         }
 
-        public async Task SetRoomId(int roomId)
+        public async Task SetRoomId(Guid roomId)
         {
             var idRecord = await GetIdRecord();
             var newIdRecord = new IdRecord()
@@ -40,12 +41,12 @@ namespace Shared
             await _localStorageService.SetItemAsync("idRecord", newIdRecord);
         }
 
-        public async Task<int> GetHouseId()
+        public async Task<Guid> GetHouseId()
         {
             return (await GetIdRecord()).HouseId;
         }
 
-        public async Task<int> GetRoomId()
+        public async Task<Guid> GetRoomId()
         {
             return (await GetIdRecord()).RoomId;
         }

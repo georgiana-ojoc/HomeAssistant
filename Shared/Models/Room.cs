@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 #nullable disable
 
 namespace Shared.Models
 {
-    public class Room
+    public class Room : BaseModel
     {
         public Room()
         {
@@ -13,8 +14,7 @@ namespace Shared.Models
             Thermostats = new HashSet<Thermostat>();
         }
 
-        public int Id { get; set; }
-        public int HouseId { get; set; }
+        public Guid HouseId { get; set; }
         public string Name { get; set; }
 
         [System.Text.Json.Serialization.JsonIgnore]

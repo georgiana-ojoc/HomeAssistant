@@ -6,6 +6,13 @@
 @inject NavigationManager NavManager
 @attribute [Authorize]
 
+<div class="input-group">
+    <input class="form-control" placeholder="Room name" @bind="_newRoomName" aria-describedby="add-room-addon"
+           style="margin: 1rem"/>
+    <div class="input-group-append">
+        <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom" style="margin: 1rem"> Add room </span>
+    </div>
+</div>
 <div class="row">
     @if (!(_rooms is null))
     {
@@ -23,17 +30,11 @@
         }
     }
 </div>
-<div class="input-group">
-    <input class="form-control" placeholder="Room name" @bind="_newRoomName" aria-describedby="add-room-addon"/>
-    <div class="input-group-append">
-        <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom"> Add room </span>
-    </div>
-</div>
 
 @code {
     private IList<Room> _rooms;
     private string _newRoomName;
-    private int _houseId;
+    private Guid _houseId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,14 +59,14 @@
         StateHasChanged();
     }
 
-    private async void DeleteRoom(int id)
+    private async void DeleteRoom(Guid id)
     {
         await Http.DeleteAsync($"houses/{_houseId}/rooms/{id}");
         _rooms.Remove(_rooms.SingleOrDefault(room => room.Id == id));
         StateHasChanged();
     }
 
-    private async void SetRoomId(int roomId)
+    private async void SetRoomId(Guid roomId)
     {
         await IdService.SetRoomId(roomId);
         NavManager.NavigateTo("Devices");

@@ -6,6 +6,13 @@
 @inject NavigationManager NavManager
 @attribute [Authorize]
 
+<div class="input-group">
+    <input class="form-control" placeholder="House name" @bind="_newHouseName" aria-describedby="add-house-addon"
+           style="margin: 1rem"/>
+    <div class="input-group-append">
+        <button class="btn btn-info" id="add-house-addon" @onclick="AddHouse" style="margin: 1rem"> Add house </button>
+    </div>
+</div>
 <div class="row">
     @if (!(_houses is null))
     {
@@ -22,12 +29,6 @@
             </div>
         }
     }
-</div>
-<div class="input-group">
-    <input class="form-control" placeholder="House name" @bind="_newHouseName" aria-describedby="add-house-addon"/>
-    <div class="input-group-append">
-        <button class="btn btn-info" id="add-house-addon" @onclick="AddHouse"> Add house </button>
-    </div>
 </div>
 
 @code {
@@ -57,14 +58,14 @@
         StateHasChanged();
     }
 
-    private async void DeleteHouse(int id)
+    private async void DeleteHouse(Guid id)
     {
         await Http.DeleteAsync($"houses/{id}");
         _houses.Remove(_houses.SingleOrDefault(house => house.Id == id));
         StateHasChanged();
     }
 
-    private async Task SetHouseId(int id)
+    private async Task SetHouseId(Guid id)
     {
         await IdService.SetHouseId(id);
         NavManager.NavigateTo("Rooms");

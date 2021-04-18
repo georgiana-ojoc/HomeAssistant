@@ -26,7 +26,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LightBulb>>> GetAsync(int house_id, int room_id)
+        public async Task<ActionResult<IEnumerable<LightBulb>>> GetAsync(Guid house_id, Guid room_id)
         {
             IEnumerable<LightBulb> lightBulbs = await _mediator.Send(new LightBulbsQuery(_identity.Email,
                 house_id, room_id));
@@ -39,7 +39,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<LightBulb>> GetAsync(int house_id, int room_id, int id)
+        public async Task<ActionResult<LightBulb>> GetAsync(Guid house_id, Guid room_id, Guid id)
         {
             LightBulb lightBulb = await _mediator.Send(new LightBulbByIdQuery(_identity.Email, house_id,
                 room_id, id));
@@ -52,7 +52,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<LightBulb>> PostAsync(int house_id, int room_id, [FromBody] LightBulb lightBulb)
+        public async Task<ActionResult<LightBulb>> PostAsync(Guid house_id, Guid room_id,
+            [FromBody] LightBulb lightBulb)
         {
             try
             {
@@ -73,7 +74,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(int house_id, int room_id, int id)
+        public async Task<ActionResult> DeleteAsync(Guid house_id, Guid room_id, Guid id)
         {
             try
             {

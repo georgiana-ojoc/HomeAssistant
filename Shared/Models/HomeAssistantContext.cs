@@ -48,7 +48,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "houses_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Email)
                     .IsRequired()
@@ -72,7 +74,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "rooms_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.HouseId).HasColumnName("house_id");
 
@@ -98,7 +102,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "light_bulb_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Color).HasColumnName("color");
 
@@ -130,7 +136,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "doors_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Locked).HasColumnName("locked");
 
@@ -160,7 +168,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "thermostats_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasDefaultValue(false).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -192,7 +202,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "schedules_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Frequency).HasColumnName("frequency");
 
@@ -220,7 +232,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "light_bulb_commands_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.Color).HasColumnName("color");
 
@@ -253,7 +267,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "door_commands_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.DoorId).HasColumnName("door_id");
 
@@ -284,7 +300,9 @@ namespace Shared.Models
                 entity.HasIndex(e => e.Id, "thermostat_commands_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.ScheduleId).HasColumnName("schedule_id");
 

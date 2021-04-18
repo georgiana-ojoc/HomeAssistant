@@ -1,3 +1,4 @@
+using System;
 using MediatR;
 
 namespace API.Queries.Room
@@ -5,10 +6,10 @@ namespace API.Queries.Room
     public class RoomByIdQuery : IRequest<Shared.Models.Room>
     {
         public string Email { get; set; }
-        public int HouseId { get; set; }
-        public int Id { get; set; }
+        public Guid HouseId { get; set; }
+        public Guid Id { get; set; }
 
-        public RoomByIdQuery(string email, int houseId, int id)
+        public RoomByIdQuery(string email, Guid houseId, Guid id)
         {
             Email = email;
             HouseId = houseId;

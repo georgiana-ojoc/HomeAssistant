@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
@@ -16,7 +17,7 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Door>> GetDoorsAsync(string email, int houseId, int roomId)
+        public async Task<IEnumerable<Door>> GetDoorsAsync(string email, Guid houseId, Guid roomId)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -35,7 +36,7 @@ namespace API.Repositories
             return await _context.Doors.Where(door => door.RoomId == room.Id).ToListAsync();
         }
 
-        public async Task<Door> GetDoorByIdAsync(string email, int houseId, int roomId, int id)
+        public async Task<Door> GetDoorByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -55,7 +56,7 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
-        public async Task<Door> CreateDoorAsync(string email, int houseId, int roomId, Door door)
+        public async Task<Door> CreateDoorAsync(string email, Guid houseId, Guid roomId, Door door)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -77,7 +78,7 @@ namespace API.Repositories
             return newDoor;
         }
 
-        public async Task<Door> DeleteDoorAsync(string email, int houseId, int roomId, int id)
+        public async Task<Door> DeleteDoorAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);

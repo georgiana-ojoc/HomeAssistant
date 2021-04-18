@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 #nullable disable
 
 namespace Shared.Models
 {
-    public class Door
+    public class Door : BaseModel
     {
         public Door()
         {
             DoorCommands = new HashSet<DoorCommand>();
         }
 
-        public int Id { get; set; }
-        public int RoomId { get; set; }
+        public Guid RoomId { get; set; }
         public string Name { get; set; }
         public bool? Status { get; set; }
         public bool? Locked { get; set; }

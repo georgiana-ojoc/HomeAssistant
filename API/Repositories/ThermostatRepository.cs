@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
@@ -16,7 +17,7 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Thermostat>> GetThermostatsAsync(string email, int houseId, int roomId)
+        public async Task<IEnumerable<Thermostat>> GetThermostatsAsync(string email, Guid houseId, Guid roomId)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -35,7 +36,7 @@ namespace API.Repositories
             return await _context.Thermostats.Where(thermostat => thermostat.RoomId == room.Id).ToListAsync();
         }
 
-        public async Task<Thermostat> GetThermostatByIdAsync(string email, int houseId, int roomId, int id)
+        public async Task<Thermostat> GetThermostatByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -55,7 +56,7 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
-        public async Task<Thermostat> CreateThermostatAsync(string email, int houseId, int roomId,
+        public async Task<Thermostat> CreateThermostatAsync(string email, Guid houseId, Guid roomId,
             Thermostat thermostat)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
@@ -78,7 +79,7 @@ namespace API.Repositories
             return newThermostat;
         }
 
-        public async Task<Thermostat> DeleteThermostatAsync(string email, int houseId, int roomId, int id)
+        public async Task<Thermostat> DeleteThermostatAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);

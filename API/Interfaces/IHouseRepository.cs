@@ -8,8 +8,8 @@ namespace API.Interfaces
     public interface IHouseRepository : IDisposable
     {
         Task<IEnumerable<House>> GetHousesAsync(string email);
-        Task<House> GetHouseByIdAsync(string email, int id);
+        Task<House> GetHouseByIdAsync(string email, Guid id);
         Task<House> CreateHouseAsync(string email, House house);
-        Task<House> DeleteHouseAsync(string email, int id);
+        Task<House> DeleteHouseAsync(string email, Guid id);
     }
 }

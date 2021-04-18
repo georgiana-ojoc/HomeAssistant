@@ -26,7 +26,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Thermostat>>> GetAsync(int house_id, int room_id)
+        public async Task<ActionResult<IEnumerable<Thermostat>>> GetAsync(Guid house_id, Guid room_id)
         {
             IEnumerable<Thermostat> thermostats = await _mediator.Send(new ThermostatsQuery(_identity.Email,
                 house_id, room_id));
@@ -39,7 +39,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Thermostat>> GetAsync(int house_id, int room_id, int id)
+        public async Task<ActionResult<Thermostat>> GetAsync(Guid house_id, Guid room_id, Guid id)
         {
             Thermostat thermostat = await _mediator.Send(new ThermostatByIdQuery(_identity.Email, house_id,
                 room_id, id));
@@ -52,7 +52,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Thermostat>> PostAsync(int house_id, int room_id,
+        public async Task<ActionResult<Thermostat>> PostAsync(Guid house_id, Guid room_id,
             [FromBody] Thermostat thermostat)
         {
             try
@@ -74,7 +74,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(int house_id, int room_id, int id)
+        public async Task<ActionResult> DeleteAsync(Guid house_id, Guid room_id, Guid id)
         {
             try
             {

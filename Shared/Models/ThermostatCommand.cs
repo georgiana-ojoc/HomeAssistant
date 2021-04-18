@@ -1,12 +1,13 @@
-﻿#nullable disable
+﻿using System;
+
+#nullable disable
 
 namespace Shared.Models
 {
-    public class ThermostatCommand
+    public class ThermostatCommand : BaseModel
     {
-        public int Id { get; set; }
-        public int ThermostatId { get; set; }
-        public int ScheduleId { get; set; }
+        public Guid ThermostatId { get; set; }
+        public Guid ScheduleId { get; set; }
         public decimal Temperature { get; set; }
 
         public Thermostat Thermostat { get; set; }

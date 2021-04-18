@@ -7,9 +7,9 @@ namespace API.Interfaces
 {
     public interface ILightBulbRepository : IDisposable
     {
-        Task<IEnumerable<LightBulb>> GetLightBulbsAsync(string email, int houseId, int roomId);
-        Task<LightBulb> GetLightBulbByIdAsync(string email, int houseId, int roomId, int id);
-        Task<LightBulb> CreateLightBulbAsync(string email, int houseId, int roomId, LightBulb lightBulb);
-        Task<LightBulb> DeleteLightBulbAsync(string email, int houseId, int roomId, int id);
+        Task<IEnumerable<LightBulb>> GetLightBulbsAsync(string email, Guid houseId, Guid roomId);
+        Task<LightBulb> GetLightBulbByIdAsync(string email, Guid houseId, Guid roomId, Guid id);
+        Task<LightBulb> CreateLightBulbAsync(string email, Guid houseId, Guid roomId, LightBulb lightBulb);
+        Task<LightBulb> DeleteLightBulbAsync(string email, Guid houseId, Guid roomId, Guid id);
     }
 }

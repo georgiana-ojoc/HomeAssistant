@@ -1,12 +1,13 @@
-﻿#nullable disable
+﻿using System;
+
+#nullable disable
 
 namespace Shared.Models
 {
-    public class LightBulbCommand
+    public class LightBulbCommand : BaseModel
     {
-        public int Id { get; set; }
-        public int LightBulbId { get; set; }
-        public int ScheduleId { get; set; }
+        public Guid LightBulbId { get; set; }
+        public Guid ScheduleId { get; set; }
         public int Color { get; set; }
         public byte Intensity { get; set; }
 

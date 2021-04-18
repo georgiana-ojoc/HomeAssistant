@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Shared.Models
 {
-    public class Schedule
+    public class Schedule : BaseModel
     {
         public Schedule()
         {
@@ -14,7 +14,6 @@ namespace Shared.Models
             ThermostatCommands = new HashSet<ThermostatCommand>();
         }
 
-        public int Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
         public TimeSpan Time { get; set; }

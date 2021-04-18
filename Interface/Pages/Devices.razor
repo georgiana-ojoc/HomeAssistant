@@ -7,6 +7,15 @@
 
 <div class="row">
     <div class="col">
+        <div class="input-group">
+            <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulbName"
+                   aria-describedby="add-light-bulb-addon" style="margin: 1rem"/>
+            <div class="input-group-append">
+                <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb" style="margin: 1rem">
+                    Add light bulb
+                </span>
+            </div>
+        </div>
         <ul class="list-group list-group-vertical">
             @if (!(_lightBulbs is null))
             {
@@ -32,15 +41,15 @@
                 }
             }
         </ul>
-        <div class="input-group">
-            <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulbName"
-                   aria-describedby="add-light-bulb-addon"/>
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb"> Add light bulb </span>
-            </div>
-        </div>
     </div>
     <div class="col">
+        <div class="input-group">
+            <input class="form-control" placeholder="Door name" @bind="_newDoorName" aria-describedby="add-door-addon"
+                   style="margin: 1rem"/>
+            <div class="input-group-append">
+                <span class="btn btn-info" id="add-door-addon" @onclick="AddDoor" style="margin: 1rem"> Add door </span>
+            </div>
+        </div>
         <ul class="list-group list-group-vertical">
             @if (!(_doors is null))
             {
@@ -63,14 +72,17 @@
                 }
             }
         </ul>
-        <div class="input-group">
-            <input class="form-control" placeholder="Door name" @bind="_newDoorName" aria-describedby="add-door-addon"/>
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-door-addon" @onclick="AddDoor"> Add door </span>
-            </div>
-        </div>
     </div>
     <div class="col">
+        <div class="input-group">
+            <input class="form-control" placeholder="Thermostat name" @bind="_newThermostatName"
+                   aria-describedby="add-thermostat-addon" style="margin: 1rem"/>
+            <div class="input-group-append">
+                <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat" style="margin: 1rem">
+                    Add thermostat
+                </span>
+            </div>
+        </div>
         <ul class="list-group list-group-vertical">
             @if (!(_thermostats is null))
             {
@@ -94,13 +106,6 @@
                 }
             }
         </ul>
-        <div class="input-group">
-            <input class="form-control" placeholder="Thermostat name" @bind="_newThermostatName"
-                   aria-describedby="add-thermostat-addon"/>
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat"> Add thermostat </span>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -111,8 +116,8 @@
     private string _newLightBulbName;
     private string _newDoorName;
     private string _newThermostatName;
-    private int _houseId;
-    private int _roomId;
+    private Guid _houseId;
+    private Guid _roomId;
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,7 +148,7 @@
         StateHasChanged();
     }
 
-    private async void DeleteLightBulb(int id)
+    private async void DeleteLightBulb(Guid id)
     {
         await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{id}");
         _lightBulbs.Remove(_lightBulbs.SingleOrDefault(lightBulb => lightBulb.Id == id));
@@ -168,7 +173,7 @@
         StateHasChanged();
     }
 
-    private async void DeleteDoor(int id)
+    private async void DeleteDoor(Guid id)
     {
         await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
         _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
@@ -193,7 +198,7 @@
         StateHasChanged();
     }
 
-    private async void DeleteThermostat(int id)
+    private async void DeleteThermostat(Guid id)
     {
         await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
         _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));

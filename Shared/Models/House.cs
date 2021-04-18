@@ -4,14 +4,13 @@
 
 namespace Shared.Models
 {
-    public class House
+    public class House : BaseModel
     {
         public House()
         {
             Rooms = new HashSet<Room>();
         }
 
-        public int Id { get; set; }
         public string Email { get; set; }
         public string Name { get; set; }
 

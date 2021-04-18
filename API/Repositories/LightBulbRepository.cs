@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
@@ -16,7 +17,7 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<LightBulb>> GetLightBulbsAsync(string email, int houseId, int roomId)
+        public async Task<IEnumerable<LightBulb>> GetLightBulbsAsync(string email, Guid houseId, Guid roomId)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -35,7 +36,7 @@ namespace API.Repositories
             return await _context.LightBulbs.Where(lightBulb => lightBulb.RoomId == room.Id).ToListAsync();
         }
 
-        public async Task<LightBulb> GetLightBulbByIdAsync(string email, int houseId, int roomId, int id)
+        public async Task<LightBulb> GetLightBulbByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -55,7 +56,7 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(lightBulb => lightBulb.Id == id);
         }
 
-        public async Task<LightBulb> CreateLightBulbAsync(string email, int houseId, int roomId, LightBulb lightBulb)
+        public async Task<LightBulb> CreateLightBulbAsync(string email, Guid houseId, Guid roomId, LightBulb lightBulb)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -77,7 +78,7 @@ namespace API.Repositories
             return newLightBulb;
         }
 
-        public async Task<LightBulb> DeleteLightBulbAsync(string email, int houseId, int roomId, int id)
+        public async Task<LightBulb> DeleteLightBulbAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);

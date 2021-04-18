@@ -26,7 +26,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Door>>> GetAsync(int house_id, int room_id)
+        public async Task<ActionResult<IEnumerable<Door>>> GetAsync(Guid house_id, Guid room_id)
         {
             IEnumerable<Door> doors = await _mediator.Send(new DoorsQuery(_identity.Email, house_id, room_id));
             if (doors == null)
@@ -38,7 +38,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Door>> GetAsync(int house_id, int room_id, int id)
+        public async Task<ActionResult<Door>> GetAsync(Guid house_id, Guid room_id, Guid id)
         {
             Door door = await _mediator.Send(new DoorByIdQuery(_identity.Email, house_id, room_id, id));
             if (door == null)
@@ -50,7 +50,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Door>> PostAsync(int house_id, int room_id, [FromBody] Door door)
+        public async Task<ActionResult<Door>> PostAsync(Guid house_id, Guid room_id, [FromBody] Door door)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(int house_id, int room_id, int id)
+        public async Task<ActionResult> DeleteAsync(Guid house_id, Guid room_id, Guid id)
         {
             try
             {

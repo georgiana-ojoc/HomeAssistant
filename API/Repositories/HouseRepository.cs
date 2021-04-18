@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
@@ -21,7 +22,7 @@ namespace API.Repositories
             return await _context.Houses.Where(house => house.Email == email).ToListAsync();
         }
 
-        public async Task<House> GetHouseByIdAsync(string email, int id)
+        public async Task<House> GetHouseByIdAsync(string email, Guid id)
         {
             return await _context.Houses.Where(house => house.Email == email)
                 .FirstOrDefaultAsync(house => house.Id == id);
@@ -35,7 +36,7 @@ namespace API.Repositories
             return newHouse;
         }
 
-        public async Task<House> DeleteHouseAsync(string email, int id)
+        public async Task<House> DeleteHouseAsync(string email, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == id);

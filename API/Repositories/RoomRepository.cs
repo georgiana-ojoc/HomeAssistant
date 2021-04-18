@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Interfaces;
@@ -16,7 +17,7 @@ namespace API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Room>> GetRoomsAsync(string email, int houseId)
+        public async Task<IEnumerable<Room>> GetRoomsAsync(string email, Guid houseId)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -28,7 +29,7 @@ namespace API.Repositories
             return await _context.Rooms.Where(room => room.HouseId == house.Id).ToListAsync();
         }
 
-        public async Task<Room> GetRoomByIdAsync(string email, int houseId, int id)
+        public async Task<Room> GetRoomByIdAsync(string email, Guid houseId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -41,7 +42,7 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(room => room.Id == id);
         }
 
-        public async Task<Room> CreateRoomAsync(string email, int houseId, Room room)
+        public async Task<Room> CreateRoomAsync(string email, Guid houseId, Room room)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
@@ -56,7 +57,7 @@ namespace API.Repositories
             return newRoom;
         }
 
-        public async Task<Room> DeleteRoomAsync(string email, int houseId, int id)
+        public async Task<Room> DeleteRoomAsync(string email, Guid houseId, Guid id)
         {
             House house = await _context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);

@@ -38,7 +38,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<House>> GetAsync(int id)
+        public async Task<ActionResult<House>> GetAsync(Guid id)
         {
             House house = await _mediator.Send(new HouseByIdQuery(_identity.Email, id));
             if (house == null)
@@ -70,7 +70,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAsync(int id)
+        public async Task<ActionResult> DeleteAsync(Guid id)
         {
             try
             {
