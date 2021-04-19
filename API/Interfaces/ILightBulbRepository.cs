@@ -11,7 +11,7 @@ namespace API.Interfaces
         Task<LightBulb> GetLightBulbByIdAsync(string email, Guid houseId, Guid roomId, Guid id);
         Task<LightBulb> CreateLightBulbAsync(string email, Guid houseId, Guid roomId, LightBulb lightBulb);
         Task<LightBulb> DeleteLightBulbAsync(string email, Guid houseId, Guid roomId, Guid id);
-        
+
         Task<Boolean> SaveChangesAsync();
     }
 }

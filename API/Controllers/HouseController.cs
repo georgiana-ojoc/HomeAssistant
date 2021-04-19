@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using API.Commands.House;
 using API.Queries.House;
 using MediatR;
-using Microsoft.AspNet.JsonPatch;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using Shared.Models.Patch;
@@ -71,6 +71,26 @@ namespace API.Controllers
             }
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<House>> UpdateAsync(Guid id, [FromBody] JsonPatchDocument<HousePatch> patch)
+        {
+            try
+            {
+                House house = await _mediator.Send(new UpdateHouseCommand(_identity.Email, id, patch));
+                if (house == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return house;
+            }
+            catch (Exception exception)
+            {
+                Console.Write(exception.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
@@ -83,27 +103,6 @@ namespace API.Controllers
                 }
 
                 return new NoContentResult();
-            }
-            catch (Exception exception)
-            {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-        }
-        
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<House>> UpdateAsync(Guid id,[FromBody] JsonPatchDocument<HousePatch> patch)
-        {
-            try
-            {
-                House house = await _mediator.Send(new UpdateHouseCommand(_identity.Email, id, patch));
-                if (house == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                return house;
-
             }
             catch (Exception exception)
             {

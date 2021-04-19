@@ -1,6 +1,6 @@
 using System;
 using MediatR;
-using Microsoft.AspNet.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch;
 using Shared.Models.Patch;
 
 namespace API.Commands.Thermostat
@@ -11,10 +11,10 @@ namespace API.Commands.Thermostat
         public Guid HouseId { get; set; }
         public Guid RoomId { get; set; }
         public Guid Id { get; set; }
-        
+
         public JsonPatchDocument<ThermostatPatch> Patch { get; set; }
 
-        public UpdateThermostatCommand(string email, Guid houseId, Guid roomId, Guid id, 
+        public UpdateThermostatCommand(string email, Guid houseId, Guid roomId, Guid id,
             JsonPatchDocument<ThermostatPatch> patch)
         {
             Email = email;

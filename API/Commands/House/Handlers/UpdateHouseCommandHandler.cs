@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
@@ -8,7 +7,7 @@ using Shared.Models.Patch;
 
 namespace API.Commands.House.Handlers
 {
-    public class UpdateHouseCommandHandler: IRequestHandler<UpdateHouseCommand,Shared.Models.House>
+    public class UpdateHouseCommandHandler : IRequestHandler<UpdateHouseCommand, Shared.Models.House>
     {
         private readonly IHouseRepository _repository;
         private readonly IMapper _mapper;
@@ -29,13 +28,13 @@ namespace API.Commands.House.Handlers
 
             HousePatch houseToPatch = _mapper.Map<HousePatch>(house);
             request.Patch.ApplyTo(houseToPatch);
-
             _mapper.Map(houseToPatch, house);
-            
 
-            if (!await _repository.SaveChangesAsync()) {
+            if (!await _repository.SaveChangesAsync())
+            {
                 return null;
             }
+
             return house;
         }
     }

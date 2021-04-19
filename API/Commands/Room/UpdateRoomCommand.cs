@@ -1,11 +1,11 @@
 using System;
 using MediatR;
-using Microsoft.AspNet.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch;
 using Shared.Models.Patch;
 
 namespace API.Commands.Room
 {
-    public class UpdateRoomCommand: IRequest<Shared.Models.Room>
+    public class UpdateRoomCommand : IRequest<Shared.Models.Room>
     {
         public string Email { get; set; }
         public Guid HouseId { get; set; }

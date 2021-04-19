@@ -7,7 +7,7 @@ using Shared.Models.Patch;
 
 namespace API.Commands.LightBulb.Handlers
 {
-    public class UpdateLightBulbCommandHandler : IRequestHandler<UpdateLightBulbCommand,Shared.Models.LightBulb>
+    public class UpdateLightBulbCommandHandler : IRequestHandler<UpdateLightBulbCommand, Shared.Models.LightBulb>
     {
         private readonly ILightBulbRepository _repository;
         private readonly IMapper _mapper;
@@ -18,11 +18,11 @@ namespace API.Commands.LightBulb.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Shared.Models.LightBulb> Handle(UpdateLightBulbCommand request, 
+        public async Task<Shared.Models.LightBulb> Handle(UpdateLightBulbCommand request,
             CancellationToken cancellationToken)
         {
             Shared.Models.LightBulb lightBulb = await _repository.GetLightBulbByIdAsync(request.Email, request.HouseId,
-                request.RoomId,request.Id);
+                request.RoomId, request.Id);
             if (lightBulb == null)
             {
                 return null;
@@ -32,10 +32,11 @@ namespace API.Commands.LightBulb.Handlers
             request.Patch.ApplyTo(lightBulbToPatch);
             _mapper.Map(lightBulbToPatch, lightBulb);
             
-
-            if (!await _repository.SaveChangesAsync()) {
+            if (!await _repository.SaveChangesAsync())
+            {
                 return null;
             }
+
             return lightBulb;
         }
     }
