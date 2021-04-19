@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 #nullable disable
 
@@ -16,10 +17,10 @@ namespace Shared.Models
 
         public Guid HouseId { get; set; }
         public string Name { get; set; }
-
+        
+        [JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public House House { get; set; }
-
         public ICollection<LightBulb> LightBulbs { get; set; }
         public ICollection<Door> Doors { get; set; }
         public ICollection<Thermostat> Thermostats { get; set; }

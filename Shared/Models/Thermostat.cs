@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 #nullable disable
 
@@ -17,6 +18,7 @@ namespace Shared.Models
         public bool? Status { get; set; }
         public decimal? Temperature { get; set; }
 
+        [JsonIgnore]
         [System.Text.Json.Serialization.JsonIgnore]
         public Room Room { get; set; }
 

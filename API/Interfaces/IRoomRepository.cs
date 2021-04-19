@@ -11,5 +11,7 @@ namespace API.Interfaces
         Task<Room> GetRoomByIdAsync(string email, Guid houseId, Guid id);
         Task<Room> CreateRoomAsync(string email, Guid houseId, Room room);
         Task<Room> DeleteRoomAsync(string email, Guid houseId, Guid id);
+        
+        Task<Boolean> SaveChangesAsync();
     }
 }

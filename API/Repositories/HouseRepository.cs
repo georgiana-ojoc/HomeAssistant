@@ -49,5 +49,16 @@ namespace API.Repositories
             await _context.SaveChangesAsync();
             return house;
         }
+
+        public async Task<bool> SaveChangesAsync()
+        {
+            if (await _context.SaveChangesAsync()<0)
+            {
+                return false;
+
+            }
+
+            return true;
+        }
     }
 }

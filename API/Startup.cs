@@ -1,6 +1,7 @@
 using System.Reflection;
 using API.Interfaces;
 using API.Repositories;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -50,10 +51,20 @@ namespace API
                 return identity;
             });
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
+
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddSingleton<HomeAssistantContext>();
+            
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
 
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+            
+            
             services.AddScoped<IHouseRepository, HouseRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IDoorRepository, DoorRepository>();

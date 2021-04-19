@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using API.Commands.LightBulb;
 using API.Queries.LightBulb;
 using MediatR;
+using Microsoft.AspNet.JsonPatch;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
+using Shared.Models.Patch;
 
 namespace API.Controllers
 {
@@ -86,6 +88,28 @@ namespace API.Controllers
                 }
 
                 return new NoContentResult();
+            }
+            catch (Exception exception)
+            {
+                Console.Write(exception.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<LightBulb>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
+            [FromBody] JsonPatchDocument<LightBulbPatch> patch)
+        {
+            try
+            {
+                LightBulb lightBulb = await _mediator.Send(new UpdateLightBulbCommand(_identity.Email,
+                    house_id, room_id, id,patch));
+                if (lightBulb== null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return lightBulb;
+
             }
             catch (Exception exception)
             {

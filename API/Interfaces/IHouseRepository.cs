@@ -11,5 +11,7 @@ namespace API.Interfaces
         Task<House> GetHouseByIdAsync(string email, Guid id);
         Task<House> CreateHouseAsync(string email, House house);
         Task<House> DeleteHouseAsync(string email, Guid id);
+
+        Task<Boolean> SaveChangesAsync();
     }
 }

@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using API.Commands.Room;
 using API.Queries.Room;
 using MediatR;
+using Microsoft.AspNet.JsonPatch;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
+using Shared.Models.Patch;
 
 namespace API.Controllers
 {
@@ -50,7 +52,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Room>> Post(Guid house_id, [FromBody] Room room)
+        public async Task<ActionResult<Room>> PostAsync(Guid house_id, [FromBody] Room room)
         {
             try
             {
@@ -70,7 +72,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(Guid house_id, Guid id)
+        public async Task<ActionResult> DeleteAsync(Guid house_id, Guid id)
         {
             try
             {
@@ -88,5 +90,29 @@ namespace API.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
+        
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Room>> UpdateAsync(Guid house_id, Guid id,
+            [FromBody] JsonPatchDocument<RoomPatch> patch)
+        {
+            try
+            {
+                Room room = await _mediator.Send(new UpdateRoomCommand(_identity.Email, 
+                    house_id, id,patch));
+                if (room == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return room;
+            }
+            catch (Exception exception)
+            {
+                Console.Write(exception.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+        
+        
     }
 }

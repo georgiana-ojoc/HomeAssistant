@@ -11,5 +11,7 @@ namespace API.Interfaces
         Task<Thermostat> GetThermostatByIdAsync(string email, Guid houseId, Guid roomId, Guid id);
         Task<Thermostat> CreateThermostatAsync(string email, Guid houseId, Guid roomId, Thermostat thermostat);
         Task<Thermostat> DeleteThermostatAsync(string email, Guid houseId, Guid roomId, Guid id);
+        Task<Boolean> SaveChangesAsync();
+        
     }
 }

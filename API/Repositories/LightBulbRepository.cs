@@ -105,5 +105,15 @@ namespace API.Repositories
             await _context.SaveChangesAsync();
             return lightBulb;
         }
+        public async Task<bool> SaveChangesAsync()
+        {
+            if (await _context.SaveChangesAsync()<0)
+            {
+                return false;
+
+            }
+
+            return true;
+        }
     }
 }

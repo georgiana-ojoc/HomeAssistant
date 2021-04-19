@@ -77,5 +77,15 @@ namespace API.Repositories
             await _context.SaveChangesAsync();
             return room;
         }
+        public async Task<bool> SaveChangesAsync()
+        {
+            if (await _context.SaveChangesAsync()<0)
+            {
+                return false;
+
+            }
+
+            return true;
+        }
     }
 }
