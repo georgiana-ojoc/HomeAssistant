@@ -5,7 +5,7 @@ using Shared.Models;
 
 namespace API.Interfaces
 {
-    public interface ILightBulbRepository : IDisposable
+    public interface ILightBulbRepository
     {
         Task<IEnumerable<LightBulb>> GetLightBulbsAsync(string email, Guid houseId, Guid roomId);
         Task<LightBulb> GetLightBulbByIdAsync(string email, Guid houseId, Guid roomId, Guid id);

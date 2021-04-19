@@ -5,7 +5,7 @@ using Shared.Models;
 
 namespace API.Interfaces
 {
-    public interface IHouseRepository : IDisposable
+    public interface IHouseRepository
     {
         Task<IEnumerable<House>> GetHousesAsync(string email);
         Task<House> GetHouseByIdAsync(string email, Guid id);

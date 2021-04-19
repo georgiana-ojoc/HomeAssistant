@@ -49,10 +49,5 @@ namespace API.Repositories
             await _context.SaveChangesAsync();
             return house;
         }
-
-        public void Dispose()
-        {
-            // TODO 
-        }
     }
 }

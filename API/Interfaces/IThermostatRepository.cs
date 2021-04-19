@@ -5,7 +5,7 @@ using Shared.Models;
 
 namespace API.Interfaces
 {
-    public interface IThermostatRepository : IDisposable
+    public interface IThermostatRepository
     {
         Task<IEnumerable<Thermostat>> GetThermostatsAsync(string email, Guid houseId, Guid roomId);
         Task<Thermostat> GetThermostatByIdAsync(string email, Guid houseId, Guid roomId, Guid id);

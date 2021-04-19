@@ -77,10 +77,5 @@ namespace API.Repositories
             await _context.SaveChangesAsync();
             return room;
         }
-
-        public void Dispose()
-        {
-            // TODO 
-        }
     }
 }

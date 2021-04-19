@@ -10,7 +10,7 @@ namespace API.Repositories
 {
     public class ThermostatRepository : IThermostatRepository
     {
-        private readonly HomeAssistantContext _context;
+        private  HomeAssistantContext _context;
 
         public ThermostatRepository(HomeAssistantContext context)
         {
@@ -105,11 +105,6 @@ namespace API.Repositories
             _context.Thermostats.Remove(thermostat);
             await _context.SaveChangesAsync();
             return thermostat;
-        }
-
-        public void Dispose()
-        {
-            // TODO 
         }
     }
 }

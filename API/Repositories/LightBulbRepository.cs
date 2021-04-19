@@ -105,10 +105,5 @@ namespace API.Repositories
             await _context.SaveChangesAsync();
             return lightBulb;
         }
-
-        public void Dispose()
-        {
-            // TODO 
-        }
     }
 }
