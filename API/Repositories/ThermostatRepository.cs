@@ -10,7 +10,7 @@ namespace API.Repositories
 {
     public class ThermostatRepository : IThermostatRepository
     {
-        private  HomeAssistantContext _context;
+        private readonly HomeAssistantContext _context;
 
         public ThermostatRepository(HomeAssistantContext context)
         {
