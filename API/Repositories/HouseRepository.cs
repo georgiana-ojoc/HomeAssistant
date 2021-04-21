@@ -47,9 +47,9 @@ namespace API.Repositories
                 await _context.SaveChangesAsync();
                 return newHouse;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                throw new Exception($"{nameof(house)} could not be saved:{ex.Message} ");
+                throw new Exception($"{nameof(house)} could not be saved: {exception.Message}.");
             }
         }
 
