@@ -30,39 +30,68 @@
                 <li class="list-group-item">
                     <div class="card">
                         <h3 class="card-header" style="text-align: center"> @_lightBulbs[lightBulbIndex].Name </h3>
-                        <div class="card-body" style="margin: auto">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-dark"> Off </button>
-                                <input type="range" class="form-range" min="0" max="100" id="LB" style="margin: 0.25rem">
-                                <button type="button" class="btn btn-light"> Max </button>
+                        <div class="card-body" style="margin: auto; text-align: center">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
+                                <button type="button" class="btn btn-dark"
+                                        @onclick="@(() => SetOffIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    Off
+                                </button>
+                                <div class="col" style="text-align: center">
+                                    <div class="row">
+                                        <input type="range" class="form-range"  min="0" max="255" id="LB"
+                                               @bind="_lightBulbs[lightBulbIndex].Intensity"
+                                               style="margin: 0.25rem; appearance: none; outline-style: double">
+                                    </div>
+                                    <div class="row">
+                                        <button type="button" class="btn btn-info"
+                                                style="margin: 0.25rem; height: 2.5rem; width: 100%"
+                                                @onclick="@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id))">
+                                            Press To Set
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-light"
+                                        @onclick="@(() => SetMaxIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    Max
+                                </button>
                             </div>
                             <p/>
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-dark"> Off </button>
+                                <button type="button" class="btn btn-dark"
+                                        @onclick="@(() => SetOffColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    Off
+                                </button>
                                 <div class="col" style="text-align: center">
                                     <div class="row">
                                         <input type="range" class="form-range" min="0" max="255" id="Red"
-                                               style="margin: 0.25rem; appearance: none; background: red; outline-style: double; "
+                                               style="margin: 0.25rem; appearance: none; background: #FF0000; outline-style: double; "
                                                @bind="_lightColors[lightBulbIndex].RedValue">
                                     </div>
                                     <div class="row">
                                         <input type="range" class="form-range" min="0" max="255" id="Green"
-                                               style="margin: 0.25rem; appearance: none; background: green; outline-style: double; "
+                                               style="margin: 0.25rem; appearance: none; background: #00FF00; outline-style: double; "
                                                @bind="_lightColors[lightBulbIndex].GreenValue">
                                     </div>
                                     <div class="row">
                                         <input type="range" class="form-range" min="0" max="255" id="Blue"
-                                               style="margin: 0.25rem;appearance: none; background: blue; outline-style: double;"
+                                               style="margin: 0.25rem; appearance: none; background: #0000FF; outline-style: double;"
                                                @bind="_lightColors[lightBulbIndex].BlueValue">
                                     </div>
-                                    <div class="row">
+                                    <div class="row" style="text-align: center">
+                                        <label style="margin: 0.25rem">Press the colored button to set.</label>
+                                    </div>
+                                    <div class="row" style="text-align: center">
                                         <button type="button" class="btn btn-info"
-                                                style="background-color: @_lightColors[lightBulbIndex].Color; height: 2.5rem; width: 100%"
+                                                style="background-color: @_lightColors[lightBulbIndex].Color; margin: 0.25rem; height: 2.5rem; width: 100%"
                                                 @onclick="@(() => PatchLightBulbColor(_lightBulbs[lightBulbIndex].Id))">
                                         </button>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-light"> White Light </button>
+                                <button type="button" class="btn btn-light"
+                                        @onclick="@(() => SetWhiteColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    White Light
+                                </button>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align: center">
@@ -118,6 +147,76 @@
             patchBody);
     }
 
+    private async void SetWhiteColorAndPatchLightBulb(Guid id)
+    {
+
+        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
+        int index = _lightBulbs.IndexOf(lightBulb);
+        _lightColors[index] = new LightColor("#FFFFFF");
+        lightBulb.Color = _lightColors[index].GetIntColor();
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+            patchBody);
+    }
+
+    private async void SetOffColorAndPatchLightBulb(Guid id)
+    {
+
+        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
+        int index = _lightBulbs.IndexOf(lightBulb);
+        _lightColors[index] = new LightColor("#000000");
+        lightBulb.Color = _lightColors[index].GetIntColor();
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+            patchBody);
+    }
+
+    private async void PatchLightBulbIntensity(Guid id)
+    {
+        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity ?? 0));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+            patchBody);
+    }
+
+    private async void SetOffIntensityAndPatchLightBulb(Guid id)
+    {
+        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
+        lightBulb.Intensity = Byte.MinValue;
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+            patchBody);
+    }
+
+    private async void SetMaxIntensityAndPatchLightBulb(Guid id)
+    {
+        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
+        lightBulb.Intensity = Byte.MaxValue;
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+            patchBody);
+    }
+
     private static Dictionary<string, string> GenerateLightBulbColorPatch(int color)
     {
         return new()
@@ -130,6 +229,22 @@
             },
             {
                 "value", color.ToString()
+            }
+        };
+    }
+
+    private static Dictionary<string, string> GenerateLightBulbIntensityPatch(byte intensity)
+    {
+        return new()
+        {
+            {
+                "op", "replace"
+            },
+            {
+                "path", "intensity"
+            },
+            {
+                "value", intensity.ToString()
             }
         };
     }
@@ -151,9 +266,25 @@
                     <div class="card">
                         <h3 class="card-header" style="text-align: center"> @door.Name </h3>
                         <div class="card-body" style="margin: auto">
+                            <div style="text-align: center; margin: 0.25rem">
+                                @if (@door.Locked != null)
+                                {
+                                    <label>Status: </label>
+                                    if (@door.Locked.Value)
+                                    {
+                                        <span class="oi oi-lock-locked" aria-hidden="true" style="margin: 0.25rem"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="oi oi-lock-unlocked" aria-hidden="true" style="margin: 0.25rem"></span>
+                                    }
+                                }
+                            </div>
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-danger"> Lock </button>
-                                <button type="button" class="btn btn-success"> Unlock </button>
+                                <button type="button" class="btn btn-danger"
+                                        @onclick="@(() => SetTrueLockedAndPatchDoor(door.Id))"> Lock </button>
+                                <button type="button" class="btn btn-success"
+                                        @onclick="@(() => SetFalseLockedAndPatchDoor(door.Id))"> Unlock </button>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align: center">
@@ -192,6 +323,48 @@
         _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
         StateHasChanged();
     }
+
+    private async void SetTrueLockedAndPatchDoor(Guid id)
+    {
+        Door door = _doors.First(l => l.Id == id);
+        door.Locked = true;
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
+            patchBody);
+    }
+
+    private async void SetFalseLockedAndPatchDoor(Guid id)
+    {
+        Door door = _doors.First(l => l.Id == id);
+        door.Locked = false;
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
+            patchBody);
+    }
+
+    private static Dictionary<string, string> GenerateDoorLockedPatch(bool locked)
+    {
+        return new()
+        {
+            {
+                "op", "replace"
+            },
+            {
+                "path", "locked"
+            },
+            {
+                "value", locked.ToString()
+            }
+        };
+    }
 }
 
 <div class="col">
@@ -214,7 +387,8 @@
                         <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
                         <div class="card-body" style="margin: auto">
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <input type="range" class="form-range" min="7" max="30" id="temp">
+                                <input type="range" class="form-range" min="7" max="30" 
+                                       @bind="thermostat.Temperature" id="temp">
                             </div>
                         </div>
                         <div class="card-footer" style="text-align: center">
@@ -255,6 +429,22 @@
         _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
         StateHasChanged();
     }
+
+    private static Dictionary<string, string> GenerateThermostatTemperaturePatch(decimal temperature)
+    {
+        return new()
+        {
+            {
+                "op", "replace"
+            },
+            {
+                "path", "temperature"
+            },
+            {
+                "value", temperature.ToString(CultureInfo.InvariantCulture)
+            }
+        };
+    }
 }
 
 </div>
@@ -278,28 +468,75 @@
             $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
         if (responseLightBulbs != null)
             _lightBulbs = new List<LightBulb>(responseLightBulbs);
-            foreach (var lightBulb in _lightBulbs)
+        foreach (var lightBulb in _lightBulbs)
+        {
+            if (lightBulb.Color != null)
             {
-                if (lightBulb.Color != null)
-                {
-                    _lightColors.Add(new LightColor(lightBulb.Color.Value));
-                }
-                else
-                {
-                    _lightColors.Add(new LightColor());
-                    lightBulb.Color = new LightColor().GetIntColor();
-                    IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-                    patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-                    string serializedContent = JsonConvert.SerializeObject(patchList);
-                    HttpContent patchBody = new StringContent(serializedContent,
-                        Encoding.UTF8, "application/json");
-                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                        patchBody);
-                }
+                _lightColors.Add(new LightColor(lightBulb.Color.Value));
             }
-        _doors = await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
-        _thermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
+            else
+            {
+                _lightColors.Add(new LightColor());
+                lightBulb.Color = new LightColor().GetIntColor();
+                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+                patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
+                string serializedContent = JsonConvert.SerializeObject(patchList);
+                HttpContent patchBody = new StringContent(serializedContent,
+                    Encoding.UTF8, "application/json");
+                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+                    patchBody);
+            }
+            if (lightBulb.Intensity == null)
+            {
+                lightBulb.Intensity = 0;
+                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+                patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
+                string serializedContent = JsonConvert.SerializeObject(patchList);
+                HttpContent patchBody = new StringContent(serializedContent,
+                    Encoding.UTF8, "application/json");
+                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+                    patchBody);
+            }
+        }
+        IList<Door> responseDoors = await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
+        if (responseDoors != null)
+        {
+            _doors = new List<Door>(responseDoors);
+        }
+        foreach (var door in _doors)
+        {
+            if (door.Locked == null)
+            {
+                door.Locked = false;
+                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+                patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
+                string serializedContent = JsonConvert.SerializeObject(patchList);
+                HttpContent patchBody = new StringContent(serializedContent,
+                    Encoding.UTF8, "application/json");
+                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
+                    patchBody);
+            }
+        }
+        IList<Thermostat> responseThermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
             $"houses/{_houseId}/rooms/{_roomId}/thermostats");
+        if (responseThermostats != null)
+        {
+            _thermostats = new List<Thermostat>(responseThermostats);
+        }
+        foreach (var thermostat in _thermostats)
+        {
+            if (thermostat.Temperature == null)
+            {
+                thermostat.Temperature = 7;
+                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+                patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature.Value));
+                string serializedContent = JsonConvert.SerializeObject(patchList);
+                HttpContent patchBody = new StringContent(serializedContent,
+                    Encoding.UTF8, "application/json");
+                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
+                    patchBody);
+            }
+        }
     }
 
     private class LightColor
@@ -316,14 +553,12 @@
             GreenValue = greenValue;
             BlueValue = blueValue;
         }
-
         public LightColor(string hexColor = "#000000")
         {
             RedValue = int.Parse(hexColor.Substring(1, 2), NumberStyles.HexNumber);
             GreenValue = int.Parse(hexColor.Substring(3, 2), NumberStyles.HexNumber);
             BlueValue = int.Parse(hexColor.Substring(5, 2), NumberStyles.HexNumber);
         }
-
         public LightColor(int intColor = 0)
         {
             string hexColor = intColor.ToString("X6");
@@ -337,7 +572,6 @@
         private int _blueValue;
 
         public string Color { get; set; }
-
         public int RedValue
         {
             get => _redValue;
@@ -348,7 +582,6 @@
             }
 
         }
-
         public int GreenValue
         {
             get => _greenValue;
@@ -358,7 +591,6 @@
                 OnValueChanged();
             }
         }
-
         public int BlueValue
         {
             get => _blueValue;
@@ -368,7 +600,7 @@
                 OnValueChanged();
             }
         }
-
+        
         private void OnValueChanged()
         {
 
@@ -383,6 +615,4 @@
             return int.Parse(hexColor, NumberStyles.HexNumber);
         }
     }
-
-    private LightColor _lightColor = new LightColor(16711808);//FF0080
 }
