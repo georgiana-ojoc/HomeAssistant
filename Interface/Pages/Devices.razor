@@ -3,9 +3,9 @@
 @using Newtonsoft.Json
 @using System.Globalization
 @using System.Text
-@inject global::Shared.IdService _idService
-@inject HttpClient _http
-@inject IJSRuntime _jsRuntime
+@inject global::Shared.IdService IdService
+@inject HttpClient Http
+@inject IJSRuntime JsRuntime
 @attribute [Authorize]
 
 <div class="row">
@@ -111,7 +111,7 @@
         {
             return;
         }
-        HttpResponseMessage response = await _http.PostAsJsonAsync(
+        HttpResponseMessage response = await Http.PostAsJsonAsync(
             $"houses/{_houseId}/rooms/{_roomId}/light_bulbs", new LightBulb()
             {
                 Name = _newLightBulbName
@@ -303,7 +303,7 @@
         {
             return;
         }
-        HttpResponseMessage response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/doors",
+        HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/doors",
             new Door()
             {
                 Name = _newDoorName
@@ -317,7 +317,7 @@
 
     private async void DeleteDoor(Guid id)
     {
-        await _http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
+        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
         _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
         StateHasChanged();
     }
@@ -409,7 +409,7 @@
         {
             return;
         }
-        HttpResponseMessage response = await _http.PostAsJsonAsync(
+        HttpResponseMessage response = await Http.PostAsJsonAsync(
             $"houses/{_houseId}/rooms/{_roomId}/thermostats", new Thermostat()
             {
                 Name = _newThermostatName
@@ -423,7 +423,7 @@
 
     private async void DeleteThermostat(Guid id)
     {
-        await _http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
+        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
         _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
         StateHasChanged();
     }
@@ -451,7 +451,7 @@
     private IList<LightBulb> _lightBulbs;
     private IList<Door> _doors;
     private IList<Thermostat> _thermostats;
-    private readonly IDictionary<LightBulb, LightColor> _lightColors = new Dictionary<LightBulb, LightColor>();
+    private readonly IList<LightColor> _lightColors = new List<LightColor>();
     private string _newLightBulbName;
     private string _newDoorName;
     private string _newThermostatName;
@@ -460,9 +460,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _houseId = await _idService.GetHouseId();
-        _roomId = await _idService.GetRoomId();
-        IList<LightBulb> lightBulbs = await _http.GetFromJsonAsync<IList<LightBulb>>(
+        _houseId = await IdService.GetHouseId();
+        _roomId = await IdService.GetRoomId();
+        IList<LightBulb> responseLightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
             $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
         if (responseLightBulbs != null)
             _lightBulbs = new List<LightBulb>(responseLightBulbs);
@@ -545,12 +545,14 @@
             GreenValue = 0;
             BlueValue = 0;
         }
+/*
         public LightColor(int redValue = 0, int greenValue = 0, int blueValue = 0)
         {
             RedValue = redValue;
             GreenValue = greenValue;
             BlueValue = blueValue;
         }
+*/
         public LightColor(string hexColor = "#000000")
         {
             RedValue = int.Parse(hexColor.Substring(1, 2), NumberStyles.HexNumber);
@@ -565,15 +567,15 @@
             BlueValue = int.Parse(hexColor.Substring(4, 2), NumberStyles.HexNumber);
         }
 
-        private int _redValue;
-        private int _greenValue;
-        private int _blueValue;
+        private readonly int _redValue;
+        private readonly int _greenValue;
+        private readonly int _blueValue;
 
-        public string Color { get; set; }
+        public string Color { get; private set; }
         public int RedValue
         {
             get => _redValue;
-            set
+            private init
             {
                 _redValue = value;
                 OnValueChanged();
@@ -582,7 +584,7 @@
         public int GreenValue
         {
             get => _greenValue;
-            set
+            private init
             {
                 _greenValue = value;
                 OnValueChanged();
@@ -591,7 +593,7 @@
         public int BlueValue
         {
             get => _blueValue;
-            set
+            private init
             {
                 _blueValue = value;
                 OnValueChanged();
