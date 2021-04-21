@@ -1,48 +1,48 @@
-using System;
 using Shared.Models;
+using System.Linq;
 
 namespace Tests
 {
-    public class DatabaseInitializer
+    public static class DatabaseInitializer
     {
         public static void Initialize(HomeAssistantContext context)
         {
-            // TODO if(context not empty do something)
-
-            Seed(context);
+            if (!context.Houses.Any())
+            {
+                SeedHouses(context);
+            }
         }
 
-        private static void Seed(HomeAssistantContext context)
+        private static void SeedHouses(HomeAssistantContext context)
         {
-            var houses = new[]
-            {
-                new House
+            House[] houses = {
+                new()
                 {
                     Email = "gica@popescu.com",
                     Name = "test"
                 },
-                new House
+                new()
                 {
                     Email = "gicaaa@popescu.com",
                     Name = "test2"
                 },
-                new House
+                new()
                 {
                     Email = "gicadsadas@popescu.com",
                     Name = "test3"
                 },
-                new House
+                new()
                 {
                     Email = "marica@dodescu.com",
                     Name = "test0"
                 },
-                new House
+                new()
                 {
                     Email = "mardsaica@dodescu.com",
                     Name = "test-1"
                 },
             };
-            context.AddRange(houses);
+            context.Houses.AddRange(houses);
             context.SaveChanges();
         }
     }

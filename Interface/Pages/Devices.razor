@@ -1,23 +1,20 @@
 ﻿@page "/Devices"
 @using global::Shared.Models
+@using Newtonsoft.Json
 @using System.Globalization
 @using System.Text
-@using Newtonsoft.Json
-@using System.Collections
-@using System.Net
-@using Microsoft.EntityFrameworkCore.Infrastructure
-@inject global::Shared.IdService IdService
-@inject HttpClient Http
-@inject IJSRuntime JsRuntime
+@inject global::Shared.IdService _idService
+@inject HttpClient _http
+@inject IJSRuntime _jsRuntime
 @attribute [Authorize]
 
 <div class="row">
 <div class="col">
     <div class="input-group">
-        <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulbName"
+        <input class="form-control" style="margin: 0.5rem" placeholder="Light bulb name" @bind="_newLightBulbName"
                aria-describedby="add-light-bulb-addon"/>
         <div class="input-group-append">
-            <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb">
+            <span class="btn btn-info" id="add-light-bulb-addon" style="margin: 0.5rem" @onclick="AddLightBulb">
                 Add light bulb
             </span>
         </div>
@@ -114,7 +111,7 @@
         {
             return;
         }
-        HttpResponseMessage response = await Http.PostAsJsonAsync(
+        HttpResponseMessage response = await _http.PostAsJsonAsync(
             $"houses/{_houseId}/rooms/{_roomId}/light_bulbs", new LightBulb()
             {
                 Name = _newLightBulbName
@@ -252,9 +249,10 @@
 
 <div class="col">
     <div class="input-group">
-        <input class="form-control" placeholder="Door name" @bind="_newDoorName" aria-describedby="add-door-addon"/>
+        <input class="form-control" style="margin: 0.5rem" placeholder="Door name" @bind="_newDoorName"
+               ria-describedby="add-door-addon"/>
         <div class="input-group-append">
-            <span class="btn btn-info" id="add-door-addon" @onclick="AddDoor"> Add door </span>
+            <span class="btn btn-info" id="add-door-addon" style="margin: 0.5rem" @onclick="AddDoor"> Add door </span>
         </div>
     </div>
     <ul class="list-group list-group-vertical">
@@ -305,7 +303,7 @@
         {
             return;
         }
-        HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/doors",
+        HttpResponseMessage response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/doors",
             new Door()
             {
                 Name = _newDoorName
@@ -319,7 +317,7 @@
 
     private async void DeleteDoor(Guid id)
     {
-        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
+        await _http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
         _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
         StateHasChanged();
     }
@@ -369,10 +367,10 @@
 
 <div class="col">
     <div class="input-group">
-        <input class="form-control" placeholder="Thermostat name" @bind="_newThermostatName"
+        <input class="form-control" style="margin: 0.5rem" placeholder="Thermostat name" @bind="_newThermostatName"
                aria-describedby="add-thermostat-addon"/>
         <div class="input-group-append">
-            <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat">
+            <span class="btn btn-info" style="margin: 0.5rem" id="add-thermostat-addon" @onclick="AddThermostat">
                 Add thermostat
             </span>
         </div>
@@ -411,7 +409,7 @@
         {
             return;
         }
-        HttpResponseMessage response = await Http.PostAsJsonAsync(
+        HttpResponseMessage response = await _http.PostAsJsonAsync(
             $"houses/{_houseId}/rooms/{_roomId}/thermostats", new Thermostat()
             {
                 Name = _newThermostatName
@@ -425,7 +423,7 @@
 
     private async void DeleteThermostat(Guid id)
     {
-        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
+        await _http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
         _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
         StateHasChanged();
     }
@@ -453,7 +451,7 @@
     private IList<LightBulb> _lightBulbs;
     private IList<Door> _doors;
     private IList<Thermostat> _thermostats;
-    private IList<LightColor> _lightColors = new List<LightColor>();
+    private readonly IDictionary<LightBulb, LightColor> _lightColors = new Dictionary<LightBulb, LightColor>();
     private string _newLightBulbName;
     private string _newDoorName;
     private string _newThermostatName;
@@ -462,9 +460,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _houseId = await IdService.GetHouseId();
-        _roomId = await IdService.GetRoomId();
-        IList<LightBulb> responseLightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
+        _houseId = await _idService.GetHouseId();
+        _roomId = await _idService.GetRoomId();
+        IList<LightBulb> lightBulbs = await _http.GetFromJsonAsync<IList<LightBulb>>(
             $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
         if (responseLightBulbs != null)
             _lightBulbs = new List<LightBulb>(responseLightBulbs);
@@ -580,7 +578,6 @@
                 _redValue = value;
                 OnValueChanged();
             }
-
         }
         public int GreenValue
         {
@@ -603,7 +600,6 @@
         
         private void OnValueChanged()
         {
-
             Color = "#" + _redValue.ToString("X2")
                     + _greenValue.ToString("X2")
                     + _blueValue.ToString("X2");
