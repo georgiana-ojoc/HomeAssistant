@@ -52,13 +52,7 @@ namespace API.Repositories
 
         public async Task<bool> SaveChangesAsync()
         {
-            if (await _context.SaveChangesAsync()<0)
-            {
-                return false;
-
-            }
-
-            return true;
+            return await _context.SaveChangesAsync() >= 0;
         }
     }
 }

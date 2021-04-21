@@ -55,16 +55,15 @@ namespace API
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddSingleton<HomeAssistantContext>();
-            
-            var mapperConfig = new MapperConfiguration(mc =>
+
+            MapperConfiguration mapperConfiguration = new MapperConfiguration(mapperConfigurationExpression =>
             {
-                mc.AddProfile(new MappingProfile());
+                mapperConfigurationExpression.AddProfile(new MappingProfile());
             });
 
-            IMapper mapper = mapperConfig.CreateMapper();
+            IMapper mapper = mapperConfiguration.CreateMapper();
             services.AddSingleton(mapper);
-            
-            
+
             services.AddScoped<IHouseRepository, HouseRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IDoorRepository, DoorRepository>();

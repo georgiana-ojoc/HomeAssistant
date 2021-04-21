@@ -7,7 +7,7 @@ using Shared.Models.Patch;
 
 namespace API.Commands.Thermostat.Handlers
 {
-    public class UpdateThermostatCommandHandler : IRequestHandler<UpdateThermostatCommand,Shared.Models.Thermostat>
+    public class UpdateThermostatCommandHandler : IRequestHandler<UpdateThermostatCommand, Shared.Models.Thermostat>
     {
         private readonly IThermostatRepository _repository;
         private readonly IMapper _mapper;
@@ -18,12 +18,12 @@ namespace API.Commands.Thermostat.Handlers
             _mapper = mapper;
         }
 
-        public async Task<Shared.Models.Thermostat> Handle(UpdateThermostatCommand request, 
+        public async Task<Shared.Models.Thermostat> Handle(UpdateThermostatCommand request,
             CancellationToken cancellationToken)
         {
-            Shared.Models.Thermostat thermostat = await _repository.GetThermostatByIdAsync(request.Email, request.HouseId,
-                request.RoomId,request.Id);
-            if (thermostat== null)
+            Shared.Models.Thermostat thermostat = await _repository.GetThermostatByIdAsync(request.Email,
+                request.HouseId, request.RoomId, request.Id);
+            if (thermostat == null)
             {
                 return null;
             }
@@ -31,11 +31,12 @@ namespace API.Commands.Thermostat.Handlers
             ThermostatPatch thermostatToPatch = _mapper.Map<ThermostatPatch>(thermostat);
             request.Patch.ApplyTo(thermostatToPatch);
             _mapper.Map(thermostatToPatch, thermostat);
-            
 
-            if (!await _repository.SaveChangesAsync()) {
+            if (!await _repository.SaveChangesAsync())
+            {
                 return null;
             }
+
             return thermostat;
         }
     }

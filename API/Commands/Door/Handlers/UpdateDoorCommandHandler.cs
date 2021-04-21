@@ -7,7 +7,7 @@ using Shared.Models.Patch;
 
 namespace API.Commands.Door.Handlers
 {
-    public class UpdateDoorCommandHandler: IRequestHandler<UpdateDoorCommand,Shared.Models.Door>
+    public class UpdateDoorCommandHandler : IRequestHandler<UpdateDoorCommand, Shared.Models.Door>
     {
         private readonly IDoorRepository _repository;
         private readonly IMapper _mapper;
@@ -21,7 +21,7 @@ namespace API.Commands.Door.Handlers
         public async Task<Shared.Models.Door> Handle(UpdateDoorCommand request, CancellationToken cancellationToken)
         {
             Shared.Models.Door door = await _repository.GetDoorByIdAsync(request.Email, request.HouseId,
-                request.RoomId,request.Id);
+                request.RoomId, request.Id);
             if (door == null)
             {
                 return null;
@@ -30,13 +30,13 @@ namespace API.Commands.Door.Handlers
             DoorPatch doorToPatch = _mapper.Map<DoorPatch>(door);
             request.Patch.ApplyTo(doorToPatch);
             _mapper.Map(doorToPatch, door);
-            
 
-            if (!await _repository.SaveChangesAsync()) {
+            if (!await _repository.SaveChangesAsync())
+            {
                 return null;
             }
+
             return door;
-            
         }
     }
 }

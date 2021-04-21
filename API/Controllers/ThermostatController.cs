@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using API.Commands.Thermostat;
 using API.Queries.Thermostat;
 using MediatR;
-using Microsoft.AspNet.JsonPatch;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using Shared.Models.Patch;
@@ -75,6 +75,28 @@ namespace API.Controllers
             }
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Thermostat>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
+            [FromBody] JsonPatchDocument<ThermostatPatch> patch)
+        {
+            try
+            {
+                Thermostat thermostat = await _mediator.Send(new UpdateThermostatCommand(_identity.Email,
+                    house_id, room_id, id, patch));
+                if (thermostat == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return thermostat;
+            }
+            catch (Exception exception)
+            {
+                Console.Write(exception.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid house_id, Guid room_id, Guid id)
         {
@@ -88,29 +110,6 @@ namespace API.Controllers
                 }
 
                 return new NoContentResult();
-            }
-            catch (Exception exception)
-            {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-        }
-        
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<Thermostat>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
-            [FromBody] JsonPatchDocument<ThermostatPatch> patch)
-        {
-            try
-            {
-                Thermostat thermostat = await _mediator.Send(new UpdateThermostatCommand(_identity.Email,
-                    house_id, room_id, id,patch));
-                if (thermostat== null)
-                {
-                    return new NotFoundResult();
-                }
-
-                return thermostat;
-
             }
             catch (Exception exception)
             {

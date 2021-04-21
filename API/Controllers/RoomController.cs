@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using API.Commands.Room;
 using API.Queries.Room;
 using MediatR;
-using Microsoft.AspNet.JsonPatch;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using Shared.Models.Patch;
@@ -71,6 +71,27 @@ namespace API.Controllers
             }
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Room>> UpdateAsync(Guid house_id, Guid id,
+            [FromBody] JsonPatchDocument<RoomPatch> patch)
+        {
+            try
+            {
+                Room room = await _mediator.Send(new UpdateRoomCommand(_identity.Email, house_id, id, patch));
+                if (room == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return room;
+            }
+            catch (Exception exception)
+            {
+                Console.Write(exception.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid house_id, Guid id)
         {
@@ -90,29 +111,5 @@ namespace API.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
-        
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<Room>> UpdateAsync(Guid house_id, Guid id,
-            [FromBody] JsonPatchDocument<RoomPatch> patch)
-        {
-            try
-            {
-                Room room = await _mediator.Send(new UpdateRoomCommand(_identity.Email, 
-                    house_id, id,patch));
-                if (room == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                return room;
-            }
-            catch (Exception exception)
-            {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-        }
-        
-        
     }
 }

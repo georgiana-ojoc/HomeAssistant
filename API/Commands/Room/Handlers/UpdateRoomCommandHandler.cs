@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using API.Commands.House;
 using API.Interfaces;
 using AutoMapper;
 using MediatR;
@@ -8,7 +7,7 @@ using Shared.Models.Patch;
 
 namespace API.Commands.Room.Handlers
 {
-    public class UpdateRoomCommandHandler: IRequestHandler<UpdateRoomCommand,Shared.Models.Room>
+    public class UpdateRoomCommandHandler : IRequestHandler<UpdateRoomCommand, Shared.Models.Room>
     {
         private readonly IRoomRepository _repository;
         private readonly IMapper _mapper;
@@ -18,11 +17,10 @@ namespace API.Commands.Room.Handlers
             _repository = repository;
             _mapper = mapper;
         }
-        
+
         public async Task<Shared.Models.Room> Handle(UpdateRoomCommand request, CancellationToken cancellationToken)
         {
             Shared.Models.Room room = await _repository.GetRoomByIdAsync(request.Email, request.HouseId, request.Id);
-            
             if (room == null)
             {
                 return null;
@@ -30,13 +28,13 @@ namespace API.Commands.Room.Handlers
 
             RoomPatch roomToPatch = _mapper.Map<RoomPatch>(room);
             request.Patch.ApplyTo(roomToPatch);
-
             _mapper.Map(roomToPatch, room);
-            
 
-            if (!await _repository.SaveChangesAsync()) {
+            if (!await _repository.SaveChangesAsync())
+            {
                 return null;
             }
+
             return room;
         }
     }

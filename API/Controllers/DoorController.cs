@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using API.Commands.Door;
 using API.Queries.Door;
 using MediatR;
-using Microsoft.AspNet.JsonPatch;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using Shared.Models.Patch;
@@ -71,6 +71,28 @@ namespace API.Controllers
             }
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Door>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
+            [FromBody] JsonPatchDocument<DoorPatch> patch)
+        {
+            try
+            {
+                Door door = await _mediator.Send(new UpdateDoorCommand(_identity.Email, house_id, room_id, id,
+                    patch));
+                if (door == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return door;
+            }
+            catch (Exception exception)
+            {
+                Console.Write(exception.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(Guid house_id, Guid room_id, Guid id)
         {
@@ -90,31 +112,5 @@ namespace API.Controllers
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
-        
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<Door>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
-            [FromBody] JsonPatchDocument<DoorPatch> patch)
-        {
-            try
-            {
-                Door door = await _mediator.Send(new UpdateDoorCommand(_identity.Email, 
-                    house_id, room_id, id,patch));
-                if (door == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                return door;
-
-            }
-            catch (Exception exception)
-            {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-            }
-        }
-        
-        
-        
     }
 }
