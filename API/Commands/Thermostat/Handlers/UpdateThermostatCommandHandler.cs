@@ -31,7 +31,7 @@ namespace API.Commands.Thermostat.Handlers
             ThermostatPatch thermostatToPatch = _mapper.Map<ThermostatPatch>(thermostat);
             request.Patch.ApplyTo(thermostatToPatch);
             _mapper.Map(thermostatToPatch, thermostat);
-            
+
             if (!await _repository.SaveChangesAsync())
             {
                 return null;

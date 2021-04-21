@@ -30,7 +30,7 @@ namespace API.Commands.Door.Handlers
             DoorPatch doorToPatch = _mapper.Map<DoorPatch>(door);
             request.Patch.ApplyTo(doorToPatch);
             _mapper.Map(doorToPatch, door);
-            
+
             if (!await _repository.SaveChangesAsync())
             {
                 return null;

@@ -77,7 +77,7 @@ namespace API.Controllers
         {
             try
             {
-                Door door = await _mediator.Send(new UpdateDoorCommand(_identity.Email, house_id, room_id, id, 
+                Door door = await _mediator.Send(new UpdateDoorCommand(_identity.Email, house_id, room_id, id,
                     patch));
                 if (door == null)
                 {
