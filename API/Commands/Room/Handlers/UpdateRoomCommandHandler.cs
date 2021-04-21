@@ -29,7 +29,7 @@ namespace API.Commands.Room.Handlers
             RoomPatch roomToPatch = _mapper.Map<RoomPatch>(room);
             request.Patch.ApplyTo(roomToPatch);
             _mapper.Map(roomToPatch, room);
-            
+
             if (!await _repository.SaveChangesAsync())
             {
                 return null;

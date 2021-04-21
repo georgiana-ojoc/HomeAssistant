@@ -31,7 +31,7 @@ namespace API.Commands.LightBulb.Handlers
             LightBulbPatch lightBulbToPatch = _mapper.Map<LightBulbPatch>(lightBulb);
             request.Patch.ApplyTo(lightBulbToPatch);
             _mapper.Map(lightBulbToPatch, lightBulb);
-            
+
             if (!await _repository.SaveChangesAsync())
             {
                 return null;

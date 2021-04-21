@@ -1,135 +1,84 @@
 ﻿@page "/Devices"
 @using global::Shared.Models
+@using System.Globalization
+@using System.Text
+@using Newtonsoft.Json
+@using System.Collections
+@using System.Net
+@using Microsoft.EntityFrameworkCore.Infrastructure
 @inject global::Shared.IdService IdService
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
 @attribute [Authorize]
 
 <div class="row">
-    <div class="col">
-        <div class="input-group">
-            <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulbName"
-                   aria-describedby="add-light-bulb-addon" style="margin: 1rem"/>
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb" style="margin: 1rem">
-                    Add light bulb
-                </span>
-            </div>
+<div class="col">
+    <div class="input-group">
+        <input class="form-control" placeholder="Light bulb name" @bind="_newLightBulbName"
+               aria-describedby="add-light-bulb-addon"/>
+        <div class="input-group-append">
+            <span class="btn btn-info" id="add-light-bulb-addon" @onclick="AddLightBulb">
+                Add light bulb
+            </span>
         </div>
-        <ul class="list-group list-group-vertical">
-            @if (!(_lightBulbs is null))
+    </div>
+    <ul class="list-group list-group-vertical">
+        @if (!(_lightBulbs is null))
+        {
+            @foreach (int lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
             {
-                @foreach (var lightBulb in _lightBulbs)
-                {
-                    <li class="list-group-item">
-                        <div class="card">
-                            <h3 class="card-header" style="text-align: center"> @lightBulb.Name </h3>
-                            <div class="card-body" style="margin: auto">
-                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" class="btn btn-danger"> Off </button>
-                                    <input type="range" class="form-range" min="2" max="8" id="LB" style="margin: 0.25rem">
-                                    <button type="button" class="btn btn-success"> On </button>
-                                </div>
+                <li class="list-group-item">
+                    <div class="card">
+                        <h3 class="card-header" style="text-align: center"> @_lightBulbs[lightBulbIndex].Name </h3>
+                        <div class="card-body" style="margin: auto">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="button" class="btn btn-dark"> Off </button>
+                                <input type="range" class="form-range" min="0" max="100" id="LB" style="margin: 0.25rem">
+                                <button type="button" class="btn btn-light"> Max </button>
                             </div>
-                            <div class="card-footer" style="text-align: center">
-                                <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(lightBulb.Id))">
-                                    Delete
-                                </button>
+                            <p/>
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="button" class="btn btn-dark"> Off </button>
+                                <div class="col" style="text-align: center">
+                                    <div class="row">
+                                        <input type="range" class="form-range" min="0" max="255" id="Red"
+                                               style="margin: 0.25rem; appearance: none; background: red; outline-style: double; "
+                                               @bind="_lightColors[lightBulbIndex].RedValue">
+                                    </div>
+                                    <div class="row">
+                                        <input type="range" class="form-range" min="0" max="255" id="Green"
+                                               style="margin: 0.25rem; appearance: none; background: green; outline-style: double; "
+                                               @bind="_lightColors[lightBulbIndex].GreenValue">
+                                    </div>
+                                    <div class="row">
+                                        <input type="range" class="form-range" min="0" max="255" id="Blue"
+                                               style="margin: 0.25rem;appearance: none; background: blue; outline-style: double;"
+                                               @bind="_lightColors[lightBulbIndex].BlueValue">
+                                    </div>
+                                    <div class="row">
+                                        <button type="button" class="btn btn-info"
+                                                style="background-color: @_lightColors[lightBulbIndex].Color; height: 2.5rem; width: 100%"
+                                                @onclick="@(() => PatchLightBulbColor(_lightBulbs[lightBulbIndex].Id))">
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-light"> White Light </button>
                             </div>
                         </div>
-                    </li>
-                }
-            }
-        </ul>
-    </div>
-    <div class="col">
-        <div class="input-group">
-            <input class="form-control" placeholder="Door name" @bind="_newDoorName" aria-describedby="add-door-addon"
-                   style="margin: 1rem"/>
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-door-addon" @onclick="AddDoor" style="margin: 1rem"> Add door </span>
-            </div>
-        </div>
-        <ul class="list-group list-group-vertical">
-            @if (!(_doors is null))
-            {
-                @foreach (var door in _doors)
-                {
-                    <li class="list-group-item">
-                        <div class="card">
-                            <h3 class="card-header" style="text-align: center"> @door.Name </h3>
-                            <div class="card-body" style="margin: auto">
-                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" class="btn btn-danger"> Lock </button>
-                                    <button type="button" class="btn btn-success"> Unlock </button>
-                                </div>
-                            </div>
-                            <div class="card-footer" style="text-align: center">
-                                <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))"> Delete </button>
-                            </div>
+                        <div class="card-footer" style="text-align: center">
+                            <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                Delete
+                            </button>
                         </div>
-                    </li>
-                }
+                    </div>
+                </li>
             }
-        </ul>
-    </div>
-    <div class="col">
-        <div class="input-group">
-            <input class="form-control" placeholder="Thermostat name" @bind="_newThermostatName"
-                   aria-describedby="add-thermostat-addon" style="margin: 1rem"/>
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat" style="margin: 1rem">
-                    Add thermostat
-                </span>
-            </div>
-        </div>
-        <ul class="list-group list-group-vertical">
-            @if (!(_thermostats is null))
-            {
-                @foreach (var thermostat in _thermostats)
-                {
-                    <li class="list-group-item">
-                        <div class="card">
-                            <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
-                            <div class="card-body" style="margin: auto">
-                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                    <input type="range" class="form-range" min="7" max="30" id="temp">
-                                </div>
-                            </div>
-                            <div class="card-footer" style="text-align: center">
-                                <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </li>
-                }
-            }
-        </ul>
-    </div>
+        }
+    </ul>
 </div>
 
-@code {
-    private IList<LightBulb> _lightBulbs;
-    private IList<Door> _doors;
-    private IList<Thermostat> _thermostats;
-    private string _newLightBulbName;
-    private string _newDoorName;
-    private string _newThermostatName;
-    private Guid _houseId;
-    private Guid _roomId;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _houseId = await IdService.GetHouseId();
-        _roomId = await IdService.GetRoomId();
-        _lightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
-            $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
-        _doors = await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
-        _thermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
-            $"houses/{_houseId}/rooms/{_roomId}/thermostats");
-    }
-
+@code
+{
     private async void AddLightBulb()
     {
         if (string.IsNullOrWhiteSpace(_newLightBulbName))
@@ -155,6 +104,70 @@
         StateHasChanged();
     }
 
+    private async void PatchLightBulbColor(Guid id)
+    {
+        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
+        int index = _lightBulbs.IndexOf(lightBulb);
+        lightBulb.Color = _lightColors[index].GetIntColor();
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+            patchBody);
+    }
+
+    private static Dictionary<string, string> GenerateLightBulbColorPatch(int color)
+    {
+        return new()
+        {
+            {
+                "op", "replace"
+            },
+            {
+                "path", "color"
+            },
+            {
+                "value", color.ToString()
+            }
+        };
+    }
+}
+
+<div class="col">
+    <div class="input-group">
+        <input class="form-control" placeholder="Door name" @bind="_newDoorName" aria-describedby="add-door-addon"/>
+        <div class="input-group-append">
+            <span class="btn btn-info" id="add-door-addon" @onclick="AddDoor"> Add door </span>
+        </div>
+    </div>
+    <ul class="list-group list-group-vertical">
+        @if (!(_doors is null))
+        {
+            @foreach (var door in _doors)
+            {
+                <li class="list-group-item">
+                    <div class="card">
+                        <h3 class="card-header" style="text-align: center"> @door.Name </h3>
+                        <div class="card-body" style="margin: auto">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <button type="button" class="btn btn-danger"> Lock </button>
+                                <button type="button" class="btn btn-success"> Unlock </button>
+                            </div>
+                        </div>
+                        <div class="card-footer" style="text-align: center">
+                            <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))"> Delete </button>
+                        </div>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+@code
+{
     private async void AddDoor()
     {
         if (string.IsNullOrWhiteSpace(_newDoorName))
@@ -179,7 +192,45 @@
         _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
         StateHasChanged();
     }
+}
 
+<div class="col">
+    <div class="input-group">
+        <input class="form-control" placeholder="Thermostat name" @bind="_newThermostatName"
+               aria-describedby="add-thermostat-addon"/>
+        <div class="input-group-append">
+            <span class="btn btn-info" id="add-thermostat-addon" @onclick="AddThermostat">
+                Add thermostat
+            </span>
+        </div>
+    </div>
+    <ul class="list-group list-group-vertical">
+        @if (!(_thermostats is null))
+        {
+            @foreach (var thermostat in _thermostats)
+            {
+                <li class="list-group-item">
+                    <div class="card">
+                        <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
+                        <div class="card-body" style="margin: auto">
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                <input type="range" class="form-range" min="7" max="30" id="temp">
+                            </div>
+                        </div>
+                        <div class="card-footer" style="text-align: center">
+                            <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+@code
+{
     private async void AddThermostat()
     {
         if (string.IsNullOrWhiteSpace(_newThermostatName))
@@ -204,5 +255,134 @@
         _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
         StateHasChanged();
     }
+}
 
+</div>
+
+@code {
+    private IList<LightBulb> _lightBulbs;
+    private IList<Door> _doors;
+    private IList<Thermostat> _thermostats;
+    private IList<LightColor> _lightColors = new List<LightColor>();
+    private string _newLightBulbName;
+    private string _newDoorName;
+    private string _newThermostatName;
+    private static Guid _houseId;
+    private static Guid _roomId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _houseId = await IdService.GetHouseId();
+        _roomId = await IdService.GetRoomId();
+        IList<LightBulb> responseLightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
+            $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
+        if (responseLightBulbs != null)
+            _lightBulbs = new List<LightBulb>(responseLightBulbs);
+            foreach (var lightBulb in _lightBulbs)
+            {
+                if (lightBulb.Color != null)
+                {
+                    _lightColors.Add(new LightColor(lightBulb.Color.Value));
+                }
+                else
+                {
+                    _lightColors.Add(new LightColor());
+                    lightBulb.Color = new LightColor().GetIntColor();
+                    IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+                    patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
+                    string serializedContent = JsonConvert.SerializeObject(patchList);
+                    HttpContent patchBody = new StringContent(serializedContent,
+                        Encoding.UTF8, "application/json");
+                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
+                        patchBody);
+                }
+            }
+        _doors = await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
+        _thermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
+            $"houses/{_houseId}/rooms/{_roomId}/thermostats");
+    }
+
+    private class LightColor
+    {
+        public LightColor()
+        {
+            RedValue = 0;
+            GreenValue = 0;
+            BlueValue = 0;
+        }
+        public LightColor(int redValue = 0, int greenValue = 0, int blueValue = 0)
+        {
+            RedValue = redValue;
+            GreenValue = greenValue;
+            BlueValue = blueValue;
+        }
+
+        public LightColor(string hexColor = "#000000")
+        {
+            RedValue = int.Parse(hexColor.Substring(1, 2), NumberStyles.HexNumber);
+            GreenValue = int.Parse(hexColor.Substring(3, 2), NumberStyles.HexNumber);
+            BlueValue = int.Parse(hexColor.Substring(5, 2), NumberStyles.HexNumber);
+        }
+
+        public LightColor(int intColor = 0)
+        {
+            string hexColor = intColor.ToString("X6");
+            RedValue = int.Parse(hexColor.Substring(0, 2), NumberStyles.HexNumber);
+            GreenValue = int.Parse(hexColor.Substring(2, 2), NumberStyles.HexNumber);
+            BlueValue = int.Parse(hexColor.Substring(4, 2), NumberStyles.HexNumber);
+        }
+
+        private int _redValue;
+        private int _greenValue;
+        private int _blueValue;
+
+        public string Color { get; set; }
+
+        public int RedValue
+        {
+            get => _redValue;
+            set
+            {
+                _redValue = value;
+                OnValueChanged();
+            }
+
+        }
+
+        public int GreenValue
+        {
+            get => _greenValue;
+            set
+            {
+                _greenValue = value;
+                OnValueChanged();
+            }
+        }
+
+        public int BlueValue
+        {
+            get => _blueValue;
+            set
+            {
+                _blueValue = value;
+                OnValueChanged();
+            }
+        }
+
+        private void OnValueChanged()
+        {
+
+            Color = "#" + _redValue.ToString("X2")
+                    + _greenValue.ToString("X2")
+                    + _blueValue.ToString("X2");
+        }
+
+        public int GetIntColor()
+        {
+            string hexColor = Color.Substring(1, 6);
+            return int.Parse(hexColor, NumberStyles.HexNumber);
+        }
+    }
+
+    private LightColor _lightColor = new LightColor(16711808);//FF0080
 }

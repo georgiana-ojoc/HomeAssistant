@@ -63,7 +63,7 @@ namespace API
 
             IMapper mapper = mapperConfiguration.CreateMapper();
             services.AddSingleton(mapper);
-            
+
             services.AddScoped<IHouseRepository, HouseRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IDoorRepository, DoorRepository>();
