@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace APITest
+namespace Tests
 {
     public class UnitTest
     {

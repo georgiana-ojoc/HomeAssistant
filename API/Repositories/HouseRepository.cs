@@ -30,10 +30,27 @@ namespace API.Repositories
 
         public async Task<House> CreateHouseAsync(string email, House house)
         {
-            house.Email = email;
-            House newHouse = (await _context.Houses.AddAsync(house)).Entity;
-            await _context.SaveChangesAsync();
-            return newHouse;
+            if (email == null)
+            {
+                throw new ArgumentNullException($"{nameof(CreateHouseAsync)} email must not be null");
+            }
+
+            if (house == null)
+            {
+                throw new ArgumentNullException($"{nameof(CreateHouseAsync)} house must not be null");
+            }
+
+            try
+            {
+                house.Email = email;
+                House newHouse = (await _context.Houses.AddAsync(house)).Entity;
+                await _context.SaveChangesAsync();
+                return newHouse;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{nameof(house)} could not be saved:{ex.Message} ");
+            }
         }
 
         public async Task<House> DeleteHouseAsync(string email, Guid id)
