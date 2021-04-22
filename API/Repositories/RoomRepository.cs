@@ -48,11 +48,7 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
-                throw new ArgumentNullException($"{nameof(CreateRoomAsync)} house must not be null");
-            }
-            if (room == null)
-            {
-                throw new ArgumentNullException($"{nameof(CreateRoomAsync)} room must not be null");
+                return null;
             }
 
             room.HouseId = house.Id;

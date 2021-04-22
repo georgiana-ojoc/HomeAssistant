@@ -62,14 +62,14 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
             {
-                throw new ArgumentNullException($"{nameof(CreateDoorAsync)} house must not be null");
+                return null;
             }
 
             Room room = await _context.Rooms.Where(r => r.HouseId == house.Id)
                 .FirstOrDefaultAsync(r => r.Id == roomId);
             if (room == null)
             {
-                throw new ArgumentNullException($"{nameof(CreateDoorAsync)} house must not be null");
+                return null;
             }
 
             door.RoomId = room.Id;

@@ -54,7 +54,7 @@ namespace API
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddSingleton<HomeAssistantContext>();
+            services.AddScoped<HomeAssistantContext>();
 
             MapperConfiguration mapperConfiguration = new MapperConfiguration(mapperConfigurationExpression =>
             {

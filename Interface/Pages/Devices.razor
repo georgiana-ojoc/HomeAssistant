@@ -28,33 +28,6 @@
                     <div class="card">
                         <h3 class="card-header" style="text-align: center"> @_lightBulbs[lightBulbIndex].Name </h3>
                         <div class="card-body" style="margin: auto; text-align: center">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
-                                <button type="button" class="btn btn-dark"
-                                        @onclick="@(() => SetOffIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                    Off
-                                </button>
-                                
-                                <div class="col" style="text-align: center">
-                                    <div class="row">
-                                        <input type="range" class="form-range" min="0" max="255" id="LB"
-                                               @bind="_lightBulbs[lightBulbIndex].Intensity"
-                                               style="margin: 0.25rem; appearance: none; outline-style: double">
-                                    </div>
-                                    <div class="row">
-                                        <button type="button" class="btn btn-info"
-                                                style="margin: 0.25rem; height: 2.5rem; width: 100%"
-                                                @onclick="@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id))">
-                                            Press To Set
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <button type="button" class="btn btn-light"
-                                        @onclick="@(() => SetMaxIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                    Max
-                                </button>
-                            </div>
-                            <p/>
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                 <button type="button" class="btn btn-dark"
                                         @onclick="@(() => SetOffColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
@@ -88,7 +61,33 @@
                                 </div>
                                 <button type="button" class="btn btn-light"
                                         @onclick="@(() => SetWhiteColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                    White Light
+                                    On
+                                </button>
+                            </div>
+                            <p/>
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
+                                <button type="button" class="btn btn-dark"
+                                        @onclick="@(() => SetOffIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    Min
+                                </button>
+
+                                <div class="col" style="text-align: center">
+                                    <div class="row">
+                                        <input type="range" class="form-range" min="0" max="255" id="LB"
+                                               @bind="_lightBulbs[lightBulbIndex].Intensity"
+                                               style="margin: 0.25rem; appearance: none; outline-style: double">
+                                    </div>
+                                    <div class="row">
+                                        <button type="button" class="btn btn-info"
+                                                style="margin: 0.25rem; height: 2.5rem; width: 100%"
+                                                @onclick="@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id))">
+                                            Press to set
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-light"
+                                        @onclick="@(() => SetMaxIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    Max
                                 </button>
                             </div>
                         </div>
@@ -147,7 +146,6 @@
 
     private async void SetWhiteColorAndPatchLightBulb(Guid id)
     {
-
         LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
         int index = _lightBulbs.IndexOf(lightBulb);
         _lightColors[index] = new LightColor("#FFFFFF");
@@ -163,7 +161,6 @@
 
     private async void SetOffColorAndPatchLightBulb(Guid id)
     {
-
         LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
         int index = _lightBulbs.IndexOf(lightBulb);
         _lightColors[index] = new LightColor("#000000");
@@ -411,7 +408,7 @@
                                         <button type="button" class="btn btn-info"
                                                 style="margin: 0.25rem; height: 2.5rem; width: 100%"
                                                 @onclick="@(() => PatchThermostatTemperature(thermostat.Id))">
-                                            Press To Set
+                                            Press to set
                                         </button>
                                     </div>
                                 </div>
@@ -631,6 +628,7 @@
             GreenValue = 0;
             BlueValue = 0;
         }
+
     /*
         public LightColor(int redValue = 0, int greenValue = 0, int blueValue = 0)
         {
@@ -639,12 +637,14 @@
             BlueValue = blueValue;
         }
 */
+
         public LightColor(string hexColor = "#000000")
         {
             RedValue = int.Parse(hexColor.Substring(1, 2), NumberStyles.HexNumber);
             GreenValue = int.Parse(hexColor.Substring(3, 2), NumberStyles.HexNumber);
             BlueValue = int.Parse(hexColor.Substring(5, 2), NumberStyles.HexNumber);
         }
+
         public LightColor(int intColor = 0)
         {
             string hexColor = intColor.ToString("X6");
