@@ -1,32 +1,32 @@
-using FluentAssertions;
-using API.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using API.Repositories;
+using FluentAssertions;
 using Shared.Models;
 using Xunit;
 
-namespace Tests
+namespace Tests.RepositoryTests
 {
     public class HouseRepositoryTest : Database
     {
         private readonly HouseRepository _repository;
         private readonly House _newHouse;
-        private readonly String email = "gaicassadsa@popescu.com";
+        private const string Email = "maria@popescu.com";
 
         public HouseRepositoryTest()
         {
             _repository = new HouseRepository(Context);
             _newHouse = new House
             {
-                Name = "Apartment",
+                Name = "Apartment"
             };
         }
 
         [Fact]
         public async void GivenNewHouse_WhenHouseIsNotNull_ThenCreateHouseAsyncShouldReturnNewHouse()
         {
-            var result = await _repository.CreateHouseAsync(email, _newHouse);
+            var result = await _repository.CreateHouseAsync(Email, _newHouse);
 
             result.Should().BeOfType<House>();
         }
@@ -34,22 +34,15 @@ namespace Tests
         [Fact]
         public async void GivenNewHouse_WhenHouseIsEmpty_ThenCreateHouseAsyncShouldReturnNewHouse()
         {
-            var result = await _repository.CreateHouseAsync(email, new House());
+            var result = await _repository.CreateHouseAsync(Email, new House());
 
             result.Should().BeOfType<House>();
         }
 
         [Fact]
-        public void GivenNewHouse_WhenHouseIsNull_ThenCreateHouseAsyncShouldThrowException()
-        {
-            _repository.Invoking(r => r.CreateHouseAsync(null, null)).Should()
-                .Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public async void GivenNewHouse_WhenHouseExists_ThenGetHouseByIdAsyncShouldReturnHouse()
         {
-            var house = await _repository.CreateHouseAsync(email, _newHouse);
+            var house = await _repository.CreateHouseAsync(Email, _newHouse);
 
             house.Should().BeOfType<House>();
 
@@ -71,7 +64,7 @@ namespace Tests
         [Fact]
         public async void GivenNewHouse_WhenIdDoesNotExist_GetHouseByIdAsyncShouldReturnNull()
         {
-            var house = await _repository.CreateHouseAsync(email, _newHouse);
+            var house = await _repository.CreateHouseAsync(Email, _newHouse);
 
             var result = await _repository.GetHouseByIdAsync(house.Email,
                 Guid.Parse("3f953890-20ad-48b5-a272-c0faa8f09ea3"));
@@ -83,7 +76,7 @@ namespace Tests
         [Fact]
         public async void GivenNewHouse_WhenHouseIsNotNull_ThenDeleteHouseAsyncShouldReturnHouse()
         {
-            var house = await _repository.CreateHouseAsync(email, _newHouse);
+            var house = await _repository.CreateHouseAsync(Email, _newHouse);
 
 
             var result = await _repository.DeleteHouseAsync(house.Email, house.Id);
@@ -105,12 +98,12 @@ namespace Tests
         [Fact]
         public async void GivenEmail_WhenEmailExists_ThenGetHousesAsyncShouldReturnListOfHouses()
         {
-            await _repository.CreateHouseAsync(email, new House());
-            await _repository.CreateHouseAsync(email, new House());
-            await _repository.CreateHouseAsync(email, new House());
-            await _repository.CreateHouseAsync(email, new House());
+            await _repository.CreateHouseAsync(Email, new House());
+            await _repository.CreateHouseAsync(Email, new House());
+            await _repository.CreateHouseAsync(Email, new House());
+            await _repository.CreateHouseAsync(Email, new House());
 
-            var result = await _repository.GetHousesAsync(email);
+            var result = await _repository.GetHousesAsync(Email);
 
             result.Should().BeOfType<List<House>>();
         }
@@ -118,9 +111,9 @@ namespace Tests
         [Fact]
         public async void GivenEmail_WhenEmailDoesNotExist_ThenGetHousesAsyncShouldReturnEmptyListOfHouses()
         {
-            var email = "empty_email@gmail.com";
+            const string newEmail = "new@gmail.com";
 
-            var result = await _repository.GetHousesAsync(email);
+            var result = await _repository.GetHousesAsync(newEmail);
 
             result.Count().Should().Be(0);
         }

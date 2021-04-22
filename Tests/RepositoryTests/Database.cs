@@ -2,7 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 
-namespace Tests
+namespace Tests.RepositoryTests
 {
     public class Database : IDisposable
     {
@@ -10,8 +10,8 @@ namespace Tests
 
         protected Database()
         {
-            var options = new DbContextOptionsBuilder<HomeAssistantContext>().UseInMemoryDatabase("Test")
-                .Options;
+            var options = new DbContextOptionsBuilder<HomeAssistantContext>()
+                .UseInMemoryDatabase("HomeAssistantTest").Options;
             Context = new HomeAssistantContext(options);
             Context.Database.EnsureCreated();
             DatabaseInitializer.Initialize(Context);

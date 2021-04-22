@@ -1,7 +1,7 @@
-using Shared.Models;
 using System.Linq;
+using Shared.Models;
 
-namespace Tests
+namespace Tests.RepositoryTests
 {
     public static class DatabaseInitializer
     {
@@ -15,31 +15,32 @@ namespace Tests
 
         private static void SeedHouses(HomeAssistantContext context)
         {
-            House[] houses = {
+            House[] houses =
+            {
                 new()
                 {
                     Email = "gica@popescu.com",
-                    Name = "test"
+                    Name = "Apartment"
                 },
                 new()
                 {
-                    Email = "gicaaa@popescu.com",
-                    Name = "test2"
+                    Email = "costel@popescu.com",
+                    Name = "Apartment"
                 },
                 new()
                 {
-                    Email = "gicadsadas@popescu.com",
-                    Name = "test3"
+                    Email = "ion@popescu.com",
+                    Name = "Apartment"
                 },
                 new()
                 {
-                    Email = "marica@dodescu.com",
-                    Name = "test0"
+                    Email = "ilie@dodescu.com",
+                    Name = "Apartment"
                 },
                 new()
                 {
-                    Email = "mardsaica@dodescu.com",
-                    Name = "test-1"
+                    Email = "marius@dodescu.com",
+                    Name = "Apartment"
                 },
             };
             context.Houses.AddRange(houses);

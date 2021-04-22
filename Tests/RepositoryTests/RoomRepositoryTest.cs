@@ -1,19 +1,19 @@
-using FluentAssertions;
-using API.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using API.Repositories;
+using FluentAssertions;
 using Shared.Models;
 using Xunit;
 
-namespace Tests
+namespace Tests.RepositoryTests
 {
     public class RoomRepositoryTest : Database
     {
-        private readonly RoomRepository _roomRepository;
         private readonly HouseRepository _houseRepository;
+        private readonly RoomRepository _roomRepository;
         private readonly Room _newRoom;
-        private readonly String email = "ghsdsa@popescu.com";
+        private const string Email = "elena@popescu.com";
 
         public RoomRepositoryTest()
         {
@@ -21,15 +21,15 @@ namespace Tests
             _roomRepository = new RoomRepository(Context);
             _newRoom = new Room
             {
-                Name = "LivingRoom",
+                Name = "Living room",
             };
         }
 
         [Fact]
         public async void GivenNewRoom_WhenRoomIsNotNull_ThenCreateRoomAsyncShouldReturnNewRoom()
         {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
-            var result = await _roomRepository.CreateRoomAsync(email, house.Id, _newRoom);
+            var house = await _houseRepository.CreateHouseAsync(Email, new House());
+            var result = await _roomRepository.CreateRoomAsync(Email, house.Id, _newRoom);
 
             result.Should().BeOfType<Room>();
         }
@@ -37,25 +37,17 @@ namespace Tests
         [Fact]
         public async void GivenNewRoom_WhenRoomIsEmpty_ThenCreateRoomAsyncShouldReturnNewRoom()
         {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
-            var result = await _roomRepository.CreateRoomAsync(email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House());
+            var result = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
 
             result.Should().BeOfType<Room>();
         }
 
         [Fact]
-        public async void GivenNewRoom_WhenRoomIsNull_ThenCreateRoomAsyncShouldThrowException()
-        {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
-            _roomRepository.Invoking(r => r.CreateRoomAsync(null, house.Id, null)).Should()
-                .Throw<ArgumentNullException>();
-        }
-
-        [Fact]
         public async void GivenNewRoom_WhenRoomExists_ThenGetRoomByIdAsyncShouldReturnRoom()
         {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
-            var room = await _roomRepository.CreateRoomAsync(email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House());
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
 
             room.Should().BeOfType<Room>();
 
@@ -67,7 +59,7 @@ namespace Tests
         [Fact]
         public async void GivenNewRoom_WhenRoomIsEmpty_ThenGetRoomByIdAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House());
             var room = new Room();
 
             var result = await _roomRepository.GetRoomByIdAsync(house.Email, house.Id, room.Id);
@@ -78,7 +70,7 @@ namespace Tests
         [Fact]
         public async void GivenNewRoom_WhenIdDoesNotExist_GetRoomByIdAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House());
             var room = new Room();
 
             room.Should().BeOfType<Room>();
@@ -92,8 +84,8 @@ namespace Tests
         [Fact]
         public async void GivenNewRoom_WhenRoomIsNotNull_ThenDeleteRoomAsyncShouldReturnRoom()
         {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
-            var room = await _roomRepository.CreateRoomAsync(email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House());
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
 
             room.Should().BeOfType<Room>();
 
@@ -105,7 +97,7 @@ namespace Tests
         [Fact]
         public async void GivenNewRoom_WhenRoomIsNotNull_ThenDeleteRoomAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House());
             var room = new Room();
 
             room.Should().BeOfType<Room>();
@@ -137,11 +129,11 @@ namespace Tests
         [Fact]
         public async void GivenEmail_WhenEmailDoesNotExist_ThenGetRoomsAsyncShouldReturnEmptyListOfRooms()
         {
-            var email = "empty_email@gmail.com";
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
+            const string newEmail = "new@gmail.com";
+            var house = await _houseRepository.CreateHouseAsync(newEmail, new House());
 
 
-            var result = await _roomRepository.GetRoomsAsync(email, house.Id);
+            var result = await _roomRepository.GetRoomsAsync(newEmail, house.Id);
 
             result.Count().Should().Be(0);
         }
