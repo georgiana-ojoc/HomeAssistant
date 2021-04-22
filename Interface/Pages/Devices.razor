@@ -33,9 +33,10 @@
                                         @onclick="@(() => SetOffIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
                                     Off
                                 </button>
+                                
                                 <div class="col" style="text-align: center">
                                     <div class="row">
-                                        <input type="range" class="form-range"  min="0" max="255" id="LB"
+                                        <input type="range" class="form-range" min="0" max="255" id="LB"
                                                @bind="_lightBulbs[lightBulbIndex].Intensity"
                                                style="margin: 0.25rem; appearance: none; outline-style: double">
                                     </div>
@@ -280,9 +281,13 @@
                             </div>
                             <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                 <button type="button" class="btn btn-danger"
-                                        @onclick="@(() => SetTrueLockedAndPatchDoor(door.Id))"> Lock </button>
+                                        @onclick="@(() => SetTrueLockedAndPatchDoor(door.Id))">
+                                    Lock
+                                </button>
                                 <button type="button" class="btn btn-success"
-                                        @onclick="@(() => SetFalseLockedAndPatchDoor(door.Id))"> Unlock </button>
+                                        @onclick="@(() => SetFalseLockedAndPatchDoor(door.Id))">
+                                    Unlock
+                                </button>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align: center">
@@ -383,10 +388,38 @@
                 <li class="list-group-item">
                     <div class="card">
                         <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
-                        <div class="card-body" style="margin: auto">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <input type="range" class="form-range" min="7" max="30" 
-                                       @bind="thermostat.Temperature" id="temp">
+                        <div class="card-body" style="text-align: center; margin: auto">
+                            <div style="text-align: center; margin: 0.25rem">
+                                @if (thermostat.Temperature != null)
+                                {
+                                    <label>Temperature: @thermostat.Temperature.Value &#8451;</label>
+                                }
+                            </div>
+                            <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
+                                <button type="button" class="btn btn-dark"
+                                        @onclick="@(() => SetMinTemperatureAndPatchThermostat(thermostat.Id))">
+                                    Min
+                                </button>
+
+                                <div class="col" style="text-align: center">
+                                    <div class="row">
+                                        <input type="range" class="form-range" min="7" max="30" id="LB"
+                                               @bind="thermostat.Temperature"
+                                               style="margin: 0.25rem; appearance: none; outline-style: double">
+                                    </div>
+                                    <div class="row">
+                                        <button type="button" class="btn btn-info"
+                                                style="margin: 0.25rem; height: 2.5rem; width: 100%"
+                                                @onclick="@(() => PatchThermostatTemperature(thermostat.Id))">
+                                            Press To Set
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-light"
+                                        @onclick="@(() => SetMaxTemperatureAndPatchThermostat(thermostat.Id))">
+                                    Max
+                                </button>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align: center">
@@ -428,6 +461,44 @@
         StateHasChanged();
     }
 
+    private async void PatchThermostatTemperature(Guid id)
+    {
+        Thermostat thermostat = _thermostats.First(l => l.Id == id);
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
+            patchBody);
+    }
+
+    private async void SetMinTemperatureAndPatchThermostat(Guid id)
+    {
+        Thermostat thermostat = _thermostats.First(l => l.Id == id);
+        thermostat.Temperature = 7;
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
+            patchBody);
+    }
+
+    private async void SetMaxTemperatureAndPatchThermostat(Guid id)
+    {
+        Thermostat thermostat = _thermostats.First(l => l.Id == id);
+        thermostat.Temperature = 30;
+        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+        patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
+        string serializedContent = JsonConvert.SerializeObject(patchList);
+        HttpContent patchBody = new StringContent(serializedContent,
+            Encoding.UTF8, "application/json");
+        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
+            patchBody);
+    }
+
     private static Dictionary<string, string> GenerateThermostatTemperaturePatch(decimal temperature)
     {
         return new()
@@ -462,6 +533,13 @@
     {
         _houseId = await IdService.GetHouseId();
         _roomId = await IdService.GetRoomId();
+        await GetLightBulbs();
+        await GetDoors();
+        await GetThermostats();
+    }
+
+    private async Task GetLightBulbs()
+    {
         IList<LightBulb> responseLightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
             $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
         if (responseLightBulbs != null)
@@ -496,6 +574,10 @@
                     patchBody);
             }
         }
+    }
+
+    private async Task GetDoors()
+    {
         IList<Door> responseDoors = await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
         if (responseDoors != null)
         {
@@ -515,6 +597,10 @@
                     patchBody);
             }
         }
+    }
+
+    private async Task GetThermostats()
+    {
         IList<Thermostat> responseThermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
             $"houses/{_houseId}/rooms/{_roomId}/thermostats");
         if (responseThermostats != null)
@@ -545,7 +631,7 @@
             GreenValue = 0;
             BlueValue = 0;
         }
-/*
+    /*
         public LightColor(int redValue = 0, int greenValue = 0, int blueValue = 0)
         {
             RedValue = redValue;
@@ -567,39 +653,42 @@
             BlueValue = int.Parse(hexColor.Substring(4, 2), NumberStyles.HexNumber);
         }
 
-        private readonly int _redValue;
-        private readonly int _greenValue;
-        private readonly int _blueValue;
+        private int _redValue;
+        private int _greenValue;
+        private int _blueValue;
 
         public string Color { get; private set; }
+
         public int RedValue
         {
             get => _redValue;
-            private init
+            set
             {
                 _redValue = value;
                 OnValueChanged();
             }
         }
+
         public int GreenValue
         {
             get => _greenValue;
-            private init
+            set
             {
                 _greenValue = value;
                 OnValueChanged();
             }
         }
+
         public int BlueValue
         {
             get => _blueValue;
-            private init
+            set
             {
                 _blueValue = value;
                 OnValueChanged();
             }
         }
-        
+
         private void OnValueChanged()
         {
             Color = "#" + _redValue.ToString("X2")
@@ -613,4 +702,5 @@
             return int.Parse(hexColor, NumberStyles.HexNumber);
         }
     }
+
 }
