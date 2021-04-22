@@ -1,6 +1,6 @@
 ﻿@page "/"
-@inject IAccessTokenProvider _accessTokenProvider
-@inject Microsoft.Extensions.Configuration.IConfiguration _configuration
+@inject IAccessTokenProvider AccessTokenProvider
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @attribute [Authorize]
 
 <h1>Home Assistant</h1>
@@ -15,11 +15,11 @@
 
     async Task<string> GetAccessTokenAsync()
     {
-        var request = await _accessTokenProvider.RequestAccessToken(new AccessTokenRequestOptions
+        var request = await AccessTokenProvider.RequestAccessToken(new AccessTokenRequestOptions
         {
             Scopes = new[]
             {
-                _configuration["AzureAdB2C:Scope"]
+                Configuration["AzureAdB2C:Scope"]
             }
         });
         var result = request.TryGetToken(out var accessToken);
