@@ -72,7 +72,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Room>> UpdateAsync(Guid house_id, Guid id,
+        public async Task<ActionResult<Room>> PatchAsync(Guid house_id, Guid id,
             [FromBody] JsonPatchDocument<RoomPatch> patch)
         {
             try

@@ -76,7 +76,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<LightBulb>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
+        public async Task<ActionResult<LightBulb>> PatchAsync(Guid house_id, Guid room_id, Guid id,
             [FromBody] JsonPatchDocument<LightBulbPatch> patch)
         {
             try

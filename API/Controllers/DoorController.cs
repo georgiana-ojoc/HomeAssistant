@@ -52,7 +52,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Door>> PostAsync(Guid house_id, Guid room_id, [FromBody] Door door)
+        public async Task<ActionResult<Door>> PatchAsync(Guid house_id, Guid room_id, [FromBody] Door door)
         {
             try
             {

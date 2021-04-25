@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Thermostat>> PostAsync(Guid house_id, Guid room_id,
+        public async Task<ActionResult<Thermostat>> PatchAsync(Guid house_id, Guid room_id,
             [FromBody] Thermostat thermostat)
         {
             try
