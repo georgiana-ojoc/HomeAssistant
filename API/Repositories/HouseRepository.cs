@@ -8,51 +8,48 @@ using Shared.Models;
 
 namespace API.Repositories
 {
-    public class HouseRepository : IHouseRepository
+    public class HouseRepository : Repository, IHouseRepository
     {
-        private readonly HomeAssistantContext _context;
-
-        public HouseRepository(HomeAssistantContext context)
+        public HouseRepository(HomeAssistantContext context) : base(context)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<House>> GetHousesAsync(string email)
         {
-            return await _context.Houses.Where(house => house.Email == email).ToListAsync();
+            return await Context.Houses.Where(house => house.Email == email).ToListAsync();
         }
 
         public async Task<House> GetHouseByIdAsync(string email, Guid id)
         {
-            return await _context.Houses.Where(house => house.Email == email)
+            return await Context.Houses.Where(house => house.Email == email)
                 .FirstOrDefaultAsync(house => house.Id == id);
         }
 
         public async Task<House> CreateHouseAsync(string email, House house)
         {
             house.Email = email;
-            House newHouse = (await _context.Houses.AddAsync(house)).Entity;
-            await _context.SaveChangesAsync();
+            House newHouse = (await Context.Houses.AddAsync(house)).Entity;
+            await Context.SaveChangesAsync();
             return newHouse;
         }
 
         public async Task<House> DeleteHouseAsync(string email, Guid id)
         {
-            House house = await _context.Houses.Where(h => h.Email == email)
+            House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == id);
             if (house == null)
             {
                 return null;
             }
 
-            _context.Houses.Remove(house);
-            await _context.SaveChangesAsync();
+            Context.Houses.Remove(house);
+            await Context.SaveChangesAsync();
             return house;
         }
 
         public async Task<bool> SaveChangesAsync()
         {
-            return await _context.SaveChangesAsync() >= 0;
+            return await Context.SaveChangesAsync() >= 0;
         }
     }
 }
