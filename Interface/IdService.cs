@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 
-namespace Shared
+namespace Interface
 {
     internal record IdRecord
     {
