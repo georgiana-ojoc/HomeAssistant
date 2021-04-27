@@ -16,21 +16,16 @@ namespace API.Controllers
     [ApiController]
     [Route("houses/{house_id}/rooms")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class RoomController
+    public class RoomController : BaseController
     {
-        private readonly Identity _identity;
-        private readonly IMediator _mediator;
-
-        public RoomController(Identity identity, IMediator mediator)
+        public RoomController(Identity identity, IMediator mediator) : base(identity, mediator)
         {
-            _identity = identity;
-            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetAsync(Guid house_id)
         {
-            IEnumerable<Room> rooms = await _mediator.Send(new RoomsQuery(_identity.Email, house_id));
+            IEnumerable<Room> rooms = await Mediator.Send(new RoomsQuery(Identity.Email, house_id));
             if (rooms == null)
             {
                 return new NotFoundResult();
@@ -42,7 +37,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetAsync(Guid house_id, Guid id)
         {
-            Room room = await _mediator.Send(new RoomByIdQuery(_identity.Email, house_id, id));
+            Room room = await Mediator.Send(new RoomByIdQuery(Identity.Email, house_id, id));
             if (room == null)
             {
                 return new NotFoundResult();
@@ -56,7 +51,7 @@ namespace API.Controllers
         {
             try
             {
-                Room newRoom = await _mediator.Send(new AddRoomCommand(_identity.Email, house_id, room));
+                Room newRoom = await Mediator.Send(new AddRoomCommand(Identity.Email, house_id, room));
                 if (newRoom == null)
                 {
                     return new NotFoundResult();
@@ -77,7 +72,7 @@ namespace API.Controllers
         {
             try
             {
-                Room room = await _mediator.Send(new UpdateRoomCommand(_identity.Email, house_id, id, patch));
+                Room room = await Mediator.Send(new UpdateRoomCommand(Identity.Email, house_id, id, patch));
                 if (room == null)
                 {
                     return new NotFoundResult();
@@ -97,7 +92,7 @@ namespace API.Controllers
         {
             try
             {
-                Room room = await _mediator.Send(new DeleteRoomCommand(_identity.Email, house_id, id));
+                Room room = await Mediator.Send(new DeleteRoomCommand(Identity.Email, house_id, id));
                 if (room == null)
                 {
                     return new NotFoundResult();

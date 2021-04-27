@@ -16,21 +16,16 @@ namespace API.Controllers
     [ApiController]
     [Route("houses/{house_id}/rooms/{room_id}/light_bulbs")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class LightBulbController
+    public class LightBulbController : BaseController
     {
-        private readonly Identity _identity;
-        private readonly IMediator _mediator;
-
-        public LightBulbController(Identity identity, IMediator mediator)
+        public LightBulbController(Identity identity, IMediator mediator) : base(identity, mediator)
         {
-            _identity = identity;
-            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LightBulb>>> GetAsync(Guid house_id, Guid room_id)
         {
-            IEnumerable<LightBulb> lightBulbs = await _mediator.Send(new LightBulbsQuery(_identity.Email,
+            IEnumerable<LightBulb> lightBulbs = await Mediator.Send(new LightBulbsQuery(Identity.Email,
                 house_id, room_id));
             if (lightBulbs == null)
             {
@@ -43,7 +38,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LightBulb>> GetAsync(Guid house_id, Guid room_id, Guid id)
         {
-            LightBulb lightBulb = await _mediator.Send(new LightBulbByIdQuery(_identity.Email, house_id,
+            LightBulb lightBulb = await Mediator.Send(new LightBulbByIdQuery(Identity.Email, house_id,
                 room_id, id));
             if (lightBulb == null)
             {
@@ -59,7 +54,7 @@ namespace API.Controllers
         {
             try
             {
-                LightBulb newLightBulb = await _mediator.Send(new AddLightBulbCommand(_identity.Email, house_id,
+                LightBulb newLightBulb = await Mediator.Send(new AddLightBulbCommand(Identity.Email, house_id,
                     room_id, lightBulb));
                 if (newLightBulb == null)
                 {
@@ -81,7 +76,7 @@ namespace API.Controllers
         {
             try
             {
-                LightBulb lightBulb = await _mediator.Send(new UpdateLightBulbCommand(_identity.Email, house_id,
+                LightBulb lightBulb = await Mediator.Send(new UpdateLightBulbCommand(Identity.Email, house_id,
                     room_id, id, patch));
                 if (lightBulb == null)
                 {
@@ -102,7 +97,7 @@ namespace API.Controllers
         {
             try
             {
-                LightBulb lightBulb = await _mediator.Send(new DeleteLightBulbCommand(_identity.Email, house_id,
+                LightBulb lightBulb = await Mediator.Send(new DeleteLightBulbCommand(Identity.Email, house_id,
                     room_id, id));
                 if (lightBulb == null)
                 {

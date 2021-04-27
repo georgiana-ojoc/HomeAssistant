@@ -16,21 +16,16 @@ namespace API.Controllers
     [ApiController]
     [Route("houses")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class HouseController
+    public class HouseController : BaseController
     {
-        private readonly Identity _identity;
-        private readonly IMediator _mediator;
-
-        public HouseController(Identity identity, IMediator mediator)
+        public HouseController(Identity identity, IMediator mediator) : base(identity, mediator)
         {
-            _identity = identity;
-            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<House>>> GetAsync()
         {
-            IEnumerable<House> houses = await _mediator.Send(new HousesQuery(_identity.Email));
+            IEnumerable<House> houses = await Mediator.Send(new HousesQuery(Identity.Email));
             if (houses == null)
             {
                 return new NotFoundResult();
@@ -42,7 +37,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<House>> GetAsync(Guid id)
         {
-            House house = await _mediator.Send(new HouseByIdQuery(_identity.Email, id));
+            House house = await Mediator.Send(new HouseByIdQuery(Identity.Email, id));
             if (house == null)
             {
                 return new NotFoundResult();
@@ -56,7 +51,7 @@ namespace API.Controllers
         {
             try
             {
-                House newHouse = await _mediator.Send(new AddHouseCommand(_identity.Email, house));
+                House newHouse = await Mediator.Send(new AddHouseCommand(Identity.Email, house));
                 if (newHouse == null)
                 {
                     return new NotFoundResult();
@@ -76,7 +71,7 @@ namespace API.Controllers
         {
             try
             {
-                House house = await _mediator.Send(new UpdateHouseCommand(_identity.Email, id, patch));
+                House house = await Mediator.Send(new UpdateHouseCommand(Identity.Email, id, patch));
                 if (house == null)
                 {
                     return new NotFoundResult();
@@ -96,7 +91,7 @@ namespace API.Controllers
         {
             try
             {
-                House house = await _mediator.Send(new DeleteHouseCommand(_identity.Email, id));
+                House house = await Mediator.Send(new DeleteHouseCommand(Identity.Email, id));
                 if (house == null)
                 {
                     return new NotFoundResult();

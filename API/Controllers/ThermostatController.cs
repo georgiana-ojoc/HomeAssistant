@@ -16,21 +16,16 @@ namespace API.Controllers
     [ApiController]
     [Route("houses/{house_id}/rooms/{room_id}/thermostats")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class ThermostatController
+    public class ThermostatController : BaseController
     {
-        private readonly Identity _identity;
-        private readonly IMediator _mediator;
-
-        public ThermostatController(Identity identity, IMediator mediator)
+        public ThermostatController(Identity identity, IMediator mediator) : base(identity, mediator)
         {
-            _identity = identity;
-            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Thermostat>>> GetAsync(Guid house_id, Guid room_id)
         {
-            IEnumerable<Thermostat> thermostats = await _mediator.Send(new ThermostatsQuery(_identity.Email,
+            IEnumerable<Thermostat> thermostats = await Mediator.Send(new ThermostatsQuery(Identity.Email,
                 house_id, room_id));
             if (thermostats == null)
             {
@@ -43,7 +38,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Thermostat>> GetAsync(Guid house_id, Guid room_id, Guid id)
         {
-            Thermostat thermostat = await _mediator.Send(new ThermostatByIdQuery(_identity.Email, house_id,
+            Thermostat thermostat = await Mediator.Send(new ThermostatByIdQuery(Identity.Email, house_id,
                 room_id, id));
             if (thermostat == null)
             {
@@ -59,7 +54,7 @@ namespace API.Controllers
         {
             try
             {
-                Thermostat newThermostat = await _mediator.Send(new AddThermostatCommand(_identity.Email,
+                Thermostat newThermostat = await Mediator.Send(new AddThermostatCommand(Identity.Email,
                     house_id, room_id, thermostat));
                 if (newThermostat == null)
                 {
@@ -81,7 +76,7 @@ namespace API.Controllers
         {
             try
             {
-                Thermostat thermostat = await _mediator.Send(new UpdateThermostatCommand(_identity.Email,
+                Thermostat thermostat = await Mediator.Send(new UpdateThermostatCommand(Identity.Email,
                     house_id, room_id, id, patch));
                 if (thermostat == null)
                 {
@@ -102,7 +97,7 @@ namespace API.Controllers
         {
             try
             {
-                Thermostat thermostat = await _mediator.Send(new DeleteThermostatCommand(_identity.Email,
+                Thermostat thermostat = await Mediator.Send(new DeleteThermostatCommand(Identity.Email,
                     house_id, room_id, id));
                 if (thermostat == null)
                 {

@@ -16,21 +16,18 @@ namespace API.Controllers
     [ApiController]
     [Route("houses/{house_id}/rooms/{room_id}/doors")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class DoorController
+    public class DoorController:BaseController
     {
-        private readonly Identity _identity;
-        private readonly IMediator _mediator;
 
-        public DoorController(Identity identity, IMediator mediator)
+        public DoorController(Identity identity, IMediator mediator) : base(identity, mediator)
         {
-            _identity = identity;
-            _mediator = mediator;
+
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Door>>> GetAsync(Guid house_id, Guid room_id)
         {
-            IEnumerable<Door> doors = await _mediator.Send(new DoorsQuery(_identity.Email, house_id, room_id));
+            IEnumerable<Door> doors = await Mediator.Send(new DoorsQuery(Identity.Email, house_id, room_id));
             if (doors == null)
             {
                 return new NotFoundResult();
@@ -42,7 +39,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Door>> GetAsync(Guid house_id, Guid room_id, Guid id)
         {
-            Door door = await _mediator.Send(new DoorByIdQuery(_identity.Email, house_id, room_id, id));
+            Door door = await Mediator.Send(new DoorByIdQuery(Identity.Email, house_id, room_id, id));
             if (door == null)
             {
                 return new NotFoundResult();
@@ -56,7 +53,7 @@ namespace API.Controllers
         {
             try
             {
-                Door newDoor = await _mediator.Send(new AddDoorCommand(_identity.Email, house_id, room_id, door));
+                Door newDoor = await Mediator.Send(new AddDoorCommand(Identity.Email, house_id, room_id, door));
                 if (newDoor == null)
                 {
                     return new NotFoundResult();
@@ -77,7 +74,7 @@ namespace API.Controllers
         {
             try
             {
-                Door door = await _mediator.Send(new UpdateDoorCommand(_identity.Email, house_id, room_id, id,
+                Door door = await Mediator.Send(new UpdateDoorCommand(Identity.Email, house_id, room_id, id,
                     patch));
                 if (door == null)
                 {
@@ -98,7 +95,7 @@ namespace API.Controllers
         {
             try
             {
-                Door door = await _mediator.Send(new DeleteDoorCommand(_identity.Email, house_id, room_id, id));
+                Door door = await Mediator.Send(new DeleteDoorCommand(Identity.Email, house_id, room_id, id));
                 if (door == null)
                 {
                     return new NotFoundResult();
