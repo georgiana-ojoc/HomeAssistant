@@ -32,44 +32,9 @@
 </div>
 
 @code {
-    private IList<Room> _rooms;
-    private string _newRoomName;
-    private Guid _houseId;
-
     protected override async Task OnInitializedAsync()
     {
         _houseId = await IdService.GetHouseId();
         _rooms = await Http.GetFromJsonAsync<IList<Room>>($"houses/{_houseId}/rooms");
     }
-
-    private async void AddRoom()
-    {
-        if (string.IsNullOrWhiteSpace(_newRoomName))
-        {
-            return;
-        }
-        HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms", new Room()
-        {
-            Name = _newRoomName
-        });
-        Room newRoom = await response.Content.ReadFromJsonAsync<Room>();
-        _rooms.Add(newRoom);
-
-        _newRoomName = string.Empty;
-        StateHasChanged();
-    }
-
-    private async void DeleteRoom(Guid id)
-    {
-        await Http.DeleteAsync($"houses/{_houseId}/rooms/{id}");
-        _rooms.Remove(_rooms.SingleOrDefault(room => room.Id == id));
-        StateHasChanged();
-    }
-
-    private async void SetRoomId(Guid roomId)
-    {
-        await IdService.SetRoomId(roomId);
-        NavManager.NavigateTo("Devices");
-    }
-
 }
