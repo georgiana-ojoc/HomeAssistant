@@ -29,7 +29,7 @@ namespace Shared.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(ConnectionService.Connection, 
+                optionsBuilder.UseSqlServer(ConnectionService.Connection,
                     builder => builder.EnableRetryOnFailure());
             }
         }

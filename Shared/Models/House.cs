@@ -13,7 +13,7 @@ namespace Shared.Models
 
         public string Email { get; set; }
         public string Name { get; set; }
-
-        public ICollection<Room> Rooms { get; set; }
+        
+        internal ICollection<Room> Rooms { get; set; }
     }
 }

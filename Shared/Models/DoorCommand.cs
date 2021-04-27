@@ -10,7 +10,7 @@ namespace Shared.Models
         public Guid ScheduleId { get; set; }
         public bool Locked { get; set; }
 
-        public Door Door { get; set; }
-        public Schedule Schedule { get; set; }
+        internal Door Door { get; set; }
+        internal Schedule Schedule { get; set; }
     }
 }

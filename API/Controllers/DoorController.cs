@@ -16,12 +16,10 @@ namespace API.Controllers
     [ApiController]
     [Route("houses/{house_id}/rooms/{room_id}/doors")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public class DoorController:BaseController
+    public class DoorController : BaseController
     {
-
         public DoorController(Identity identity, IMediator mediator) : base(identity, mediator)
         {
-
         }
 
         [HttpGet]

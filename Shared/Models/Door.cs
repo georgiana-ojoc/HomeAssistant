@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 #nullable disable
 
@@ -18,10 +17,7 @@ namespace Shared.Models
         public bool? Status { get; set; }
         public bool? Locked { get; set; }
 
-        [JsonIgnore]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public Room Room { get; set; }
-
-        public ICollection<DoorCommand> DoorCommands { get; set; }
+        internal Room Room { get; set; }
+        internal ICollection<DoorCommand> DoorCommands { get; set; }
     }
 }

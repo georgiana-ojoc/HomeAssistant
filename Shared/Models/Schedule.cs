@@ -19,8 +19,8 @@ namespace Shared.Models
         public TimeSpan Time { get; set; }
         public byte Frequency { get; set; }
 
-        public ICollection<LightBulbCommand> LightBulbCommands { get; set; }
-        public ICollection<DoorCommand> DoorCommands { get; set; }
-        public ICollection<ThermostatCommand> ThermostatCommands { get; set; }
+        internal ICollection<LightBulbCommand> LightBulbCommands { get; set; }
+        internal ICollection<DoorCommand> DoorCommands { get; set; }
+        internal ICollection<ThermostatCommand> ThermostatCommands { get; set; }
     }
 }

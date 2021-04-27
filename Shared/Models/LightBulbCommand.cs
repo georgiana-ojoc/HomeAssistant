@@ -11,7 +11,7 @@ namespace Shared.Models
         public int Color { get; set; }
         public byte Intensity { get; set; }
 
-        public LightBulb LightBulb { get; set; }
-        public Schedule Schedule { get; set; }
+        internal LightBulb LightBulb { get; set; }
+        internal Schedule Schedule { get; set; }
     }
 }

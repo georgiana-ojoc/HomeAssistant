@@ -22,7 +22,7 @@ namespace Tests.PerformanceTests
             var house = await postResponse.Content.ReadFromJsonAsync<House>();
             return house?.Id ?? Guid.Parse("a918cdd5-b15b-4d04-9839-8a74e676dfea");
         }
-        
+
         public RoomRepositoryTest()
         {
             _apiHousesUrl = $"{ApiUrl}/houses";
@@ -32,7 +32,7 @@ namespace Tests.PerformanceTests
         public async Task GivenRooms_WhenGetAsync_ThenResponseTimeShouldBeLessThan1500MilliSeconds()
         {
             Guid id = await GetHouseId();
-            
+
             DateTime start = DateTime.Now;
             await Client.GetAsync($"{_apiHousesUrl}/{id}/rooms");
             DateTime end = DateTime.Now;
@@ -70,7 +70,7 @@ namespace Tests.PerformanceTests
         public async Task GivenRoom_WhenPostAsync_ThenResponseTimeShouldBeLessThan2000MilliSeconds()
         {
             Guid id = await GetHouseId();
-            
+
             DateTime start = DateTime.Now;
             await Client.PostAsJsonAsync($"{_apiHousesUrl}/{id}/rooms", new House()
             {

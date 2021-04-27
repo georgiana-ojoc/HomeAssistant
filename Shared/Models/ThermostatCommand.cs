@@ -10,7 +10,7 @@ namespace Shared.Models
         public Guid ScheduleId { get; set; }
         public decimal Temperature { get; set; }
 
-        public Thermostat Thermostat { get; set; }
-        public Schedule Schedule { get; set; }
+        internal Thermostat Thermostat { get; set; }
+        internal Schedule Schedule { get; set; }
     }
 }
