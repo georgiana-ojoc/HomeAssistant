@@ -8,7 +8,7 @@ using Shared.Models;
 
 namespace API.Repositories
 {
-    public class HouseRepository : Repository, IHouseRepository
+    public class HouseRepository : BaseRepository, IHouseRepository
     {
         public HouseRepository(HomeAssistantContext context) : base(context)
         {

@@ -8,7 +8,7 @@ using Shared.Models;
 
 namespace API.Repositories
 {
-    public class ThermostatRepository : Repository, IThermostatRepository
+    public class ThermostatRepository : BaseRepository, IThermostatRepository
     {
         public ThermostatRepository(HomeAssistantContext context) : base(context)
         {

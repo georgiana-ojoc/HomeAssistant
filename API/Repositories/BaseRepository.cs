@@ -2,11 +2,11 @@
 
 namespace API.Repositories
 {
-    public abstract class Repository
+    public abstract class BaseRepository
     {
         protected readonly HomeAssistantContext Context;
 
-        protected Repository(HomeAssistantContext context)
+        protected BaseRepository(HomeAssistantContext context)
         {
             Context = context;
         }

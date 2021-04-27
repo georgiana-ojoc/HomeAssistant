@@ -8,7 +8,7 @@ using Shared.Models;
 
 namespace API.Repositories
 {
-    public class LightBulbRepository : Repository, ILightBulbRepository
+    public class LightBulbRepository : BaseRepository, ILightBulbRepository
     {
         public LightBulbRepository(HomeAssistantContext context) : base(context)
         {

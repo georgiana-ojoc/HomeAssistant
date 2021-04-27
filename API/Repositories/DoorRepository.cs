@@ -8,7 +8,7 @@ using Shared.Models;
 
 namespace API.Repositories
 {
-    public class DoorRepository : Repository, IDoorRepository
+    public class DoorRepository : BaseRepository, IDoorRepository
     {
         public DoorRepository(HomeAssistantContext context) : base(context)
         {
