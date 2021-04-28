@@ -12,7 +12,7 @@
 	 - motion detection example: send alarm and start recording
 ## Nonfunctional requirements
 - can be used by thousands of customers (small families)  
-- each customer can add up to 5 houses, 50 rooms and 150 smart devices in his account
+- each customer can add to his account up to 5 houses, 20 rooms per house and 10 devices by type per room
 ## Architectural decisions
 1. [Diagrams](https://github.com/georgiana-ojoc/HomeAssistant/tree/documentation/Diagrams/1)
 2. [Diagrams](https://github.com/georgiana-ojoc/HomeAssistant/tree/documentation/Diagrams/2)
@@ -20,4 +20,4 @@
 ## AI/ML
  - personalized schedules, based on collected information
 ## CI/CD
- - Heroku with Docker
+ - Azure
