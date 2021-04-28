@@ -19,7 +19,7 @@ namespace Interface.Pages
         private async Task GetThermostats()
         {
             IList<Thermostat> responseThermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
-                $"houses/{_houseId}/rooms/{_roomId}/thermostats");
+                $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}");
             if (responseThermostats != null)
             {
                 _thermostats = new List<Thermostat>(responseThermostats);
@@ -35,13 +35,13 @@ namespace Interface.Pages
                     string serializedContent = JsonConvert.SerializeObject(patchList);
                     HttpContent patchBody = new StringContent(serializedContent,
                         Encoding.UTF8, "application/json");
-                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
+                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}/{thermostat.Id}",
                         patchBody);
                 }
             }
         }
 
-        private async void AddThermostat()
+        private async Task AddThermostat()
         {
             if (string.IsNullOrWhiteSpace(_newThermostatName))
             {
@@ -49,7 +49,7 @@ namespace Interface.Pages
             }
 
             HttpResponseMessage response = await Http.PostAsJsonAsync(
-                $"houses/{_houseId}/rooms/{_roomId}/thermostats",
+                $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}",
                 new Thermostat()
                 {
                     Name = _newThermostatName
@@ -61,52 +61,37 @@ namespace Interface.Pages
             StateHasChanged();
         }
 
-        private async void DeleteThermostat(Guid id)
+        private async Task DeleteThermostat(Guid id)
         {
-            await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
+            await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}/{id}");
             _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
             StateHasChanged();
         }
 
-        private async void PatchThermostatTemperature(Guid id)
+        private async Task PatchThermostatTemperature(Guid id)
         {
             Thermostat thermostat = _thermostats.First(l => l.Id == id);
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
-                patchBody);
+            await PatchDevice(patchList, ThermostatsPath, thermostat.Id);
         }
 
-        private async void SetMinTemperatureAndPatchThermostat(Guid id)
+        private async Task SetMinTemperatureAndPatchThermostat(Guid id)
         {
             Thermostat thermostat = _thermostats.First(l => l.Id == id);
             thermostat.Temperature = 7;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
-                patchBody);
+            await PatchDevice(patchList, ThermostatsPath, thermostat.Id);
         }
 
-        private async void SetMaxTemperatureAndPatchThermostat(Guid id)
+        private async Task SetMaxTemperatureAndPatchThermostat(Guid id)
         {
             Thermostat thermostat = _thermostats.First(l => l.Id == id);
             thermostat.Temperature = 30;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
-                patchBody);
+            await PatchDevice(patchList, ThermostatsPath, thermostat.Id);
         }
 
         private static Dictionary<string, string> GenerateThermostatTemperaturePatch(decimal temperature)

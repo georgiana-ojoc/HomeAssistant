@@ -56,7 +56,7 @@ namespace Interface.Pages
             }
         }
 
-        private async void AddLightBulb()
+        private async Task AddLightBulb()
         {
             if (string.IsNullOrWhiteSpace(_newLightBulbName))
             {
@@ -64,7 +64,7 @@ namespace Interface.Pages
             }
 
             HttpResponseMessage response = await Http.PostAsJsonAsync(
-                $"houses/{_houseId}/rooms/{_roomId}/light_bulbs",
+                $"houses/{_houseId}/rooms/{_roomId}/{LightBulbsPath}",
                 new LightBulb()
                 {
                     Name = _newLightBulbName
@@ -76,29 +76,24 @@ namespace Interface.Pages
             StateHasChanged();
         }
 
-        private async void DeleteLightBulb(Guid id)
+        private async Task DeleteLightBulb(Guid id)
         {
-            await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{id}");
+            await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/{LightBulbsPath}/{id}");
             _lightBulbs.Remove(_lightBulbs.SingleOrDefault(lightBulb => lightBulb.Id == id));
             StateHasChanged();
         }
 
-        private async void PatchLightBulbColor(Guid id)
+        private async Task PatchLightBulbColor(Guid id)
         {
             LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
             int index = _lightBulbs.IndexOf(lightBulb);
             lightBulb.Color = _lightColors[index].GetIntColor();
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                patchBody);
+            await PatchDevice(patchList, LightBulbsPath, lightBulb.Id);
         }
 
-        private async void SetWhiteColorAndPatchLightBulb(Guid id)
+        private async Task SetWhiteColorAndPatchLightBulb(Guid id)
         {
             LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
             int index = _lightBulbs.IndexOf(lightBulb);
@@ -106,15 +101,10 @@ namespace Interface.Pages
             lightBulb.Color = _lightColors[index].GetIntColor();
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                patchBody);
+            await PatchDevice(patchList, LightBulbsPath, lightBulb.Id);
         }
 
-        private async void SetOffColorAndPatchLightBulb(Guid id)
+        private async Task SetOffColorAndPatchLightBulb(Guid id)
         {
             LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
             int index = _lightBulbs.IndexOf(lightBulb);
@@ -122,53 +112,33 @@ namespace Interface.Pages
             lightBulb.Color = _lightColors[index].GetIntColor();
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                patchBody);
+            await PatchDevice(patchList, LightBulbsPath, lightBulb.Id);
         }
 
-        private async void PatchLightBulbIntensity(Guid id)
+        private async Task PatchLightBulbIntensity(Guid id)
         {
             LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity ?? 0));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                patchBody);
+            await PatchDevice(patchList, LightBulbsPath, lightBulb.Id);
         }
 
-        private async void SetOffIntensityAndPatchLightBulb(Guid id)
+        private async Task SetOffIntensityAndPatchLightBulb(Guid id)
         {
             LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
             lightBulb.Intensity = Byte.MinValue;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                patchBody);
+            await PatchDevice(patchList, LightBulbsPath, lightBulb.Id);
         }
 
-        private async void SetMaxIntensityAndPatchLightBulb(Guid id)
+        private async Task SetMaxIntensityAndPatchLightBulb(Guid id)
         {
             LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
             lightBulb.Intensity = Byte.MaxValue;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                patchBody);
+            await PatchDevice(patchList, LightBulbsPath, lightBulb.Id);
         }
 
         private static Dictionary<string, string> GenerateLightBulbColorPatch(int color)

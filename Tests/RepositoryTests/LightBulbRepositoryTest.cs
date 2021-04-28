@@ -31,8 +31,8 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewLightBulb_WhenLightBulbIsNotNull_ThenCreateLightBulbAsyncShouldReturnNewLightBulb()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
             var result = await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, _newLightBulb);
 
             result.Should().BeOfType<LightBulb>();
@@ -41,9 +41,11 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewLightBulb_WhenLightBulbIsEmpty_ThenCreateLightBulbAsyncShouldReturnNewLightBulb()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-            var result = await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            var result =
+                await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id,
+                    new LightBulb {Name = "Test"});
 
             result.Should().BeOfType<LightBulb>();
         }
@@ -51,9 +53,11 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewLightBulb_WhenLightBulbExists_ThenGetLightBulbByIdAsyncShouldReturnLightBulb()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-            var lightBulb = await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            var lightBulb =
+                await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id,
+                    new LightBulb {Name = "Test"});
 
             lightBulb.Should().BeOfType<LightBulb>();
 
@@ -64,22 +68,20 @@ namespace Tests.RepositoryTests
         }
 
         [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbIsEmpty_ThenGetLightBulbByIdAsyncShouldReturnNull()
+        public async void GivenNewLightBulb_WhenLightBulbIsEmpty_ThenGetLightBulbByIdAsyncShouldThrowError()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = new Room();
-            var lightBulb = new LightBulb();
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = new Room {Name = "Test"};
+            var lightBulb = new LightBulb {Name = "Test"};
 
-            var result = await _lightBulbRepository.GetLightBulbByIdAsync(house.Email, house.Id, room.Id, lightBulb.Id);
-
-            result.Should().BeNull();
+            _lightBulbRepository.Invoking(r => r.GetLightBulbByIdAsync(house.Email, house.Id, room.Id, lightBulb.Id));
         }
 
         [Fact]
         public async void GivenNewLightBulb_WhenIdDoesNotExist_GetLightBulbByIdAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
 
             house.Should().BeOfType<House>();
             room.Should().BeOfType<Room>();
@@ -93,9 +95,11 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewLightBulb_WhenLightBulbIsNotNull_ThenDeleteLightBulbAsyncShouldReturnLightBulb()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-            var lightBulb = await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            var lightBulb =
+                await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id,
+                    new LightBulb {Name = "Test"});
 
             house.Should().BeOfType<House>();
             room.Should().BeOfType<Room>();
@@ -107,33 +111,31 @@ namespace Tests.RepositoryTests
         }
 
         [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbIsNotNull_ThenDeleteLightBulbAsyncShouldReturnNull()
+        public async void GivenNewLightBulb_WhenLightBulbIsNotNull_ThenDeleteLightBulbAsyncShouldThrowError()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-            var lightBulb = new LightBulb();
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            var lightBulb = new LightBulb {Name = "Test"};
 
             house.Should().BeOfType<House>();
             room.Should().BeOfType<Room>();
             lightBulb.Should().BeOfType<LightBulb>();
 
-            var result = await _lightBulbRepository.DeleteLightBulbAsync(house.Email, house.Id, room.Id, lightBulb.Id);
-
-            result.Should().BeNull();
+            _lightBulbRepository.Invoking(r => r.DeleteLightBulbAsync(house.Email, house.Id, room.Id, lightBulb.Id));
         }
 
         [Fact]
         public async void GivenEmail_WhenEmailExists_ThenGetLightBulbsAsyncShouldReturnListOfLightBulbs()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
 
 
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb());
+            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
+            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
+            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
+            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
+            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
 
             var result = await _lightBulbRepository.GetLightBulbsAsync(Email, house.Id, room.Id);
 
@@ -145,8 +147,8 @@ namespace Tests.RepositoryTests
         public async void GivenEmail_WhenEmailDoesNotExist_ThenGetLightBulbsAsyncShouldReturnEmptyListOfLightBulbs()
         {
             const string newEmail = "new@gmail.com";
-            var house = await _houseRepository.CreateHouseAsync(newEmail, new House());
-            var room = await _roomRepository.CreateRoomAsync(newEmail, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(newEmail, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(newEmail, house.Id, new Room {Name = "Test"});
 
 
             var result = await _lightBulbRepository.GetLightBulbsAsync(newEmail, house.Id, room.Id);
