@@ -32,8 +32,8 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewThermostat_WhenThermostatIsNotNull_ThenCreateThermostatAsyncShouldReturnNewThermostat()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
             var result = await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, _newThermostat);
 
             result.Should().BeOfType<Thermostat>();
@@ -42,9 +42,11 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewThermostat_WhenThermostatIsEmpty_ThenCreateThermostatAsyncShouldReturnNewThermostat()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-            var result = await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            var result =
+                await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id,
+                    new Thermostat {Name = "Test"});
 
             result.Should().BeOfType<Thermostat>();
         }
@@ -52,10 +54,11 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewThermostat_WhenThermostatExists_ThenGetThermostatByIdAsyncShouldReturnThermostat()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
             var thermostat =
-                await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
+                await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id,
+                    new Thermostat {Name = "Test"});
 
             thermostat.Should().BeOfType<Thermostat>();
 
@@ -67,23 +70,21 @@ namespace Tests.RepositoryTests
         }
 
         [Fact]
-        public async void GivenNewThermostat_WhenThermostatIsEmpty_ThenGetThermostatByIdAsyncShouldReturnNull()
+        public async void GivenNewThermostat_WhenThermostatIsEmpty_ThenGetThermostatByIdAsyncShouldThrowError()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = new Room();
-            var thermostat = new Thermostat();
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = new Room {Name = "Test"};
+            var thermostat = new Thermostat {Name = "Test"};
 
-            var result =
-                await _thermostatRepository.GetThermostatByIdAsync(house.Email, house.Id, room.Id, thermostat.Id);
-
-            result.Should().BeNull();
+            _thermostatRepository.Invoking(r =>
+                r.GetThermostatByIdAsync(house.Email, house.Id, room.Id, thermostat.Id));
         }
 
         [Fact]
         public async void GivenNewThermostat_WhenIdDoesNotExist_GetThermostatByIdAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
 
             house.Should().BeOfType<House>();
             room.Should().BeOfType<Room>();
@@ -97,10 +98,11 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewThermostat_WhenThermostatIsNotNull_ThenDeleteThermostatAsyncShouldReturnThermostat()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
             var thermostat =
-                await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
+                await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id,
+                    new Thermostat {Name = "Test"});
 
             house.Should().BeOfType<House>();
             room.Should().BeOfType<Room>();
@@ -113,34 +115,32 @@ namespace Tests.RepositoryTests
         }
 
         [Fact]
-        public async void GivenNewThermostat_WhenThermostatIsNotNull_ThenDeleteThermostatAsyncShouldReturnNull()
+        public async void GivenNewThermostat_WhenThermostatIsNotNull_ThenDeleteThermostatAsyncShouldThrowError()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-            var thermostat = new Thermostat();
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            var thermostat = new Thermostat {Name = "Test"};
 
             house.Should().BeOfType<House>();
             room.Should().BeOfType<Room>();
             thermostat.Should().BeOfType<Thermostat>();
 
-            var result =
-                await _thermostatRepository.DeleteThermostatAsync(house.Email, house.Id, room.Id, thermostat.Id);
-
-            result.Should().BeNull();
+            _thermostatRepository.Invoking(r =>
+                r.GetThermostatByIdAsync(house.Email, house.Id, room.Id, thermostat.Id));
         }
 
         [Fact]
         public async void GivenEmail_WhenEmailExists_ThenGetThermostatsAsyncShouldReturnListOfThermostats()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
 
 
-            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
-            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
-            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
-            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
-            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat());
+            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat {Name = "Test"});
+            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat {Name = "Test"});
+            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat {Name = "Test"});
+            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat {Name = "Test"});
+            await _thermostatRepository.CreateThermostatAsync(Email, house.Id, room.Id, new Thermostat {Name = "Test"});
 
             var result = await _thermostatRepository.GetThermostatsAsync(Email, house.Id, room.Id);
 
@@ -152,8 +152,8 @@ namespace Tests.RepositoryTests
         public async void GivenEmail_WhenEmailDoesNotExist_ThenGetThermostatsAsyncShouldReturnEmptyListOfThermostats()
         {
             const string newEmail = "new@gmail.com";
-            var house = await _houseRepository.CreateHouseAsync(newEmail, new House());
-            var room = await _roomRepository.CreateRoomAsync(newEmail, house.Id, new Room());
+            var house = await _houseRepository.CreateHouseAsync(newEmail, new House {Name = "Test"});
+            var room = await _roomRepository.CreateRoomAsync(newEmail, house.Id, new Room {Name = "Test"});
 
 
             var result = await _thermostatRepository.GetThermostatsAsync(newEmail, house.Id, room.Id);
