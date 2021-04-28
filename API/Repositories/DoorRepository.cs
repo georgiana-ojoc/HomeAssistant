@@ -18,36 +18,8 @@ namespace API.Repositories
         {
         }
 
-        public async Task<IEnumerable<Door>> GetDoorsAsync(string email, Guid houseId, Guid roomId)
+        private async Task<Door> GetDoorInternalAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
-            CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
-
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
-            if (room == null)
-            {
-                return null;
-            }
-
-            return await Context.Doors.Where(door => door.RoomId == room.Id).ToListAsync();
-        }
-
-        public async Task<Door> GetDoorByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
-        {
-            CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
-            CheckGuid(id, "id");
-
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
@@ -66,6 +38,31 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
+        public async Task<IEnumerable<Door>> GetDoorsAsync(string email, Guid houseId, Guid roomId)
+        {
+            CheckString(email, "email");
+            CheckGuid(houseId, "house_id");
+            CheckGuid(roomId, "room_id");
+
+            Room room = await GetRoomInternalAsync(email, houseId, roomId);
+            if (room == null)
+            {
+                return null;
+            }
+
+            return await Context.Doors.Where(door => door.RoomId == room.Id).ToListAsync();
+        }
+
+        public async Task<Door> GetDoorByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
+        {
+            CheckString(email, "email");
+            CheckGuid(houseId, "house_id");
+            CheckGuid(roomId, "room_id");
+            CheckGuid(id, "id");
+
+            return await GetDoorInternalAsync(email, houseId, roomId, id);
+        }
+
         public async Task<Door> CreateDoorAsync(string email, Guid houseId, Guid roomId, Door door)
         {
             CheckString(email, "email");
@@ -73,15 +70,7 @@ namespace API.Repositories
             CheckGuid(roomId, "room_id");
             CheckString(door.Name, "name");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
+            Room room = await GetRoomInternalAsync(email, houseId, roomId);
             if (room == null)
             {
                 return null;
@@ -107,22 +96,8 @@ namespace API.Repositories
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
-            if (room == null)
-            {
-                return null;
-            }
-
-            Door door = await Context.Doors.Where(d => d.RoomId == room.Id)
-                .FirstOrDefaultAsync(d => d.Id == id);
+            Door door = await GetDoorInternalAsync(email, houseId, roomId, id);
+            ;
             if (door == null)
             {
                 return null;
@@ -144,22 +119,8 @@ namespace API.Repositories
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
-            if (room == null)
-            {
-                return null;
-            }
-
-            Door door = await Context.Doors.Where(d => d.RoomId == room.Id)
-                .FirstOrDefaultAsync(d => d.Id == id);
+            Door door = await GetDoorInternalAsync(email, houseId, roomId, id);
+            ;
             if (door == null)
             {
                 return null;

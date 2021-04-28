@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 
 namespace API.Repositories
@@ -29,6 +32,25 @@ namespace API.Repositories
             {
                 throw new ArgumentNullException(name);
             }
+        }
+
+        protected async Task<House> GetHouseInternalAsync(string email, Guid id)
+        {
+            return await Context.Houses.Where(h => h.Email == email)
+                .FirstOrDefaultAsync(h => h.Id == id);
+        }
+
+        protected async Task<Room> GetRoomInternalAsync(string email, Guid houseId, Guid id)
+        {
+            House house = await Context.Houses.Where(h => h.Email == email)
+                .FirstOrDefaultAsync(h => h.Id == houseId);
+            if (house == null)
+            {
+                return null;
+            }
+
+            return await Context.Rooms.Where(room => room.HouseId == house.Id)
+                .FirstOrDefaultAsync(room => room.Id == id);
         }
     }
 }

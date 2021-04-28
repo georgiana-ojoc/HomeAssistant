@@ -18,36 +18,8 @@ namespace API.Repositories
         {
         }
 
-        public async Task<IEnumerable<Thermostat>> GetThermostatsAsync(string email, Guid houseId, Guid roomId)
+        private async Task<Thermostat> GetThermostatInternalAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
-            CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
-
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
-            if (room == null)
-            {
-                return null;
-            }
-
-            return await Context.Thermostats.Where(thermostat => thermostat.RoomId == room.Id).ToListAsync();
-        }
-
-        public async Task<Thermostat> GetThermostatByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
-        {
-            CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
-            CheckGuid(id, "id");
-
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
@@ -66,6 +38,31 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
+        public async Task<IEnumerable<Thermostat>> GetThermostatsAsync(string email, Guid houseId, Guid roomId)
+        {
+            CheckString(email, "email");
+            CheckGuid(houseId, "house_id");
+            CheckGuid(roomId, "room_id");
+
+            Room room = await GetRoomInternalAsync(email, houseId, roomId);
+            if (room == null)
+            {
+                return null;
+            }
+
+            return await Context.Thermostats.Where(thermostat => thermostat.RoomId == room.Id).ToListAsync();
+        }
+
+        public async Task<Thermostat> GetThermostatByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
+        {
+            CheckString(email, "email");
+            CheckGuid(houseId, "house_id");
+            CheckGuid(roomId, "room_id");
+            CheckGuid(id, "id");
+
+            return await GetThermostatInternalAsync(email, houseId, roomId, id);
+        }
+
         public async Task<Thermostat> CreateThermostatAsync(string email, Guid houseId, Guid roomId,
             Thermostat thermostat)
         {
@@ -74,15 +71,7 @@ namespace API.Repositories
             CheckGuid(roomId, "room_id");
             CheckString(thermostat.Name, "name");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
+            Room room = await GetRoomInternalAsync(email, houseId, roomId);
             if (room == null)
             {
                 return null;
@@ -108,22 +97,7 @@ namespace API.Repositories
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
-            if (room == null)
-            {
-                return null;
-            }
-
-            Thermostat thermostat = await Context.Thermostats.Where(t => t.RoomId == room.Id)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            Thermostat thermostat = await GetThermostatInternalAsync(email, houseId, roomId, id);
             if (thermostat == null)
             {
                 return null;
@@ -145,22 +119,7 @@ namespace API.Repositories
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
-            if (house == null)
-            {
-                return null;
-            }
-
-            Room room = await Context.Rooms.Where(r => r.HouseId == house.Id)
-                .FirstOrDefaultAsync(r => r.Id == roomId);
-            if (room == null)
-            {
-                return null;
-            }
-
-            Thermostat thermostat = await Context.Thermostats.Where(t => t.RoomId == room.Id)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            Thermostat thermostat = await GetThermostatInternalAsync(email, houseId, roomId, id);
             if (thermostat == null)
             {
                 return null;

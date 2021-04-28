@@ -30,8 +30,7 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckGuid(id, "id");
 
-            return await Context.Houses.Where(house => house.Email == email)
-                .FirstOrDefaultAsync(house => house.Id == id);
+            return await GetHouseInternalAsync(email, id);
         }
 
         public async Task<House> CreateHouseAsync(string email, House house)
@@ -57,8 +56,7 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckGuid(id, "id");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == id);
+            House house = await GetHouseInternalAsync(email, id);
             if (house == null)
             {
                 return null;
@@ -78,8 +76,7 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckGuid(id, "id");
 
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == id);
+            House house = await GetHouseInternalAsync(email, id);
             if (house == null)
             {
                 return null;
