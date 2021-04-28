@@ -97,7 +97,6 @@ namespace API.Repositories
             CheckGuid(id, "id");
 
             Door door = await GetDoorInternalAsync(email, houseId, roomId, id);
-            ;
             if (door == null)
             {
                 return null;
@@ -120,7 +119,6 @@ namespace API.Repositories
             CheckGuid(id, "id");
 
             Door door = await GetDoorInternalAsync(email, houseId, roomId, id);
-            ;
             if (door == null)
             {
                 return null;

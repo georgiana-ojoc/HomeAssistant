@@ -10,12 +10,14 @@ namespace Interface.Scripts
             GreenValue = 0;
             BlueValue = 0;
         }
+
         public LightColor(string hexColor)
         {
             RedValue = byte.Parse(hexColor.Substring(1, 2), NumberStyles.HexNumber);
             GreenValue = byte.Parse(hexColor.Substring(3, 2), NumberStyles.HexNumber);
             BlueValue = byte.Parse(hexColor.Substring(5, 2), NumberStyles.HexNumber);
         }
+
         public LightColor(int intColor)
         {
             string hexColor = intColor.ToString("X6");

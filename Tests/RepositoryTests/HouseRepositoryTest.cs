@@ -52,11 +52,12 @@ namespace Tests.RepositoryTests
         }
 
         [Fact]
-        public async void GivenNewHouse_WhenHouseIsEmpty_ThenGetHouseByIdAsyncShouldThrowError()
+        public void GivenNewHouse_WhenHouseIsEmpty_ThenGetHouseByIdAsyncShouldThrowError()
         {
             var house = new House {Name = "Test"};
 
-            _repository.Invoking(r => r.GetHouseByIdAsync(house.Email, house.Id));
+            _repository.Invoking(r => r.GetHouseByIdAsync(house.Email, house.Id)).Should()
+                .Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -83,11 +84,12 @@ namespace Tests.RepositoryTests
         }
 
         [Fact]
-        public async void GivenNewHouse_WhenHouseIsNotNull_ThenDeleteHouseAsyncShouldThrowError()
+        public void GivenNewHouse_WhenHouseIsNotNull_ThenDeleteHouseAsyncShouldThrowError()
         {
             var house = new House {Name = "Test"};
 
-            _repository.Invoking(r => r.GetHouseByIdAsync(house.Email, house.Id));
+            _repository.Invoking(r => r.GetHouseByIdAsync(house.Email, house.Id)).Should()
+                .Throw<ArgumentNullException>();
         }
 
 
