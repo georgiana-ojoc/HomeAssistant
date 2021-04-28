@@ -18,7 +18,7 @@ namespace Interface.Pages
         private async Task GetDoors()
         {
             IList<Door> responseDoors =
-                await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
+                await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}");
             if (responseDoors != null)
             {
                 _doors = new List<Door>(responseDoors);
@@ -34,20 +34,20 @@ namespace Interface.Pages
                     string serializedContent = JsonConvert.SerializeObject(patchList);
                     HttpContent patchBody = new StringContent(serializedContent,
                         Encoding.UTF8, "application/json");
-                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
+                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}/{door.Id}",
                         patchBody);
                 }
             }
         }
 
-        private async void AddDoor()
+        private async Task AddDoor()
         {
             if (string.IsNullOrWhiteSpace(_newDoorName))
             {
                 return;
             }
 
-            HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/doors",
+            HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}",
                 new Door()
                 {
                     Name = _newDoorName
@@ -59,39 +59,29 @@ namespace Interface.Pages
             StateHasChanged();
         }
 
-        private async void DeleteDoor(Guid id)
+        private async Task DeleteDoor(Guid id)
         {
             await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
             _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
             StateHasChanged();
         }
 
-        private async void SetTrueLockedAndPatchDoor(Guid id)
+        private async Task SetTrueLockedAndPatchDoor(Guid id)
         {
             Door door = _doors.First(l => l.Id == id);
             door.Locked = true;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
-                patchBody);
+            await PatchDevice(patchList, DoorsPath, door.Id);
         }
 
-        private async void SetFalseLockedAndPatchDoor(Guid id)
+        private async Task SetFalseLockedAndPatchDoor(Guid id)
         {
             Door door = _doors.First(l => l.Id == id);
             door.Locked = false;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-            string serializedContent = JsonConvert.SerializeObject(patchList);
-            HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
-                patchBody);
+            await PatchDevice(patchList, DoorsPath, door.Id);
         }
 
         private static Dictionary<string, string> GenerateDoorLockedPatch(bool locked)

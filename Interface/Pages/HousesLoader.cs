@@ -13,7 +13,7 @@ namespace Interface.Pages
         private IList<House> _houses;
         private string _newHouseName;
 
-        private async void AddHouse()
+        private async Task AddHouse()
         {
             if (string.IsNullOrWhiteSpace(_newHouseName))
             {
@@ -31,7 +31,7 @@ namespace Interface.Pages
             StateHasChanged();
         }
 
-        private async void DeleteHouse(Guid id)
+        private async Task DeleteHouse(Guid id)
         {
             await Http.DeleteAsync($"houses/{id}");
             _houses.Remove(_houses.SingleOrDefault(house => house.Id == id));

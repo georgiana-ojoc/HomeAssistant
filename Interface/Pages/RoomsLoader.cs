@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 using Shared.Models;
 
 namespace Interface.Pages
@@ -13,7 +14,7 @@ namespace Interface.Pages
         private string _newRoomName;
         private Guid _houseId;
 
-        private async void AddRoom()
+        private async Task AddRoom()
         {
             if (string.IsNullOrWhiteSpace(_newRoomName))
             {
@@ -31,14 +32,14 @@ namespace Interface.Pages
             StateHasChanged();
         }
 
-        private async void DeleteRoom(Guid id)
+        private async Task DeleteRoom(Guid id)
         {
             await Http.DeleteAsync($"houses/{_houseId}/rooms/{id}");
             _rooms.Remove(_rooms.SingleOrDefault(room => room.Id == id));
             StateHasChanged();
         }
 
-        private async void SetRoomId(Guid roomId)
+        private async Task SetRoomId(Guid roomId)
         {
             await IdService.SetRoomId(roomId);
             NavManager.NavigateTo("Devices");

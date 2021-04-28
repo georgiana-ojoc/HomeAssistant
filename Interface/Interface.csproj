@@ -30,6 +30,12 @@
       <Compile Update="Pages\DevicesLoader.cs">
         <DependentUpon>Devices.razor</DependentUpon>
       </Compile>
+      <Compile Update="Pages\HousesLoader.cs">
+        <DependentUpon>Houses.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\RoomsLoader.cs">
+        <DependentUpon>Rooms.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
