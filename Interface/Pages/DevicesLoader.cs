@@ -9,11 +9,11 @@ namespace Interface.Pages
 {
     public partial class Devices
     {
-        private static Guid _houseId;
-        private static Guid _roomId;
         private const string LightBulbsPath = "light_bulbs";
         private const string ThermostatsPath = "thermostats";
         private const string DoorsPath = "doors";
+        private static Guid _houseId;
+        private static Guid _roomId;
 
         private async Task GetDevices()
         {
@@ -25,11 +25,12 @@ namespace Interface.Pages
         private async Task PatchDevice(IList<Dictionary<string, string>> patchList,
             string path, Guid id)
         {
-            string serializedContent = JsonConvert.SerializeObject(patchList);
+            var serializedContent = JsonConvert.SerializeObject(patchList);
             HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8, "application/json");
+            Encoding.UTF8,
+            "application/json");
             await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{path}/{id}",
-                patchBody);
+            patchBody);
         }
     }
 }

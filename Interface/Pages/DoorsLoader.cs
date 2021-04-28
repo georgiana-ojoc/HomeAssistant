@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 using Newtonsoft.Json;
 using Shared.Models;
 
@@ -17,46 +18,41 @@ namespace Interface.Pages
 
         private async Task GetDoors()
         {
-            IList<Door> responseDoors =
+            var responseDoors =
                 await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}");
-            if (responseDoors != null)
-            {
-                _doors = new List<Door>(responseDoors);
-            }
+            if (responseDoors != null) _doors = new List<Door>(responseDoors);
 
             foreach (var door in _doors)
-            {
                 if (door.Locked == null)
                 {
                     door.Locked = false;
                     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
                     patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-                    string serializedContent = JsonConvert.SerializeObject(patchList);
-                    HttpContent patchBody = new StringContent(serializedContent,
-                        Encoding.UTF8, "application/json");
-                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}/{door.Id}",
-                        patchBody);
+                    await PatchDevice(patchList, DoorsPath, door.Id);
                 }
-            }
         }
 
         private async Task AddDoor()
         {
-            if (string.IsNullOrWhiteSpace(_newDoorName))
+            if (string.IsNullOrWhiteSpace(_newDoorName)) return;
+
+            var response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}",
+            new Door
             {
-                return;
+                Name = _newDoorName
+            });
+            if (response.IsSuccessStatusCode)
+            {
+                var newDoor = await response.Content.ReadFromJsonAsync<Door>();
+                _doors.Add(newDoor);
+
+                _newDoorName = string.Empty;
+                StateHasChanged();
             }
-
-            HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}",
-                new Door()
-                {
-                    Name = _newDoorName
-                });
-            Door newDoor = await response.Content.ReadFromJsonAsync<Door>();
-            _doors.Add(newDoor);
-
-            _newDoorName = string.Empty;
-            StateHasChanged();
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Maximum number of doors reached!");
+            }
         }
 
         private async Task DeleteDoor(Guid id)
@@ -68,7 +64,7 @@ namespace Interface.Pages
 
         private async Task SetTrueLockedAndPatchDoor(Guid id)
         {
-            Door door = _doors.First(l => l.Id == id);
+            var door = _doors.First(l => l.Id == id);
             door.Locked = true;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
@@ -77,7 +73,7 @@ namespace Interface.Pages
 
         private async Task SetFalseLockedAndPatchDoor(Guid id)
         {
-            Door door = _doors.First(l => l.Id == id);
+            var door = _doors.First(l => l.Id == id);
             door.Locked = false;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));

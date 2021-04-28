@@ -4,6 +4,10 @@ namespace Interface.Scripts
 {
     public class LightColor
     {
+        private byte _blueValue;
+        private byte _greenValue;
+
+        private byte _redValue;
         public LightColor()
         {
             RedValue = 0;
@@ -20,15 +24,11 @@ namespace Interface.Scripts
 
         public LightColor(int intColor)
         {
-            string hexColor = intColor.ToString("X6");
+            var hexColor = intColor.ToString("X6");
             RedValue = byte.Parse(hexColor.Substring(0, 2), NumberStyles.HexNumber);
             GreenValue = byte.Parse(hexColor.Substring(2, 2), NumberStyles.HexNumber);
             BlueValue = byte.Parse(hexColor.Substring(4, 2), NumberStyles.HexNumber);
         }
-
-        private byte _redValue;
-        private byte _greenValue;
-        private byte _blueValue;
 
         public string Color { get; private set; }
 
@@ -71,7 +71,7 @@ namespace Interface.Scripts
 
         public int GetIntColor()
         {
-            string hexColor = Color.Substring(1, 6);
+            var hexColor = Color.Substring(1, 6);
             return int.Parse(hexColor, NumberStyles.HexNumber);
         }
     }

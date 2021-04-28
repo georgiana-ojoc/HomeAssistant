@@ -1,6 +1,7 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Configuration
 @inject IAccessTokenProvider AccessTokenProvider
-@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@inject IConfiguration Configuration
 @attribute [Authorize]
 
 <h1>Home Assistant</h1>

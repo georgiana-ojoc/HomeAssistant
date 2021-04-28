@@ -22,7 +22,7 @@ namespace Interface.Scripts
         public async Task SetHouseId(Guid houseId)
         {
             var idRecord = await GetIdRecord();
-            var newIdRecord = new IdRecord()
+            var newIdRecord = new IdRecord
             {
                 HouseId = houseId,
                 RoomId = idRecord.RoomId
@@ -33,7 +33,7 @@ namespace Interface.Scripts
         public async Task SetRoomId(Guid roomId)
         {
             var idRecord = await GetIdRecord();
-            var newIdRecord = new IdRecord()
+            var newIdRecord = new IdRecord
             {
                 HouseId = idRecord.HouseId,
                 RoomId = roomId

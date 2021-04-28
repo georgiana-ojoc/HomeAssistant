@@ -1,11 +1,12 @@
-﻿@inject NavigationManager Navigation
+﻿@using System.Diagnostics
+@inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
 
 <AuthorizeView>
     <Authorized>
         Hello,
         @{
-            System.Diagnostics.Debug.Assert(context.User.Identity != null,
+            Debug.Assert(context.User.Identity != null,
                 "context.User.Identity != null");
         }
         @context.User.Identity.Name!

@@ -1,5 +1,6 @@
 ﻿@page "/Devices"
-@inject global::Interface.Scripts.IdService IdService
+@using Interface.Scripts
+@inject IdService IdService
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
 @attribute [Authorize]
@@ -18,7 +19,7 @@
     <ul class="list-group list-group-vertical">
         @if (!(_lightBulbs is null))
         {
-            @foreach (int lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
+            @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
             {
                 <li class="list-group-item">
                     <div class="card">
@@ -117,10 +118,10 @@
                         <h3 class="card-header" style="text-align: center"> @door.Name </h3>
                         <div class="card-body" style="margin: auto">
                             <div style="text-align: center; margin: 0.25rem">
-                                @if (@door.Locked != null)
+                                @if (door.Locked != null)
                                 {
                                     <label>Status: </label>
-                                    if (@door.Locked.Value)
+                                    if (door.Locked.Value)
                                     {
                                         <span class="oi oi-lock-locked" aria-hidden="true" style="margin: 0.25rem"></span>
                                     }

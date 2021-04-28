@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 using Shared.Models;
 
 namespace Interface.Pages
@@ -15,20 +15,25 @@ namespace Interface.Pages
 
         private async Task AddHouse()
         {
-            if (string.IsNullOrWhiteSpace(_newHouseName))
-            {
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(_newHouseName)) return;
 
-            HttpResponseMessage response = await Http.PostAsJsonAsync("houses", new House()
+            var response = await Http.PostAsJsonAsync("houses",
+            new House
             {
                 Name = _newHouseName
             });
-            House newHouse = await response.Content.ReadFromJsonAsync<House>();
-            _houses.Add(newHouse);
+            if (response.IsSuccessStatusCode)
+            {
+                var newHouse = await response.Content.ReadFromJsonAsync<House>();
+                _houses.Add(newHouse);
 
-            _newHouseName = string.Empty;
-            StateHasChanged();
+                _newHouseName = string.Empty;
+                StateHasChanged();
+            }
+            else
+            {
+                await JsRuntime.InvokeVoidAsync("alert", "Maximum number of houses reached!");
+            }
         }
 
         private async Task DeleteHouse(Guid id)
