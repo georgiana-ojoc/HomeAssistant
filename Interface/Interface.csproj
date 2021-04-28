@@ -17,4 +17,19 @@
       <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Pages\LightBulbsLoader.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\DoorsLoader.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\ThermostatsLoader.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\DevicesLoader.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

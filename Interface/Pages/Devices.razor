@@ -1,16 +1,11 @@
 ﻿@page "/Devices"
-@using global::Shared.Models
-@using Newtonsoft.Json
-@using System.Globalization
-@using System.Text
-@using global::Shared
-@inject IdService IdService
+@inject global::Interface.Scripts.IdService IdService
 @inject HttpClient Http
 @inject IJSRuntime JsRuntime
 @attribute [Authorize]
 
 <div class="row">
-<div class="col">
+<div class="col" id="light-bulbs-col">
     <div class="input-group">
         <input class="form-control" style="margin: 0.5rem" placeholder="Light bulb name" @bind="_newLightBulbName"
                aria-describedby="add-light-bulb-addon"/>
@@ -36,17 +31,17 @@
                                 </button>
                                 <div class="col" style="text-align: center">
                                     <div class="row">
-                                        <input type="range" class="form-range" min="0" max="255" id="Red"
+                                        <input type="range" class="form-range" min="@byte.MinValue" max="@byte.MaxValue" id="Red"
                                                style="margin: 0.25rem; appearance: none; background: #FF0000; outline-style: double; "
                                                @bind="_lightColors[lightBulbIndex].RedValue">
                                     </div>
                                     <div class="row">
-                                        <input type="range" class="form-range" min="0" max="255" id="Green"
+                                        <input type="range" class="form-range" min="@byte.MinValue" max="@byte.MaxValue" id="Green"
                                                style="margin: 0.25rem; appearance: none; background: #00FF00; outline-style: double; "
                                                @bind="_lightColors[lightBulbIndex].GreenValue">
                                     </div>
                                     <div class="row">
-                                        <input type="range" class="form-range" min="0" max="255" id="Blue"
+                                        <input type="range" class="form-range" min="@byte.MinValue" max="@byte.MaxValue" id="Blue"
                                                style="margin: 0.25rem; appearance: none; background: #0000FF; outline-style: double;"
                                                @bind="_lightColors[lightBulbIndex].BlueValue">
                                     </div>
@@ -74,7 +69,7 @@
 
                                 <div class="col" style="text-align: center">
                                     <div class="row">
-                                        <input type="range" class="form-range" min="0" max="255" id="LB"
+                                        <input type="range" class="form-range" min="@byte.MinValue" max="@byte.MaxValue" id="LB"
                                                @bind="_lightBulbs[lightBulbIndex].Intensity"
                                                style="margin: 0.25rem; appearance: none; outline-style: double">
                                     </div>
@@ -104,149 +99,7 @@
     </ul>
 </div>
 
-@code
-{
-    private async void AddLightBulb()
-    {
-        if (string.IsNullOrWhiteSpace(_newLightBulbName))
-        {
-            return;
-        }
-        HttpResponseMessage response = await Http.PostAsJsonAsync(
-            $"houses/{_houseId}/rooms/{_roomId}/light_bulbs", new LightBulb()
-            {
-                Name = _newLightBulbName
-            });
-        LightBulb newLightBulb = await response.Content.ReadFromJsonAsync<LightBulb>();
-        _lightBulbs.Add(newLightBulb);
-
-        _newLightBulbName = string.Empty;
-        StateHasChanged();
-    }
-
-    private async void DeleteLightBulb(Guid id)
-    {
-        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{id}");
-        _lightBulbs.Remove(_lightBulbs.SingleOrDefault(lightBulb => lightBulb.Id == id));
-        StateHasChanged();
-    }
-
-    private async void PatchLightBulbColor(Guid id)
-    {
-        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
-        int index = _lightBulbs.IndexOf(lightBulb);
-        lightBulb.Color = _lightColors[index].GetIntColor();
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-            patchBody);
-    }
-
-    private async void SetWhiteColorAndPatchLightBulb(Guid id)
-    {
-        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
-        int index = _lightBulbs.IndexOf(lightBulb);
-        _lightColors[index] = new LightColor("#FFFFFF");
-        lightBulb.Color = _lightColors[index].GetIntColor();
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-            patchBody);
-    }
-
-    private async void SetOffColorAndPatchLightBulb(Guid id)
-    {
-        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
-        int index = _lightBulbs.IndexOf(lightBulb);
-        _lightColors[index] = new LightColor("#000000");
-        lightBulb.Color = _lightColors[index].GetIntColor();
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-            patchBody);
-    }
-
-    private async void PatchLightBulbIntensity(Guid id)
-    {
-        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity ?? 0));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-            patchBody);
-    }
-
-    private async void SetOffIntensityAndPatchLightBulb(Guid id)
-    {
-        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
-        lightBulb.Intensity = Byte.MinValue;
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-            patchBody);
-    }
-
-    private async void SetMaxIntensityAndPatchLightBulb(Guid id)
-    {
-        LightBulb lightBulb = _lightBulbs.First(l => l.Id == id);
-        lightBulb.Intensity = Byte.MaxValue;
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-            patchBody);
-    }
-
-    private static Dictionary<string, string> GenerateLightBulbColorPatch(int color)
-    {
-        return new()
-        {
-            {
-                "op", "replace"
-            },
-            {
-                "path", "color"
-            },
-            {
-                "value", color.ToString()
-            }
-        };
-    }
-
-    private static Dictionary<string, string> GenerateLightBulbIntensityPatch(byte intensity)
-    {
-        return new()
-        {
-            {
-                "op", "replace"
-            },
-            {
-                "path", "intensity"
-            },
-            {
-                "value", intensity.ToString()
-            }
-        };
-    }
-}
-
-<div class="col">
+<div class="col" id="doors-col">
     <div class="input-group">
         <input class="form-control" style="margin: 0.5rem" placeholder="Door name" @bind="_newDoorName"
                ria-describedby="add-door-addon"/>
@@ -298,77 +151,7 @@
     </ul>
 </div>
 
-@code
-{
-    private async void AddDoor()
-    {
-        if (string.IsNullOrWhiteSpace(_newDoorName))
-        {
-            return;
-        }
-        HttpResponseMessage response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/doors",
-            new Door()
-            {
-                Name = _newDoorName
-            });
-        Door newDoor = await response.Content.ReadFromJsonAsync<Door>();
-        _doors.Add(newDoor);
-
-        _newDoorName = string.Empty;
-        StateHasChanged();
-    }
-
-    private async void DeleteDoor(Guid id)
-    {
-        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
-        _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
-        StateHasChanged();
-    }
-
-    private async void SetTrueLockedAndPatchDoor(Guid id)
-    {
-        Door door = _doors.First(l => l.Id == id);
-        door.Locked = true;
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
-            patchBody);
-    }
-
-    private async void SetFalseLockedAndPatchDoor(Guid id)
-    {
-        Door door = _doors.First(l => l.Id == id);
-        door.Locked = false;
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
-            patchBody);
-    }
-
-    private static Dictionary<string, string> GenerateDoorLockedPatch(bool locked)
-    {
-        return new()
-        {
-            {
-                "op", "replace"
-            },
-            {
-                "path", "locked"
-            },
-            {
-                "value", locked.ToString()
-            }
-        };
-    }
-}
-
-<div class="col">
+<div class="col" id="thermostats-col">
     <div class="input-group">
         <input class="form-control" style="margin: 0.5rem" placeholder="Thermostat name" @bind="_newThermostatName"
                aria-describedby="add-thermostat-addon"/>
@@ -431,277 +214,15 @@
         }
     </ul>
 </div>
-
-@code
-{
-    private async void AddThermostat()
-    {
-        if (string.IsNullOrWhiteSpace(_newThermostatName))
-        {
-            return;
-        }
-        HttpResponseMessage response = await Http.PostAsJsonAsync(
-            $"houses/{_houseId}/rooms/{_roomId}/thermostats", new Thermostat()
-            {
-                Name = _newThermostatName
-            });
-        Thermostat newThermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
-        _thermostats.Add(newThermostat);
-
-        _newThermostatName = string.Empty;
-        StateHasChanged();
-    }
-
-    private async void DeleteThermostat(Guid id)
-    {
-        await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{id}");
-        _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
-        StateHasChanged();
-    }
-
-    private async void PatchThermostatTemperature(Guid id)
-    {
-        Thermostat thermostat = _thermostats.First(l => l.Id == id);
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
-            patchBody);
-    }
-
-    private async void SetMinTemperatureAndPatchThermostat(Guid id)
-    {
-        Thermostat thermostat = _thermostats.First(l => l.Id == id);
-        thermostat.Temperature = 7;
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
-            patchBody);
-    }
-
-    private async void SetMaxTemperatureAndPatchThermostat(Guid id)
-    {
-        Thermostat thermostat = _thermostats.First(l => l.Id == id);
-        thermostat.Temperature = 30;
-        IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
-        string serializedContent = JsonConvert.SerializeObject(patchList);
-        HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8, "application/json");
-        await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
-            patchBody);
-    }
-
-    private static Dictionary<string, string> GenerateThermostatTemperaturePatch(decimal temperature)
-    {
-        return new()
-        {
-            {
-                "op", "replace"
-            },
-            {
-                "path", "temperature"
-            },
-            {
-                "value", temperature.ToString(CultureInfo.InvariantCulture)
-            }
-        };
-    }
-}
-
 </div>
 
 @code {
-    private IList<LightBulb> _lightBulbs;
-    private IList<Door> _doors;
-    private IList<Thermostat> _thermostats;
-    private readonly IList<LightColor> _lightColors = new List<LightColor>();
-    private string _newLightBulbName;
-    private string _newDoorName;
-    private string _newThermostatName;
-    private static Guid _houseId;
-    private static Guid _roomId;
 
     protected override async Task OnInitializedAsync()
     {
         _houseId = await IdService.GetHouseId();
         _roomId = await IdService.GetRoomId();
-        await GetLightBulbs();
-        await GetDoors();
-        await GetThermostats();
-    }
-
-    private async Task GetLightBulbs()
-    {
-        IList<LightBulb> responseLightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
-            $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
-        if (responseLightBulbs != null)
-            _lightBulbs = new List<LightBulb>(responseLightBulbs);
-        foreach (var lightBulb in _lightBulbs)
-        {
-            if (lightBulb.Color != null)
-            {
-                _lightColors.Add(new LightColor(lightBulb.Color.Value));
-            }
-            else
-            {
-                _lightColors.Add(new LightColor());
-                lightBulb.Color = new LightColor().GetIntColor();
-                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-                patchList.Add(GenerateLightBulbColorPatch(lightBulb.Color.Value));
-                string serializedContent = JsonConvert.SerializeObject(patchList);
-                HttpContent patchBody = new StringContent(serializedContent,
-                    Encoding.UTF8, "application/json");
-                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                    patchBody);
-            }
-            if (lightBulb.Intensity == null)
-            {
-                lightBulb.Intensity = 0;
-                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-                patchList.Add(GenerateLightBulbIntensityPatch(lightBulb.Intensity.Value));
-                string serializedContent = JsonConvert.SerializeObject(patchList);
-                HttpContent patchBody = new StringContent(serializedContent,
-                    Encoding.UTF8, "application/json");
-                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/light_bulbs/{lightBulb.Id}",
-                    patchBody);
-            }
-        }
-    }
-
-    private async Task GetDoors()
-    {
-        IList<Door> responseDoors = await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/doors");
-        if (responseDoors != null)
-        {
-            _doors = new List<Door>(responseDoors);
-        }
-        foreach (var door in _doors)
-        {
-            if (door.Locked == null)
-            {
-                door.Locked = false;
-                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-                patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-                string serializedContent = JsonConvert.SerializeObject(patchList);
-                HttpContent patchBody = new StringContent(serializedContent,
-                    Encoding.UTF8, "application/json");
-                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{door.Id}",
-                    patchBody);
-            }
-        }
-    }
-
-    private async Task GetThermostats()
-    {
-        IList<Thermostat> responseThermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
-            $"houses/{_houseId}/rooms/{_roomId}/thermostats");
-        if (responseThermostats != null)
-        {
-            _thermostats = new List<Thermostat>(responseThermostats);
-        }
-        foreach (var thermostat in _thermostats)
-        {
-            if (thermostat.Temperature == null)
-            {
-                thermostat.Temperature = 7;
-                IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-                patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature.Value));
-                string serializedContent = JsonConvert.SerializeObject(patchList);
-                HttpContent patchBody = new StringContent(serializedContent,
-                    Encoding.UTF8, "application/json");
-                await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/thermostats/{thermostat.Id}",
-                    patchBody);
-            }
-        }
-    }
-
-    private class LightColor
-    {
-        public LightColor()
-        {
-            RedValue = 0;
-            GreenValue = 0;
-            BlueValue = 0;
-        }
-
-    /*
-        public LightColor(int redValue = 0, int greenValue = 0, int blueValue = 0)
-        {
-            RedValue = redValue;
-            GreenValue = greenValue;
-            BlueValue = blueValue;
-        }
-*/
-
-        public LightColor(string hexColor = "#000000")
-        {
-            RedValue = int.Parse(hexColor.Substring(1, 2), NumberStyles.HexNumber);
-            GreenValue = int.Parse(hexColor.Substring(3, 2), NumberStyles.HexNumber);
-            BlueValue = int.Parse(hexColor.Substring(5, 2), NumberStyles.HexNumber);
-        }
-
-        public LightColor(int intColor = 0)
-        {
-            string hexColor = intColor.ToString("X6");
-            RedValue = int.Parse(hexColor.Substring(0, 2), NumberStyles.HexNumber);
-            GreenValue = int.Parse(hexColor.Substring(2, 2), NumberStyles.HexNumber);
-            BlueValue = int.Parse(hexColor.Substring(4, 2), NumberStyles.HexNumber);
-        }
-
-        private int _redValue;
-        private int _greenValue;
-        private int _blueValue;
-
-        public string Color { get; private set; }
-
-        public int RedValue
-        {
-            get => _redValue;
-            set
-            {
-                _redValue = value;
-                OnValueChanged();
-            }
-        }
-
-        public int GreenValue
-        {
-            get => _greenValue;
-            set
-            {
-                _greenValue = value;
-                OnValueChanged();
-            }
-        }
-
-        public int BlueValue
-        {
-            get => _blueValue;
-            set
-            {
-                _blueValue = value;
-                OnValueChanged();
-            }
-        }
-
-        private void OnValueChanged()
-        {
-            Color = "#" + _redValue.ToString("X2")
-                    + _greenValue.ToString("X2")
-                    + _blueValue.ToString("X2");
-        }
-
-        public int GetIntColor()
-        {
-            string hexColor = Color.Substring(1, 6);
-            return int.Parse(hexColor, NumberStyles.HexNumber);
-        }
+        await GetDevices();
     }
 
 }
