@@ -21,7 +21,7 @@ namespace API.Commands.LightBulb.Handlers
             return await _repository.CreateLightBulbAsync(Identity.Email, request.HouseId, request.RoomId,
                 new Shared.Models.LightBulb
                 {
-                    Name=request.Request.Name,
+                    Name = request.Request.Name,
                     Color = request.Request.Color,
                     Intensity = request.Request.Intensity
                 });

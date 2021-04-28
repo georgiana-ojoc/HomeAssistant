@@ -22,7 +22,7 @@ namespace API.Repositories
                 throw new ArgumentNullException(name);
             }
         }
-        
+
         protected void CheckGuid(Guid field, string name)
         {
             if (field == Guid.Empty)

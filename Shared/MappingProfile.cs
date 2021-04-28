@@ -1,8 +1,8 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Shared.Models;
 using Shared.Requests;
 
-namespace API
+namespace Shared
 {
     public class MappingProfile : Profile
     {

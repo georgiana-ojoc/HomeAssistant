@@ -23,7 +23,7 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckGuid(houseId, "house_id");
             CheckGuid(roomId, "room_id");
-            
+
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
@@ -47,7 +47,7 @@ namespace API.Repositories
             CheckGuid(houseId, "house_id");
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
-            
+
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
@@ -73,7 +73,7 @@ namespace API.Repositories
             CheckGuid(houseId, "house_id");
             CheckGuid(roomId, "room_id");
             CheckString(thermostat.Name, "name");
-            
+
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
@@ -93,20 +93,21 @@ namespace API.Repositories
             {
                 throw new ConstraintException(nameof(CreateThermostatAsync));
             }
-            
+
             thermostat.RoomId = room.Id;
             Thermostat newThermostat = (await Context.Thermostats.AddAsync(thermostat)).Entity;
             await Context.SaveChangesAsync();
             return newThermostat;
         }
 
-        public async Task<Thermostat> PartialUpdateThermostatAsync(string email, Guid houseId, Guid roomId, Guid id, JsonPatchDocument<ThermostatRequest> thermostatPatch)
+        public async Task<Thermostat> PartialUpdateThermostatAsync(string email, Guid houseId, Guid roomId, Guid id,
+            JsonPatchDocument<ThermostatRequest> thermostatPatch)
         {
             CheckString(email, "email");
             CheckGuid(houseId, "house_id");
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
-            
+
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
@@ -127,7 +128,7 @@ namespace API.Repositories
             {
                 return null;
             }
-            
+
             ThermostatRequest thermostatToPatch = Mapper.Map<ThermostatRequest>(thermostat);
             thermostatPatch.ApplyTo(thermostatToPatch);
             CheckString(thermostatToPatch.Name, "name");
@@ -143,7 +144,7 @@ namespace API.Repositories
             CheckGuid(houseId, "house_id");
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
-            
+
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)

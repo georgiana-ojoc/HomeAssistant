@@ -44,7 +44,7 @@ namespace API.Repositories
             {
                 throw new ConstraintException(nameof(CreateHouseAsync));
             }
-            
+
             house.Email = email;
             House newHouse = (await Context.Houses.AddAsync(house)).Entity;
             await Context.SaveChangesAsync();

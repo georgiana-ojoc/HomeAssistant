@@ -106,7 +106,7 @@ namespace API.Repositories
             CheckGuid(houseId, "house_id");
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
-            
+
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
@@ -127,7 +127,7 @@ namespace API.Repositories
             {
                 return null;
             }
-            
+
             LightBulbRequest lightBulbToPatch = Mapper.Map<LightBulbRequest>(lightBulb);
             lightBulbPatch.ApplyTo(lightBulbToPatch);
             CheckString(lightBulbToPatch.Name, "name");
@@ -143,7 +143,7 @@ namespace API.Repositories
             CheckGuid(houseId, "house_id");
             CheckGuid(roomId, "room_id");
             CheckGuid(id, "id");
-            
+
             House house = await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == houseId);
             if (house == null)
