@@ -32,12 +32,11 @@ namespace Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task GivenHouses_WhenNotExist_ThenGetAsyncShouldReturnEmptyList()
+        public async Task GivenHouses_When_ThenGetAsyncShouldReturnOkResponse()
         {
             var response = await Client.GetAsync(_apiHousesUrl);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            (await response.Content.ReadFromJsonAsync<List<House>>()).Should().BeEmpty();
         }
 
         [Fact]

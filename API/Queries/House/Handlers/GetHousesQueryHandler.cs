@@ -1,0 +1,24 @@
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using API.Interfaces;
+using MediatR;
+
+namespace API.Queries.House.Handlers
+{
+    public class GetHousesQueryHandler : Handler, IRequestHandler<GetHousesQuery, IEnumerable<Shared.Models.House>>
+    {
+        private readonly IHouseRepository _repository;
+
+        public GetHousesQueryHandler(Identity identity, IHouseRepository repository) : base(identity)
+        {
+            _repository = repository;
+        }
+
+        public async Task<IEnumerable<Shared.Models.House>> Handle(GetHousesQuery request,
+            CancellationToken cancellationToken)
+        {
+            return await _repository.GetHousesAsync(Identity.Email);
+        }
+    }
+}

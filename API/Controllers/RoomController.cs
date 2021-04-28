@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using API.Commands.Room;
@@ -9,101 +10,141 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using Shared.Models.Patch;
+using Shared.Requests;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("houses/{house_id}/rooms")]
+    [Route("houses/{house_id:guid}/rooms")]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class RoomController : BaseController
     {
-        public RoomController(Identity identity, IMediator mediator) : base(identity, mediator)
+        public RoomController(IMediator mediator) : base(mediator)
         {
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetAsync(Guid house_id)
         {
-            IEnumerable<Room> rooms = await Mediator.Send(new RoomsQuery(Identity.Email, house_id));
-            if (rooms == null)
+            try
             {
-                return new NotFoundResult();
-            }
+                IEnumerable<Room> rooms = await Mediator.Send(new GetRoomsQuery {HouseId = house_id});
+                if (rooms == null)
+                {
+                    return NotFound();
+                }
 
-            return new ActionResult<IEnumerable<Room>>(rooms);
+                return Ok(rooms);
+            }
+            catch (ArgumentNullException)
+            {
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<Room>> GetAsync(Guid house_id, Guid id)
         {
-            Room room = await Mediator.Send(new RoomByIdQuery(Identity.Email, house_id, id));
-            if (room == null)
+            try
             {
-                return new NotFoundResult();
-            }
+                Room room = await Mediator.Send(new GetRoomByIdQuery {HouseId = house_id, Id = id});
+                if (room == null)
+                {
+                    return NotFound();
+                }
 
-            return room;
+                return Ok(room);
+            }
+            catch (ArgumentNullException)
+            {
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<Room>> PostAsync(Guid house_id, [FromBody] Room room)
+        public async Task<ActionResult<Room>> PostAsync(Guid house_id, [FromBody] RoomRequest request)
         {
             try
             {
-                Room newRoom = await Mediator.Send(new AddRoomCommand(Identity.Email, house_id, room));
+                Room newRoom = await Mediator.Send(new CreateRoomCommand {HouseId = house_id, Request = request});
                 if (newRoom == null)
                 {
-                    return new NotFoundResult();
+                    return NotFound();
                 }
 
-                return new CreatedResult($"houses/{house_id}/rooms", newRoom);
+                return Created($"houses/{house_id}/rooms/{newRoom.Id}", newRoom);
             }
-            catch (Exception exception)
+            catch (ArgumentNullException)
             {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return BadRequest();
+            }
+            catch (ConstraintException)
+            {
+                return Forbid();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:guid}")]
         public async Task<ActionResult<Room>> PatchAsync(Guid house_id, Guid id,
-            [FromBody] JsonPatchDocument<RoomPatch> patch)
+            [FromBody] JsonPatchDocument<RoomRequest> patch)
         {
             try
             {
-                Room room = await Mediator.Send(new UpdateRoomCommand(Identity.Email, house_id, id, patch));
+                Room room = await Mediator.Send(new PartialUpdateRoomCommand
+                {
+                    HouseId = house_id,
+                    Id = id,
+                    Patch = patch
+                });
                 if (room == null)
                 {
-                    return new NotFoundResult();
+                    return NotFound();
                 }
 
-                return room;
+                return Ok(room);
             }
-            catch (Exception exception)
+            catch (ArgumentNullException)
             {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<ActionResult> DeleteAsync(Guid house_id, Guid id)
         {
             try
             {
-                Room room = await Mediator.Send(new DeleteRoomCommand(Identity.Email, house_id, id));
+                Room room = await Mediator.Send(new DeleteRoomCommand {HouseId = house_id, Id = id});
                 if (room == null)
                 {
-                    return new NotFoundResult();
+                    return NotFound();
                 }
 
-                return new NoContentResult();
+                return NoContent();
             }
-            catch (Exception exception)
+            catch (ArgumentNullException)
             {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

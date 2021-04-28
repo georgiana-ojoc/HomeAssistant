@@ -6,19 +6,19 @@ using MediatR;
 
 namespace API.Queries.Door.Handlers
 {
-    public class DoorsHandler : IRequestHandler<DoorsQuery, IEnumerable<Shared.Models.Door>>
+    public class GetDoorsHandler : Handler, IRequestHandler<GetDoorsQuery, IEnumerable<Shared.Models.Door>>
     {
         private readonly IDoorRepository _repository;
 
-        public DoorsHandler(IDoorRepository repository)
+        public GetDoorsHandler(Identity identity, IDoorRepository repository) : base(identity)
         {
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Shared.Models.Door>> Handle(DoorsQuery request,
+        public async Task<IEnumerable<Shared.Models.Door>> Handle(GetDoorsQuery request,
             CancellationToken cancellationToken)
         {
-            return await _repository.GetDoorsAsync(request.Email, request.HouseId, request.RoomId);
+            return await _repository.GetDoorsAsync(Identity.Email, request.HouseId, request.RoomId);
         }
     }
 }

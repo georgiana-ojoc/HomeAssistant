@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using API.Commands.House;
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
-using Shared.Models.Patch;
+using Shared.Requests;
 
 namespace API.Controllers
 {
@@ -18,71 +19,92 @@ namespace API.Controllers
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class HouseController : BaseController
     {
-        public HouseController(Identity identity, IMediator mediator) : base(identity, mediator)
+        public HouseController(IMediator mediator) : base(mediator)
         {
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<House>>> GetAsync()
         {
-            IEnumerable<House> houses = await Mediator.Send(new HousesQuery(Identity.Email));
-            if (houses == null)
+            try
             {
-                return new NotFoundResult();
+                return Ok(await Mediator.Send(new GetHousesQuery()));
             }
-
-            return new ActionResult<IEnumerable<House>>(houses);
+            catch (ArgumentNullException)
+            {
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<House>> GetAsync(Guid id)
         {
-            House house = await Mediator.Send(new HouseByIdQuery(Identity.Email, id));
-            if (house == null)
+            try
             {
-                return new NotFoundResult();
-            }
+                House house = await Mediator.Send(new GetHouseByIdQuery {Id = id});
+                if (house == null)
+                {
+                    return NotFound();
+                }
 
-            return house;
+                return Ok(house);
+            }
+            catch (ArgumentNullException)
+            {
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPost]
-        public async Task<ActionResult<House>> PostAsync([FromBody] House house)
+        public async Task<ActionResult<House>> PostAsync([FromBody] HouseRequest request)
         {
             try
             {
-                House newHouse = await Mediator.Send(new AddHouseCommand(Identity.Email, house));
-                if (newHouse == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                return new CreatedResult("houses", newHouse);
+                House newHouse = await Mediator.Send(new CreateHouseCommand {Request = request});
+                return Created($"/houses/{newHouse.Id}", newHouse);
             }
-            catch (Exception exception)
+            catch (ArgumentNullException)
             {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return BadRequest();
+            }
+            catch (ConstraintException)
+            {
+                return Forbid();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
-        [HttpPatch("{id}")]
-        public async Task<ActionResult<House>> PatchAsync(Guid id, [FromBody] JsonPatchDocument<HousePatch> patch)
+        [HttpPatch("{id:guid}")]
+        public async Task<ActionResult<House>> PatchAsync(Guid id, [FromBody] JsonPatchDocument<HouseRequest> patch)
         {
             try
             {
-                House house = await Mediator.Send(new UpdateHouseCommand(Identity.Email, id, patch));
+                House house = await Mediator.Send(new PartialUpdateHouseCommand {Id = id, Patch = patch});
                 if (house == null)
                 {
-                    return new NotFoundResult();
+                    return NotFound();
                 }
 
-                return house;
+                return Ok(house);
             }
-            catch (Exception exception)
+            catch (ArgumentNullException)
             {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -91,18 +113,21 @@ namespace API.Controllers
         {
             try
             {
-                House house = await Mediator.Send(new DeleteHouseCommand(Identity.Email, id));
+                House house = await Mediator.Send(new DeleteHouseCommand {Id = id});
                 if (house == null)
                 {
-                    return new NotFoundResult();
+                    return NotFound();
                 }
 
-                return new NoContentResult();
+                return NoContent();
             }
-            catch (Exception exception)
+            catch (ArgumentNullException)
             {
-                Console.Write(exception.Message);
-                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                return BadRequest();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

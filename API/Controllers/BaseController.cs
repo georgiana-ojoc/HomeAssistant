@@ -1,15 +1,14 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public abstract class BaseController
+    public abstract class BaseController : Controller
     {
-        protected readonly Identity Identity;
         protected readonly IMediator Mediator;
 
-        protected BaseController(Identity identity, IMediator mediator)
+        protected BaseController(IMediator mediator)
         {
-            Identity = identity;
             Mediator = mediator;
         }
     }

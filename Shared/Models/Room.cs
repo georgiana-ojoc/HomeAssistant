@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -14,8 +15,8 @@ namespace Shared.Models
             Thermostats = new HashSet<Thermostat>();
         }
 
-        public Guid HouseId { get; set; }
-        public string Name { get; set; }
+        [Required] public Guid HouseId { get; set; }
+        [Required] public string Name { get; set; }
 
         internal House House { get; set; }
 

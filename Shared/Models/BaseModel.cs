@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Shared.Models
 {
     public abstract class BaseModel
     {
-        public Guid Id { get; set; }
+        [Required] public Guid Id { get; set; }
     }
 }

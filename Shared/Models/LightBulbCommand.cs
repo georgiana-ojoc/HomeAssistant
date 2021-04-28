@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -6,10 +7,10 @@ namespace Shared.Models
 {
     public class LightBulbCommand : BaseModel
     {
-        public Guid LightBulbId { get; set; }
-        public Guid ScheduleId { get; set; }
-        public int Color { get; set; }
-        public byte Intensity { get; set; }
+        [Required] public Guid LightBulbId { get; set; }
+        [Required] public Guid ScheduleId { get; set; }
+        [Required] public int Color { get; set; }
+        [Required] public byte Intensity { get; set; }
 
         internal LightBulb LightBulb { get; set; }
         internal Schedule Schedule { get; set; }

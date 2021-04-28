@@ -5,11 +5,12 @@ using MediatR;
 
 namespace API.Commands.Thermostat.Handlers
 {
-    public class DeleteThermostatCommandHandler : IRequestHandler<DeleteThermostatCommand, Shared.Models.Thermostat>
+    public class DeleteThermostatCommandHandler : Handler,
+        IRequestHandler<DeleteThermostatCommand, Shared.Models.Thermostat>
     {
         private readonly IThermostatRepository _repository;
 
-        public DeleteThermostatCommandHandler(IThermostatRepository repository)
+        public DeleteThermostatCommandHandler(Identity identity, IThermostatRepository repository) : base(identity)
         {
             _repository = repository;
         }
@@ -17,7 +18,7 @@ namespace API.Commands.Thermostat.Handlers
         public async Task<Shared.Models.Thermostat> Handle(DeleteThermostatCommand request,
             CancellationToken cancellationToken)
         {
-            return await _repository.DeleteThermostatAsync(request.Email, request.HouseId, request.RoomId, request.Id);
+            return await _repository.DeleteThermostatAsync(Identity.Email, request.HouseId, request.RoomId, request.Id);
         }
     }
 }

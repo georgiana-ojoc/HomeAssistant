@@ -6,19 +6,20 @@ using MediatR;
 
 namespace API.Queries.Thermostat.Handlers
 {
-    public class ThermostatsHandler : IRequestHandler<ThermostatsQuery, IEnumerable<Shared.Models.Thermostat>>
+    public class GetThermostatsHandler : Handler,
+        IRequestHandler<GetThermostatsQuery, IEnumerable<Shared.Models.Thermostat>>
     {
         private readonly IThermostatRepository _repository;
 
-        public ThermostatsHandler(IThermostatRepository repository)
+        public GetThermostatsHandler(Identity identity, IThermostatRepository repository) : base(identity)
         {
             _repository = repository;
         }
 
-        public async Task<IEnumerable<Shared.Models.Thermostat>> Handle(ThermostatsQuery request,
+        public async Task<IEnumerable<Shared.Models.Thermostat>> Handle(GetThermostatsQuery request,
             CancellationToken cancellationToken)
         {
-            return await _repository.GetThermostatsAsync(request.Email, request.HouseId, request.RoomId);
+            return await _repository.GetThermostatsAsync(Identity.Email, request.HouseId, request.RoomId);
         }
     }
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 using Shared.Models;
+using Shared.Requests;
 
 namespace API.Interfaces
 {
@@ -10,8 +12,10 @@ namespace API.Interfaces
         Task<IEnumerable<Room>> GetRoomsAsync(string email, Guid houseId);
         Task<Room> GetRoomByIdAsync(string email, Guid houseId, Guid id);
         Task<Room> CreateRoomAsync(string email, Guid houseId, Room room);
-        Task<Room> DeleteRoomAsync(string email, Guid houseId, Guid id);
 
-        Task<Boolean> SaveChangesAsync();
+        Task<Room> PartialUpdateRoomAsync(string email, Guid houseId, Guid id, JsonPatchDocument<RoomRequest>
+            roomPatch);
+
+        Task<Room> DeleteRoomAsync(string email, Guid houseId, Guid id);
     }
 }

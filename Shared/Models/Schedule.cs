@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -14,10 +15,10 @@ namespace Shared.Models
             ThermostatCommands = new HashSet<ThermostatCommand>();
         }
 
-        public string Email { get; set; }
-        public string Name { get; set; }
-        public TimeSpan Time { get; set; }
-        public byte Frequency { get; set; }
+        [Required] public string Email { get; set; }
+        [Required] public string Name { get; set; }
+        [Required] public TimeSpan Time { get; set; }
+        [Required] public byte Frequency { get; set; }
 
         internal ICollection<LightBulbCommand> LightBulbCommands { get; set; }
         internal ICollection<DoorCommand> DoorCommands { get; set; }

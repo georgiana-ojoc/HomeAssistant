@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class HouseRepositoryTest : Database
+    public class HouseRepositoryTest : RepositoryTest
     {
         private readonly HouseRepository _repository;
         private readonly House _newHouse;
@@ -16,7 +16,7 @@ namespace Tests.RepositoryTests
 
         public HouseRepositoryTest()
         {
-            _repository = new HouseRepository(Context);
+            _repository = new HouseRepository(Context, Mapper);
             _newHouse = new House
             {
                 Name = "Apartment"

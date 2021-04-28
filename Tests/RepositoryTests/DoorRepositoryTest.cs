@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class DoorRepositoryTest : Database
+    public class DoorRepositoryTest : RepositoryTest
     {
         private readonly DoorRepository _doorRepository;
         private readonly RoomRepository _roomRepository;
@@ -19,9 +19,9 @@ namespace Tests.RepositoryTests
 
         public DoorRepositoryTest()
         {
-            _houseRepository = new HouseRepository(Context);
-            _roomRepository = new RoomRepository(Context);
-            _doorRepository = new DoorRepository(Context);
+            _houseRepository = new HouseRepository(Context, Mapper);
+            _roomRepository = new RoomRepository(Context, Mapper);
+            _doorRepository = new DoorRepository(Context, Mapper);
             _newDoor = new Door
             {
                 Name = "Front door",

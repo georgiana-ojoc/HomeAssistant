@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -11,9 +12,9 @@ namespace Shared.Models
             Rooms = new HashSet<Room>();
         }
 
-        public string Email { get; set; }
-        public string Name { get; set; }
-        
+        [Required] public string Email { get; set; }
+        [Required] public string Name { get; set; }
+
         internal ICollection<Room> Rooms { get; set; }
     }
 }

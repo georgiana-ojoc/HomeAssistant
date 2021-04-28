@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class LightBulbRepositoryTest : Database
+    public class LightBulbRepositoryTest : RepositoryTest
     {
         private readonly LightBulbRepository _lightBulbRepository;
         private readonly RoomRepository _roomRepository;
@@ -19,9 +19,9 @@ namespace Tests.RepositoryTests
 
         public LightBulbRepositoryTest()
         {
-            _houseRepository = new HouseRepository(Context);
-            _roomRepository = new RoomRepository(Context);
-            _lightBulbRepository = new LightBulbRepository(Context);
+            _houseRepository = new HouseRepository(Context, Mapper);
+            _roomRepository = new RoomRepository(Context, Mapper);
+            _lightBulbRepository = new LightBulbRepository(Context, Mapper);
             _newLightBulb = new LightBulb
             {
                 Name = "Lamp",

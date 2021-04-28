@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class ThermostatRepositoryTest : Database
+    public class ThermostatRepositoryTest : RepositoryTest
     {
         private readonly ThermostatRepository _thermostatRepository;
         private readonly RoomRepository _roomRepository;
@@ -19,9 +19,9 @@ namespace Tests.RepositoryTests
 
         public ThermostatRepositoryTest()
         {
-            _houseRepository = new HouseRepository(Context);
-            _roomRepository = new RoomRepository(Context);
-            _thermostatRepository = new ThermostatRepository(Context);
+            _houseRepository = new HouseRepository(Context, Mapper);
+            _roomRepository = new RoomRepository(Context, Mapper);
+            _thermostatRepository = new ThermostatRepository(Context, Mapper);
             _newThermostat = new Thermostat
             {
                 Name = "Wall thermostat",

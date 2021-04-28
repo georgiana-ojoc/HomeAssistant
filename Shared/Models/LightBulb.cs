@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable disable
 
@@ -12,8 +13,8 @@ namespace Shared.Models
             LightBulbCommands = new HashSet<LightBulbCommand>();
         }
 
-        public Guid RoomId { get; set; }
-        public string Name { get; set; }
+        [Required] public Guid RoomId { get; set; }
+        [Required] public string Name { get; set; }
         public bool? Status { get; set; }
         public int? Color { get; set; }
         public byte? Intensity { get; set; }
