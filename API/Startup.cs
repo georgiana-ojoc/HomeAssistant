@@ -13,7 +13,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Shared;
-using Shared.Models;
 
 namespace API
 {
@@ -38,8 +37,7 @@ namespace API
                     policy =>
                     {
                         policy.WithOrigins("http://localhost:5000", "https://localhost:5001",
-                                "http://localhost:6000", "https://localhost:6001",
-                                "http://localhost:7000", "https://localhost:7001")
+                                "http://localhost:6000", "https://localhost:6001")
                             .AllowAnyMethod().AllowAnyHeader();
                     });
             });
@@ -81,7 +79,7 @@ namespace API
                 {
                     Version = "v1",
                     Title = "Home Assistant API",
-                    Description = "ASP.NET Core 5.0 Web API"
+                    Description = "ASP.NET Core 6.0 Web API"
                 });
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {

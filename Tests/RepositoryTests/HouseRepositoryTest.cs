@@ -1,107 +1,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using API.Repositories;
+using AutoMapper;
 using FluentAssertions;
+using Microsoft.AspNetCore.JsonPatch;
+using Shared;
 using Shared.Models;
+using Shared.Requests;
 using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class HouseRepositoryTest : RepositoryTest
+    public class HouseRepositoryTest : BaseRepositoryTest
     {
-        private readonly HouseRepository _repository;
-        private readonly House _newHouse;
-        private const string Email = "maria@popescu.com";
-
-        public HouseRepositoryTest()
-        {
-            _repository = new HouseRepository(Context, Mapper);
-            _newHouse = new House
-            {
-                Name = "Apartment"
-            };
-        }
-
-        [Fact]
-        public async void GivenNewHouse_WhenHouseIsNotNull_ThenCreateHouseAsyncShouldReturnNewHouse()
-        {
-            var result = await _repository.CreateHouseAsync(Email, _newHouse);
-
-            result.Should().BeOfType<House>();
-        }
-
-        [Fact]
-        public async void GivenNewHouse_WhenHouseIsEmpty_ThenCreateHouseAsyncShouldReturnNewHouse()
-        {
-            var result = await _repository.CreateHouseAsync(Email, new House {Name = "Test"});
-
-            result.Should().BeOfType<House>();
-        }
-
-        [Fact]
-        public async void GivenNewHouse_WhenHouseExists_ThenGetHouseByIdAsyncShouldReturnHouse()
-        {
-            var house = await _repository.CreateHouseAsync(Email, _newHouse);
-
-            house.Should().BeOfType<House>();
-
-            var result = await _repository.GetHouseByIdAsync(house.Email, house.Id);
-
-            result.Should().BeOfType<House>();
-        }
-
-        [Fact]
-        public void GivenNewHouse_WhenHouseIsEmpty_ThenGetHouseByIdAsyncShouldThrowError()
-        {
-            var house = new House {Name = "Test"};
-
-            _repository.Invoking(r => r.GetHouseByIdAsync(house.Email, house.Id)).Should()
-                .Throw<ArgumentNullException>();
-        }
-
-        [Fact]
-        public async void GivenNewHouse_WhenIdDoesNotExist_GetHouseByIdAsyncShouldReturnNull()
-        {
-            var house = await _repository.CreateHouseAsync(Email, _newHouse);
-
-            var result = await _repository.GetHouseByIdAsync(house.Email,
-                Guid.Parse("3f953890-20ad-48b5-a272-c0faa8f09ea3"));
-
-            result.Should().BeNull();
-        }
-
-
-        [Fact]
-        public async void GivenNewHouse_WhenHouseIsNotNull_ThenDeleteHouseAsyncShouldReturnHouse()
-        {
-            var house = await _repository.CreateHouseAsync(Email, _newHouse);
-
-
-            var result = await _repository.DeleteHouseAsync(house.Email, house.Id);
-
-            result.Should().BeOfType<House>();
-        }
-
-        [Fact]
-        public void GivenNewHouse_WhenHouseIsNotNull_ThenDeleteHouseAsyncShouldThrowError()
-        {
-            var house = new House {Name = "Test"};
-
-            _repository.Invoking(r => r.GetHouseByIdAsync(house.Email, house.Id)).Should()
-                .Throw<ArgumentNullException>();
-        }
-
+        #region GET_HOUSE_ASYNC
 
         [Fact]
         public async void GivenEmail_WhenEmailExists_ThenGetHousesAsyncShouldReturnListOfHouses()
         {
-            await _repository.CreateHouseAsync(Email, new House {Name = "Test"});
-            await _repository.CreateHouseAsync(Email, new House {Name = "Test"});
-            await _repository.CreateHouseAsync(Email, new House {Name = "Test"});
-            await _repository.CreateHouseAsync(Email, new House {Name = "Test"});
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
 
-            var result = await _repository.GetHousesAsync(Email);
+            var result = await repository.GetHousesAsync("homeassistantgo@outlook.com");
 
             result.Should().BeOfType<List<House>>();
         }
@@ -109,11 +32,162 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenEmail_WhenEmailDoesNotExist_ThenGetHousesAsyncShouldReturnEmptyListOfHouses()
         {
-            const string newEmail = "new@gmail.com";
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
 
-            var result = await _repository.GetHousesAsync(newEmail);
+            var result = await repository.GetHousesAsync("jane.doe@mail.com");
 
             result.Count().Should().Be(0);
         }
+
+        [Fact]
+        public async void GivenEmail_WhenEmailIsEmpty_ThenGetHousesAsyncShouldThrowArgumentNullException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            Func<Task> function = async () => { await repository.GetHousesAsync(null); };
+
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'email')");
+        }
+
+        #endregion
+
+        #region GET_HOUSE_BY_ID_ASYNC
+
+        [Fact]
+        public async void GivenHouse_WhenHouseExists_ThenGetHouseByIdAsyncShouldReturnHouse()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            var result = await repository.GetHouseByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"));
+
+            result.Should().BeOfType<House>();
+        }
+
+        [Fact]
+        public async void GivenHouse_WhenHouseDoesNotExist_ThenGetHouseByIdAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            var result = await repository.GetHouseByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
+
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region CREATE_HOUSE_ASYNC
+
+        [Fact]
+        public async void GivenNewHouse_WhenHouseIsNotEmpty_ThenCreateHouseAsyncShouldReturnNewHouse()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            var result = await repository.CreateHouseAsync("homeassistantgo@outlook.com", new House()
+            {
+                Name = "Penthouse"
+            });
+
+            result.Should().BeOfType<House>();
+        }
+
+        [Fact]
+        public async void GivenNewHouse_WhenHouseIsEmpty_ThenCreateHouseAsyncShouldThrowArgumentNullException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateHouseAsync("homeassistantgo@outlook.com",
+                    new House());
+            };
+
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'name')");
+        }
+
+        #endregion
+
+        #region PARTIAL_UPDATE_HOUSE_ASYNC
+
+        [Fact]
+        public async void
+            GivenPartialUpdatedHouse_WhenHouseExists_ThenPartialUpdatedHouseAsyncShouldReturnPartialUpdatedHouse()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            JsonPatchDocument<HouseRequest> housePatch = new JsonPatchDocument<HouseRequest>();
+            housePatch.Replace(h => h.Name, "Lake house");
+
+            var result = await repository.PartialUpdateHouseAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"), housePatch);
+
+            result.Should().BeOfType<House>();
+            result.Name.Should().Be("Lake house");
+        }
+
+        [Fact]
+        public async void GivenPartialUpdatedHouse_WhenHouseDoesNotExist_ThenPartialUpdatedHouseAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            JsonPatchDocument<HouseRequest> housePatch = new JsonPatchDocument<HouseRequest>();
+            housePatch.Replace(h => h.Name, "Lake house");
+
+            var result = await repository.PartialUpdateHouseAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"), housePatch);
+
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region DELETE_HOUSE_ASYNC
+
+        [Fact]
+        public async void GivenHouse_WhenHouseExists_ThenDeleteHouseAsyncShouldReturnHouse()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            var result = await repository.DeleteHouseAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"));
+
+            result.Should().BeOfType<House>();
+        }
+
+        [Fact]
+        public async void GivenHouse_WhenHouseDoesNotExist_ThenDeleteHouseAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            var result = await repository.DeleteHouseAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"));
+
+            result.Should().BeNull();
+        }
+
+        #endregion
     }
 }

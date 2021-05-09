@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Shared.Models;
@@ -8,36 +9,25 @@ using Xunit;
 
 namespace Tests.PerformanceTests
 {
-    public class RoomControllerTest : ApiTest
+    public class LightBulbPerformanceTest : BaseControllerTest
     {
-        private readonly string _apiHousesUrl;
+        private readonly string _lightBulbsApiUrl;
 
-        private async Task<Guid> GetHouseId()
+        public LightBulbPerformanceTest()
         {
-            var postResponse = await Client.PostAsJsonAsync(_apiHousesUrl, new House()
-            {
-                Name = "Apartment"
-            });
-
-            var house = await postResponse.Content.ReadFromJsonAsync<House>();
-            return house?.Id ?? Guid.Parse("a918cdd5-b15b-4d04-9839-8a74e676dfea");
-        }
-
-        public RoomControllerTest()
-        {
-            _apiHousesUrl = $"{ApiUrl}/houses";
+            _lightBulbsApiUrl = $"{GetApiUrl()}/houses/cae88006-a2d7-4dcd-93fc-0b561e1f1acc/rooms/" +
+                                "f6ed4eb2-ac66-429b-8199-8757888bb0ad/thermostats";
         }
 
         [Fact]
-        public async Task GivenRooms_WhenGetAsync_ThenResponseTimeShouldBeLessThan1500MilliSeconds()
+        public async Task GivenLightBulbs_WhenGetAsync_ThenResponseTimeShouldBeLessThan1000MilliSeconds()
         {
-            Guid id = await GetHouseId();
+            using HttpClient client = GetClient(GetType().Name);
 
             DateTime start = DateTime.Now;
-            await Client.GetAsync($"{_apiHousesUrl}/{id}/rooms");
+            await client.GetAsync(_lightBulbsApiUrl);
             DateTime end = DateTime.Now;
-
-            int expected = 1500;
+            int expected = 1000;
             int actual = (int) (end - start).TotalMilliseconds;
 
             Assert.True(actual < expected,
@@ -45,21 +35,21 @@ namespace Tests.PerformanceTests
         }
 
         [Fact]
-        public async Task GivenRooms_WhenGetAsync_ThenAverageResponseTimeShouldBeLessThan50MilliSeconds()
+        public async Task GivenLightBulbs_WhenGetAsync_ThenAverageResponseTimeShouldBeLessThan5MilliSeconds()
         {
-            Guid id = await GetHouseId();
+            using HttpClient client = GetClient(GetType().Name);
             List<(DateTime Start, DateTime End)> responseTimes = new List<(DateTime Start, DateTime End)>();
 
-            for (int index = 0; index < 100; index++)
+            for (int index = 0; index < 1000; index++)
             {
                 DateTime start = DateTime.Now;
-                await Client.GetAsync($"{_apiHousesUrl}/{id}/rooms");
+                await client.GetAsync(_lightBulbsApiUrl);
                 DateTime end = DateTime.Now;
 
                 responseTimes.Add((start, end));
             }
 
-            int expected = 50;
+            int expected = 5;
             int actual = (int) responseTimes.Select(time => (time.End - time.Start).TotalMilliseconds).Average();
 
             Assert.True(actual < expected,
@@ -67,18 +57,17 @@ namespace Tests.PerformanceTests
         }
 
         [Fact]
-        public async Task GivenRoom_WhenPostAsync_ThenResponseTimeShouldBeLessThan2000MilliSeconds()
+        public async Task GivenLightBulb_WhenPostAsync_ThenResponseTimeShouldBeLessThan1000MilliSeconds()
         {
-            Guid id = await GetHouseId();
+            using HttpClient client = GetClient(GetType().Name);
 
             DateTime start = DateTime.Now;
-            await Client.PostAsJsonAsync($"{_apiHousesUrl}/{id}/rooms", new House()
+            await client.PostAsJsonAsync(_lightBulbsApiUrl, new LightBulb()
             {
-                Name = "Apartment"
+                Name = "Lamp"
             });
             DateTime end = DateTime.Now;
-
-            int expected = 2000;
+            int expected = 1000;
             int actual = (int) (end - start).TotalMilliseconds;
 
             Assert.True(actual < expected,
@@ -86,24 +75,24 @@ namespace Tests.PerformanceTests
         }
 
         [Fact]
-        public async Task GivenRoom_WhenPostAsync_ThenAverageResponseTimeShouldBeLessThan30MilliSeconds()
+        public async Task GivenLightBulb_WhenPostAsync_ThenAverageResponseTimeShouldBeLessThan5MilliSeconds()
         {
-            Guid id = await GetHouseId();
+            using HttpClient client = GetClient(GetType().Name);
             List<(DateTime Start, DateTime End)> responseTimes = new List<(DateTime Start, DateTime End)>();
 
-            for (int index = 0; index < 100; index++)
+            for (int index = 0; index < 1000; index++)
             {
                 DateTime start = DateTime.Now;
-                await Client.PostAsJsonAsync($"{_apiHousesUrl}/{id}/rooms", new House()
+                await client.PostAsJsonAsync(_lightBulbsApiUrl, new LightBulb()
                 {
-                    Name = "Apartment"
+                    Name = "Lamp"
                 });
                 DateTime end = DateTime.Now;
 
                 responseTimes.Add((start, end));
             }
 
-            int expected = 30;
+            int expected = 5;
             int actual = (int) responseTimes.Select(time => (time.End - time.Start).TotalMilliseconds).Average();
 
             Assert.True(actual < expected,

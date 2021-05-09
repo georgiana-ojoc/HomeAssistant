@@ -8,6 +8,7 @@ namespace Interface.Scripts
         private byte _greenValue;
 
         private byte _redValue;
+
         public LightColor()
         {
             RedValue = 0;

@@ -1,153 +1,218 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using API.Repositories;
+using AutoMapper;
 using FluentAssertions;
-using FluentAssertions.Common;
+using Microsoft.AspNetCore.JsonPatch;
+using Shared;
 using Shared.Models;
+using Shared.Requests;
 using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class DoorRepositoryTest : RepositoryTest
+    public class DoorRepositoryTest : BaseRepositoryTest
     {
-        private readonly DoorRepository _doorRepository;
-        private readonly RoomRepository _roomRepository;
-        private readonly HouseRepository _houseRepository;
-        private readonly Door _newDoor;
-        private const string Email = "ioana@popescu.com";
+        #region GET_DOOR_ASYNC
 
-        public DoorRepositoryTest()
+        [Fact]
+        public async void GivenRoomId_WhenRoomIdExists_ThenGetDoorsAsyncShouldReturnListOfDoors()
         {
-            _houseRepository = new HouseRepository(Context, Mapper);
-            _roomRepository = new RoomRepository(Context, Mapper);
-            _doorRepository = new DoorRepository(Context, Mapper);
-            _newDoor = new Door
-            {
-                Name = "Front door",
-            };
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
+
+            var result = await repository.GetDoorsAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"));
+
+            result.Should().BeOfType<List<Door>>();
         }
 
         [Fact]
-        public async void GivenNewDoor_WhenDoorIsNotNull_ThenCreateDoorAsyncShouldReturnNewDoor()
+        public async void GivenRoomId_WhenRoomIdDoesNotExist_ThenGetDoorsAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var result = await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, _newDoor);
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
 
-            result.Should().BeOfType<Door>();
-        }
-
-        [Fact]
-        public async void GivenNewDoor_WhenDoorIsEmpty_ThenCreateDoorAsyncShouldReturnNewDoor()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var result = await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
-
-            result.Should().BeOfType<Door>();
-        }
-
-        [Fact]
-        public async void GivenNewDoor_WhenDoorExists_ThenGetDoorByIdAsyncShouldReturnDoor()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var door = await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
-
-            door.Should().BeOfType<Door>();
-
-            var result = await _doorRepository.GetDoorByIdAsync(house.Email, house.Id, room.Id, door.Id);
-
-            result.Should().BeOfType<Door>();
-            result.Should().IsSameOrEqualTo(door);
-        }
-
-        [Fact]
-        public async void GivenNewDoor_WhenDoorIsEmpty_ThenGetDoorByIdAsyncShouldThrowError()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = new Room {Name = "Test"};
-            var door = new Door {Name = "Test"};
-
-            _doorRepository.Invoking(r => r.GetDoorByIdAsync(house.Email, house.Id, room.Id, door.Id));
-        }
-
-        [Fact]
-        public async void GivenNewDoor_WhenIdDoesNotExist_GetDoorByIdAsyncShouldReturnNull()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-
-            house.Should().BeOfType<House>();
-            room.Should().BeOfType<Room>();
-
-            var result = await _doorRepository.GetDoorByIdAsync(house.Email, house.Id, room.Id,
-                Guid.Parse("3f953890-20ad-48b5-a272-c0faa8f09ea3"));
+            var result = await repository.GetDoorsAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
 
             result.Should().BeNull();
         }
 
         [Fact]
-        public async void GivenNewDoor_WhenDoorIsNotNull_ThenDeleteDoorAsyncShouldReturnDoor()
+        public async void GivenRoomId_WhenRoomIdIsEmpty_ThenGetDoorsAsyncShouldThrowArgumentNullException()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var door = await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
 
-            house.Should().BeOfType<House>();
-            room.Should().BeOfType<Room>();
-            door.Should().BeOfType<Door>();
+            Func<Task> function = async () =>
+            {
+                await repository.GetDoorsAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                    Guid.Empty);
+            };
 
-            var result = await _doorRepository.DeleteDoorAsync(house.Email, house.Id, room.Id, door.Id);
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'room_id')");
+        }
+
+        #endregion
+
+        #region GET_DOOR_BY_ID_ASYNC
+
+        [Fact]
+        public async void GivenDoor_WhenDoorExists_ThenGetDoorByIdAsyncShouldReturnDoor()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
+
+            var result = await repository.GetDoorByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"));
 
             result.Should().BeOfType<Door>();
         }
 
         [Fact]
-        public async void GivenNewDoor_WhenDoorIsNotNull_ThenDeleteDoorAsyncShouldThrowError()
+        public async void GivenDoor_WhenDoorDoesNotExist_ThenGetDoorByIdAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var door = new Door {Name = "Test"};
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
 
-            house.Should().BeOfType<House>();
-            room.Should().BeOfType<Room>();
-            door.Should().BeOfType<Door>();
+            var result = await repository.GetDoorByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
 
-            _doorRepository.Invoking(r => r.DeleteDoorAsync(house.Email, house.Id, room.Id, door.Id));
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region CREATE_DOOR_ASYNC
+
+        [Fact]
+        public async void GivenNewDoor_WhenDoorIsNotEmpty_ThenCreateDoorAsyncShouldReturnNewDoor()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
+
+            var result = await repository.CreateDoorAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new Door()
+                {
+                    Name = "Balcony door"
+                });
+
+            result.Should().BeOfType<Door>();
         }
 
         [Fact]
-        public async void GivenEmail_WhenEmailExists_ThenGetDoorsAsyncShouldReturnListOfDoors()
+        public async void
+            GivenNewDoor_WhenDoorIsEmpty_ThenCreateDoorAsyncShouldThrowArgumentNullException()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
 
+            Func<Task> function = async () =>
+            {
+                await repository.CreateDoorAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                    Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new Door());
+            };
 
-            await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
-            await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
-            await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
-            await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
-            await _doorRepository.CreateDoorAsync(Email, house.Id, room.Id, new Door {Name = "Test"});
-
-            var result = await _doorRepository.GetDoorsAsync(Email, house.Id, room.Id);
-
-            result.Should().BeOfType<List<Door>>();
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'name')");
         }
 
+        #endregion
+
+        #region PARTIAL_UPDATE_DOOR_ASYNC
 
         [Fact]
-        public async void GivenEmail_WhenEmailDoesNotExist_ThenGetDoorsAsyncShouldReturnEmptyListOfDoors()
+        public async void
+            GivenPartialUpdatedDoor_WhenDoorExists_ThenPartialUpdatedDoorAsyncShouldReturnPartialUpdatedDoor()
         {
-            const string newEmail = "new@gmail.com";
-            var house = await _houseRepository.CreateHouseAsync(newEmail, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(newEmail, house.Id, new Room {Name = "Test"});
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
 
+            JsonPatchDocument<DoorRequest> doorPatch = new JsonPatchDocument<DoorRequest>();
+            doorPatch.Replace(d => d.Locked, true);
 
-            var result = await _doorRepository.GetDoorsAsync(newEmail, house.Id, room.Id);
+            var result = await repository.PartialUpdateDoorAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"), doorPatch);
 
-            result.Count().Should().Be(0);
+            result.Should().BeOfType<Door>();
+            result.Locked.Should().Be(true);
         }
+
+        [Fact]
+        public async void
+            GivenPartialUpdatedDoor_WhenDoorDoesNotExist_ThenPartialUpdatedDoorAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
+
+            JsonPatchDocument<DoorRequest> doorPatch = new JsonPatchDocument<DoorRequest>();
+            doorPatch.Replace(d => d.Locked, true);
+
+            var result = await repository.PartialUpdateDoorAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"), doorPatch);
+
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region DELETE_DOOR_ASYNC
+
+        [Fact]
+        public async void GivenDoor_WhenDoorExists_ThenDeleteDoorAsyncShouldReturnDoor()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
+
+            var result = await repository.DeleteDoorAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"));
+
+            result.Should().BeOfType<Door>();
+        }
+
+        [Fact]
+        public async void GivenDoor_WhenDoorDoesNotExist_ThenDeleteDoorAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
+
+            var result = await repository.DeleteDoorAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"));
+
+            result.Should().BeNull();
+        }
+
+        #endregion
     }
 }

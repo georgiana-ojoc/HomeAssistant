@@ -19,10 +19,10 @@ namespace Interface.Pages
             if (string.IsNullOrWhiteSpace(_newRoomName)) return;
 
             var response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms",
-            new Room
-            {
-                Name = _newRoomName
-            });
+                new Room
+                {
+                    Name = _newRoomName
+                });
             if (response.IsSuccessStatusCode)
             {
                 var newRoom = await response.Content.ReadFromJsonAsync<Room>();

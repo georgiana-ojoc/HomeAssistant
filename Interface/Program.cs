@@ -22,21 +22,23 @@ namespace Interface
 
             builder.Services
                 .AddHttpClient("API",
-                client => {
-                    client.BaseAddress =
-                        new Uri(builder.Configuration["ApiUrl"]);
-                })
+                    client =>
+                    {
+                        client.BaseAddress =
+                            new Uri(builder.Configuration["ApiUrl"]);
+                    })
                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
                     .ConfigureHandler(new[]
-                    {
-                        builder.Configuration["ApiUrl"]
-                    },
-                    new[]
-                    {
-                        builder.Configuration["AzureAdB2C:Scope"]
-                    }));
+                        {
+                            builder.Configuration["ApiUrl"]
+                        },
+                        new[]
+                        {
+                            builder.Configuration["AzureAdB2C:Scope"]
+                        }));
 
-            builder.Services.AddMsalAuthentication(options => {
+            builder.Services.AddMsalAuthentication(options =>
+            {
                 builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
                 options.ProviderOptions.DefaultAccessTokenScopes.Add(builder.Configuration["AzureAdB2C:Scope"]);
             });

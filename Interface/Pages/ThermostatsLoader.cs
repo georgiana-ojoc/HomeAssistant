@@ -20,7 +20,7 @@ namespace Interface.Pages
         private async Task GetThermostats()
         {
             var responseThermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
-            $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}");
+                $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}");
             if (responseThermostats != null) _thermostats = new List<Thermostat>(responseThermostats);
 
             foreach (var thermostat in _thermostats)
@@ -31,10 +31,10 @@ namespace Interface.Pages
                     patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature.Value));
                     var serializedContent = JsonConvert.SerializeObject(patchList);
                     HttpContent patchBody = new StringContent(serializedContent,
-                    Encoding.UTF8,
-                    "application/json");
+                        Encoding.UTF8,
+                        "application/json");
                     await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}/{thermostat.Id}",
-                    patchBody);
+                        patchBody);
                 }
         }
 
@@ -43,11 +43,11 @@ namespace Interface.Pages
             if (string.IsNullOrWhiteSpace(_newThermostatName)) return;
 
             var response = await Http.PostAsJsonAsync(
-            $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}",
-            new Thermostat
-            {
-                Name = _newThermostatName
-            });
+                $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}",
+                new Thermostat
+                {
+                    Name = _newThermostatName
+                });
             if (response.IsSuccessStatusCode)
             {
                 var newThermostat = await response.Content.ReadFromJsonAsync<Thermostat>();

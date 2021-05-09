@@ -1,25 +1,15 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
-  &lt;Assembly Path="C:\Users\Georgiana\.nuget\packages\automapper\10.1.1\lib\netstandard2.0\AutoMapper.dll" /&gt;&#xD;
-&lt;/AssemblyExplorer&gt;</s:String>
-	
-	
-	
-	
-	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=db489a9d_002D5bb5_002D4fbd_002D91e4_002D33286dd5c7ee/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="HouseControllerTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=16b8bff5_002D622b_002D459a_002D8516_002D3b50b0f63bdd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="HouseControllerTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::9D7B5221-8C3A-4AF9-B09C-0FD41568C405::net5.0::Tests.IntegrationTests.HouseControllerTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::9D7B5221-8C3A-4AF9-B09C-0FD41568C405::net6.0::Tests.PerformanceTests.HouseControllerTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e56ffa6d_002D0587_002D4c4e_002D9886_002D29347bbad69c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Session" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;And&gt;&#xD;
-    &lt;Project Location="D:\Anul III\Semestrul II\.NET\Proiect\HomeAssistant\Tests" Presentation="&amp;lt;Tests&amp;gt;" /&gt;&#xD;
-    &lt;Namespace&gt;Tests.IntegrationTests&lt;/Namespace&gt;&#xD;
-  &lt;/And&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f060c1dd_002Dae1c_002D4a46_002D87de_002Dcaf5759f7f9d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ThermostatRepositoryTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	
+	
+	
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fcc21f3b_002Ddbdb_002D4624_002D9bb7_002D065de8a26260/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="HouseControllerTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::9D7B5221-8C3A-4AF9-B09C-0FD41568C405::net5.0::Tests.RepositoryTests.ThermostatRepositoryTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::9D7B5221-8C3A-4AF9-B09C-0FD41568C405::net6.0::Tests.PerformanceTests.HouseControllerTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

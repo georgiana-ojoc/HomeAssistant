@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Shared.Models;
@@ -8,23 +9,24 @@ using Xunit;
 
 namespace Tests.PerformanceTests
 {
-    public class HouseControllerTest : ApiTest
+    public class RoomPerformanceTest : BaseControllerTest
     {
-        private readonly string _apiHousesUrl;
+        private readonly string _roomsApiUrl;
 
-        public HouseControllerTest()
+        public RoomPerformanceTest()
         {
-            _apiHousesUrl = $"{ApiUrl}/houses";
+            _roomsApiUrl = $"{GetApiUrl()}/houses/cae88006-a2d7-4dcd-93fc-0b561e1f1acc/rooms";
         }
 
         [Fact]
-        public async Task GivenHouses_WhenGetAsync_ThenResponseTimeShouldBeLessThan1500MilliSeconds()
+        public async Task GivenRooms_WhenGetAsync_ThenResponseTimeShouldBeLessThan1000MilliSeconds()
         {
-            DateTime start = DateTime.Now;
-            await Client.GetAsync(_apiHousesUrl);
-            DateTime end = DateTime.Now;
+            using HttpClient client = GetClient(GetType().Name);
 
-            int expected = 1500;
+            DateTime start = DateTime.Now;
+            await client.GetAsync(_roomsApiUrl);
+            DateTime end = DateTime.Now;
+            int expected = 1000;
             int actual = (int) (end - start).TotalMilliseconds;
 
             Assert.True(actual < expected,
@@ -32,20 +34,21 @@ namespace Tests.PerformanceTests
         }
 
         [Fact]
-        public async Task GivenHouses_WhenGetAsync_ThenAverageResponseTimeShouldBeLessThan50MilliSeconds()
+        public async Task GivenRooms_WhenGetAsync_ThenAverageResponseTimeShouldBeLessThan5MilliSeconds()
         {
+            using HttpClient client = GetClient(GetType().Name);
             List<(DateTime Start, DateTime End)> responseTimes = new List<(DateTime Start, DateTime End)>();
 
-            for (int index = 0; index < 100; index++)
+            for (int index = 0; index < 1000; index++)
             {
                 DateTime start = DateTime.Now;
-                await Client.GetAsync(_apiHousesUrl);
+                await client.GetAsync(_roomsApiUrl);
                 DateTime end = DateTime.Now;
 
                 responseTimes.Add((start, end));
             }
 
-            int expected = 50;
+            int expected = 5;
             int actual = (int) responseTimes.Select(time => (time.End - time.Start).TotalMilliseconds).Average();
 
             Assert.True(actual < expected,
@@ -53,16 +56,17 @@ namespace Tests.PerformanceTests
         }
 
         [Fact]
-        public async Task GivenHouse_WhenPostAsync_ThenResponseTimeShouldBeLessThan2000MilliSeconds()
+        public async Task GivenRoom_WhenPostAsync_ThenResponseTimeShouldBeLessThan1000MilliSeconds()
         {
+            using HttpClient client = GetClient(GetType().Name);
+
             DateTime start = DateTime.Now;
-            await Client.PostAsJsonAsync(_apiHousesUrl, new House()
+            await client.PostAsJsonAsync(_roomsApiUrl, new Room()
             {
-                Name = "Apartment"
+                Name = "Kitchen"
             });
             DateTime end = DateTime.Now;
-
-            int expected = 2000;
+            int expected = 1000;
             int actual = (int) (end - start).TotalMilliseconds;
 
             Assert.True(actual < expected,
@@ -70,23 +74,24 @@ namespace Tests.PerformanceTests
         }
 
         [Fact]
-        public async Task GivenHouse_WhenPostAsync_ThenAverageResponseTimeShouldBeLessThan30MilliSeconds()
+        public async Task GivenRoom_WhenPostAsync_ThenAverageResponseTimeShouldBeLessThan5MilliSeconds()
         {
+            using HttpClient client = GetClient(GetType().Name);
             List<(DateTime Start, DateTime End)> responseTimes = new List<(DateTime Start, DateTime End)>();
 
-            for (int index = 0; index < 100; index++)
+            for (int index = 0; index < 1000; index++)
             {
                 DateTime start = DateTime.Now;
-                await Client.PostAsJsonAsync(_apiHousesUrl, new House()
+                await client.PostAsJsonAsync(_roomsApiUrl, new Room()
                 {
-                    Name = "Apartment"
+                    Name = "Kitchen"
                 });
                 DateTime end = DateTime.Now;
 
                 responseTimes.Add((start, end));
             }
 
-            int expected = 30;
+            int expected = 5;
             int actual = (int) responseTimes.Select(time => (time.End - time.Start).TotalMilliseconds).Average();
 
             Assert.True(actual < expected,

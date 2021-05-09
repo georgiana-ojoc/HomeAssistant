@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Models;
 
 #nullable disable
 
-namespace Shared.Models
+namespace Shared
 {
     public class HomeAssistantContext : DbContext
     {

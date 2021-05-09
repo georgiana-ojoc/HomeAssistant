@@ -27,10 +27,10 @@ namespace Interface.Pages
         {
             var serializedContent = JsonConvert.SerializeObject(patchList);
             HttpContent patchBody = new StringContent(serializedContent,
-            Encoding.UTF8,
-            "application/json");
+                Encoding.UTF8,
+                "application/json");
             await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{path}/{id}",
-            patchBody);
+                patchBody);
         }
     }
 }

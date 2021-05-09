@@ -1,141 +1,205 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using API.Repositories;
+using AutoMapper;
 using FluentAssertions;
+using Microsoft.AspNetCore.JsonPatch;
+using Shared;
 using Shared.Models;
+using Shared.Requests;
 using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class RoomRepositoryTest : RepositoryTest
+    public class RoomRepositoryTest : BaseRepositoryTest
     {
-        private readonly HouseRepository _houseRepository;
-        private readonly RoomRepository _roomRepository;
-        private readonly Room _newRoom;
-        private const string Email = "elena@popescu.com";
-
-        public RoomRepositoryTest()
-        {
-            _houseRepository = new HouseRepository(Context, Mapper);
-            _roomRepository = new RoomRepository(Context, Mapper);
-            _newRoom = new Room
-            {
-                Name = "Living room",
-            };
-        }
+        #region GET_ROOM_ASYNC
 
         [Fact]
-        public async void GivenNewRoom_WhenRoomIsNotNull_ThenCreateRoomAsyncShouldReturnNewRoom()
+        public async void GivenHouseId_WhenHouseIdExists_ThenGetRoomsAsyncShouldReturnListOfRooms()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var result = await _roomRepository.CreateRoomAsync(Email, house.Id, _newRoom);
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
 
-            result.Should().BeOfType<Room>();
-        }
-
-        [Fact]
-        public async void GivenNewRoom_WhenRoomIsEmpty_ThenCreateRoomAsyncShouldReturnNewRoom()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var result = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-
-            result.Should().BeOfType<Room>();
-        }
-
-        [Fact]
-        public async void GivenNewRoom_WhenRoomExists_ThenGetRoomByIdAsyncShouldReturnRoom()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-
-            room.Should().BeOfType<Room>();
-
-            var result = await _roomRepository.GetRoomByIdAsync(house.Email, house.Id, room.Id);
-
-            result.Should().BeOfType<Room>();
-        }
-
-        [Fact]
-        public async void GivenNewRoom_WhenRoomIsEmpty_ThenGetRoomByIdAsyncShouldReturnNull()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = new Room();
-
-            var result = await _roomRepository.GetRoomByIdAsync(house.Email, house.Id, room.Id);
-
-            result.Should().BeNull();
-        }
-
-        [Fact]
-        public async void GivenNewRoom_WhenIdDoesNotExist_GetRoomByIdAsyncShouldReturnNull()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = new Room();
-
-            room.Should().BeOfType<Room>();
-
-            var result = await _roomRepository.GetRoomByIdAsync(house.Email, house.Id,
-                Guid.Parse("3f953890-20ad-48b5-a272-c0faa8f09ea3"));
-
-            result.Should().BeNull();
-        }
-
-        [Fact]
-        public async void GivenNewRoom_WhenRoomIsNotNull_ThenDeleteRoomAsyncShouldReturnRoom()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room());
-
-            room.Should().BeOfType<Room>();
-
-            var result = await _roomRepository.DeleteRoomAsync(house.Email, house.Id, room.Id);
-
-            result.Should().BeOfType<Room>();
-        }
-
-        [Fact]
-        public async void GivenNewRoom_WhenRoomIsNotNull_ThenDeleteRoomAsyncShouldReturnNull()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House());
-            var room = new Room();
-
-            room.Should().BeOfType<Room>();
-
-            var result = await _roomRepository.DeleteRoomAsync(house.Email, house.Id, room.Id);
-
-            result.Should().BeNull();
-        }
-
-        [Fact]
-        public async void GivenEmail_WhenEmailExists_ThenGetRoomsAsyncShouldReturnListOfRooms()
-        {
-            string email = "gdsicadsa@popescu.com";
-            var house = await _houseRepository.CreateHouseAsync(email, new House());
-
-
-            await _roomRepository.CreateRoomAsync(house.Email, house.Id, new Room());
-            await _roomRepository.CreateRoomAsync(house.Email, house.Id, new Room());
-            await _roomRepository.CreateRoomAsync(house.Email, house.Id, new Room());
-            await _roomRepository.CreateRoomAsync(house.Email, house.Id, new Room());
-            await _roomRepository.CreateRoomAsync(house.Email, house.Id, new Room());
-
-            var result = await _roomRepository.GetRoomsAsync(email, house.Id);
+            var result = await repository.GetRoomsAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"));
 
             result.Should().BeOfType<List<Room>>();
         }
 
+        [Fact]
+        public async void GivenHouseId_WhenHouseIdDoesNotExist_ThenGetRoomsAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            var result = await repository.GetRoomsAsync("homeassistantgo@outlook.com",
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
+
+            result.Should().BeNull();
+        }
 
         [Fact]
-        public async void GivenEmail_WhenEmailDoesNotExist_ThenGetRoomsAsyncShouldReturnEmptyListOfRooms()
+        public async void GivenHouseId_WhenHouseIdIsEmpty_ThenGetRoomsAsyncShouldThrowArgumentNullException()
         {
-            const string newEmail = "new@gmail.com";
-            var house = await _houseRepository.CreateHouseAsync(newEmail, new House());
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
 
+            Func<Task> function = async () =>
+            {
+                await repository.GetRoomsAsync("homeassistantgo@outlook.com",
+                    Guid.Empty);
+            };
 
-            var result = await _roomRepository.GetRoomsAsync(newEmail, house.Id);
-
-            result.Count().Should().Be(0);
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'house_id')");
         }
+
+        #endregion
+
+        #region GET_ROOM_BY_ID_ASYNC
+
+        [Fact]
+        public async void GivenRoom_WhenRoomExists_ThenGetRoomByIdAsyncShouldReturnRoom()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            var result = await repository.GetRoomByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"));
+
+            result.Should().BeOfType<Room>();
+        }
+
+        [Fact]
+        public async void GivenRoom_WhenRoomDoesNotExist_ThenGetRoomByIdAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            var result = await repository.GetRoomByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
+
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region CREATE_ROOM_ASYNC
+
+        [Fact]
+        public async void GivenNewRoom_WhenRoomIsNotEmpty_ThenCreateRoomAsyncShouldReturnNewRoom()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            var result = await repository.CreateRoomAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"), new Room()
+                {
+                    Name = "Bathroom"
+                });
+
+            result.Should().BeOfType<Room>();
+        }
+
+        [Fact]
+        public async void GivenNewRoom_WhenRoomIsEmpty_ThenCreateRoomAsyncShouldThrowArgumentNullException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateRoomAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"), new Room());
+            };
+
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'name')");
+        }
+
+        #endregion
+
+        #region PARTIAL_UPDATE_ROOM_ASYNC
+
+        [Fact]
+        public async void
+            GivenPartialUpdatedRoom_WhenRoomExists_ThenPartialUpdatedRoomAsyncShouldReturnPartialUpdatedRoom()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            JsonPatchDocument<RoomRequest> roomPatch = new JsonPatchDocument<RoomRequest>();
+            roomPatch.Replace(r => r.Name, "Bedroom");
+
+            var result = await repository.PartialUpdateRoomAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), roomPatch);
+
+            result.Should().BeOfType<Room>();
+            result.Name.Should().Be("Bedroom");
+        }
+
+        [Fact]
+        public async void GivenPartialUpdatedRoom_WhenRoomDoesNotExist_ThenPartialUpdatedRoomAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            JsonPatchDocument<RoomRequest> roomPatch = new JsonPatchDocument<RoomRequest>();
+            roomPatch.Replace(r => r.Name, "Lake room");
+
+            var result = await repository.PartialUpdateRoomAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"), roomPatch);
+
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region DELETE_ROOM_ASYNC
+
+        [Fact]
+        public async void GivenRoom_WhenRoomExists_ThenDeleteRoomAsyncShouldReturnRoom()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            var result = await repository.DeleteRoomAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"));
+
+            result.Should().BeOfType<Room>();
+        }
+
+        [Fact]
+        public async void GivenRoom_WhenRoomDoesNotExist_ThenDeleteRoomAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            var result = await repository.DeleteRoomAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
+
+            result.Should().BeNull();
+        }
+
+        #endregion
     }
 }

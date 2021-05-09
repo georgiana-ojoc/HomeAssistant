@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using Shared.Models;
 
 namespace Interface.Pages
@@ -37,10 +34,10 @@ namespace Interface.Pages
             if (string.IsNullOrWhiteSpace(_newDoorName)) return;
 
             var response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}",
-            new Door
-            {
-                Name = _newDoorName
-            });
+                new Door
+                {
+                    Name = _newDoorName
+                });
             if (response.IsSuccessStatusCode)
             {
                 var newDoor = await response.Content.ReadFromJsonAsync<Door>();

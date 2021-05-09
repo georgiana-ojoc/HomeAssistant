@@ -1,159 +1,218 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using API.Repositories;
+using AutoMapper;
 using FluentAssertions;
-using FluentAssertions.Common;
+using Microsoft.AspNetCore.JsonPatch;
+using Shared;
 using Shared.Models;
+using Shared.Requests;
 using Xunit;
 
 namespace Tests.RepositoryTests
 {
-    public class LightBulbRepositoryTest : RepositoryTest
+    public class LightBulbRepositoryTest : BaseRepositoryTest
     {
-        private readonly LightBulbRepository _lightBulbRepository;
-        private readonly RoomRepository _roomRepository;
-        private readonly HouseRepository _houseRepository;
-        private readonly LightBulb _newLightBulb;
-        private const string Email = "ioana@popescu.com";
+        #region GET_LIGHT_BULB_ASYNC
 
-        public LightBulbRepositoryTest()
+        [Fact]
+        public async void GivenRoomId_WhenRoomIdExists_ThenGetLightBulbsAsyncShouldReturnListOfLightBulbs()
         {
-            _houseRepository = new HouseRepository(Context, Mapper);
-            _roomRepository = new RoomRepository(Context, Mapper);
-            _lightBulbRepository = new LightBulbRepository(Context, Mapper);
-            _newLightBulb = new LightBulb
-            {
-                Name = "Lamp",
-            };
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
+
+            var result = await repository.GetLightBulbsAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"));
+
+            result.Should().BeOfType<List<LightBulb>>();
         }
 
         [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbIsNotNull_ThenCreateLightBulbAsyncShouldReturnNewLightBulb()
+        public async void GivenRoomId_WhenRoomIdDoesNotExist_ThenGetLightBulbsAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var result = await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, _newLightBulb);
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
 
-            result.Should().BeOfType<LightBulb>();
-        }
-
-        [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbIsEmpty_ThenCreateLightBulbAsyncShouldReturnNewLightBulb()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var result =
-                await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id,
-                    new LightBulb {Name = "Test"});
-
-            result.Should().BeOfType<LightBulb>();
-        }
-
-        [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbExists_ThenGetLightBulbByIdAsyncShouldReturnLightBulb()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var lightBulb =
-                await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id,
-                    new LightBulb {Name = "Test"});
-
-            lightBulb.Should().BeOfType<LightBulb>();
-
-            var result = await _lightBulbRepository.GetLightBulbByIdAsync(house.Email, house.Id, room.Id, lightBulb.Id);
-
-            result.Should().BeOfType<LightBulb>();
-            result.Should().IsSameOrEqualTo(lightBulb);
-        }
-
-        [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbIsEmpty_ThenGetLightBulbByIdAsyncShouldThrowError()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = new Room {Name = "Test"};
-            var lightBulb = new LightBulb {Name = "Test"};
-
-            _lightBulbRepository.Invoking(r => r.GetLightBulbByIdAsync(house.Email, house.Id, room.Id, lightBulb.Id));
-        }
-
-        [Fact]
-        public async void GivenNewLightBulb_WhenIdDoesNotExist_GetLightBulbByIdAsyncShouldReturnNull()
-        {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-
-            house.Should().BeOfType<House>();
-            room.Should().BeOfType<Room>();
-
-            var result = await _lightBulbRepository.GetLightBulbByIdAsync(house.Email, house.Id, room.Id,
-                Guid.Parse("3f953890-20ad-48b5-a272-c0faa8f09ea3"));
+            var result = await repository.GetLightBulbsAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
 
             result.Should().BeNull();
         }
 
         [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbIsNotNull_ThenDeleteLightBulbAsyncShouldReturnLightBulb()
+        public async void GivenRoomId_WhenRoomIdIsEmpty_ThenGetLightBulbsAsyncShouldThrowArgumentNullException()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var lightBulb =
-                await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id,
-                    new LightBulb {Name = "Test"});
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
 
-            house.Should().BeOfType<House>();
-            room.Should().BeOfType<Room>();
-            lightBulb.Should().BeOfType<LightBulb>();
+            Func<Task> function = async () =>
+            {
+                await repository.GetLightBulbsAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                    Guid.Empty);
+            };
 
-            var result = await _lightBulbRepository.DeleteLightBulbAsync(house.Email, house.Id, room.Id, lightBulb.Id);
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'room_id')");
+        }
+
+        #endregion
+
+        #region GET_LIGHT_BULB_BY_ID_ASYNC
+
+        [Fact]
+        public async void GivenLightBulb_WhenLightBulbExists_ThenGetLightBulbByIdAsyncShouldReturnLightBulb()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
+
+            var result = await repository.GetLightBulbByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"));
 
             result.Should().BeOfType<LightBulb>();
         }
 
         [Fact]
-        public async void GivenNewLightBulb_WhenLightBulbIsNotNull_ThenDeleteLightBulbAsyncShouldThrowError()
+        public async void GivenLightBulb_WhenLightBulbDoesNotExist_ThenGetLightBulbByIdAsyncShouldReturnNull()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
-            var lightBulb = new LightBulb {Name = "Test"};
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
 
-            house.Should().BeOfType<House>();
-            room.Should().BeOfType<Room>();
-            lightBulb.Should().BeOfType<LightBulb>();
+            var result = await repository.GetLightBulbByIdAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"));
 
-            _lightBulbRepository.Invoking(r => r.DeleteLightBulbAsync(house.Email, house.Id, room.Id, lightBulb.Id));
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region CREATE_LIGHT_BULB_ASYNC
+
+        [Fact]
+        public async void GivenNewLightBulb_WhenLightBulbIsNotEmpty_ThenCreateLightBulbAsyncShouldReturnNewLightBulb()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
+
+            var result = await repository.CreateLightBulbAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new LightBulb()
+                {
+                    Name = "Chandelier"
+                });
+
+            result.Should().BeOfType<LightBulb>();
         }
 
         [Fact]
-        public async void GivenEmail_WhenEmailExists_ThenGetLightBulbsAsyncShouldReturnListOfLightBulbs()
+        public async void
+            GivenNewLightBulb_WhenLightBulbIsEmpty_ThenCreateLightBulbAsyncShouldThrowArgumentNullException()
         {
-            var house = await _houseRepository.CreateHouseAsync(Email, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(Email, house.Id, new Room {Name = "Test"});
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
 
+            Func<Task> function = async () =>
+            {
+                await repository.CreateLightBulbAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                    Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new LightBulb());
+            };
 
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
-            await _lightBulbRepository.CreateLightBulbAsync(Email, house.Id, room.Id, new LightBulb {Name = "Test"});
-
-            var result = await _lightBulbRepository.GetLightBulbsAsync(Email, house.Id, room.Id);
-
-            result.Should().BeOfType<List<LightBulb>>();
+            await function.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("Value cannot be null. (Parameter 'name')");
         }
 
+        #endregion
+
+        #region PARTIAL_UPDATE_LIGHT_BULB_ASYNC
 
         [Fact]
-        public async void GivenEmail_WhenEmailDoesNotExist_ThenGetLightBulbsAsyncShouldReturnEmptyListOfLightBulbs()
+        public async void
+            GivenPartialUpdatedLightBulb_WhenLightBulbExists_ThenPartialUpdatedLightBulbAsyncShouldReturnPartialUpdatedLightBulb()
         {
-            const string newEmail = "new@gmail.com";
-            var house = await _houseRepository.CreateHouseAsync(newEmail, new House {Name = "Test"});
-            var room = await _roomRepository.CreateRoomAsync(newEmail, house.Id, new Room {Name = "Test"});
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
 
+            JsonPatchDocument<LightBulbRequest> lightBulbPatch = new JsonPatchDocument<LightBulbRequest>();
+            lightBulbPatch.Replace(lb => lb.Intensity, (byte) 255);
 
-            var result = await _lightBulbRepository.GetLightBulbsAsync(newEmail, house.Id, room.Id);
+            var result = await repository.PartialUpdateLightBulbAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"), lightBulbPatch);
 
-            result.Count().Should().Be(0);
+            result.Should().BeOfType<LightBulb>();
+            result.Intensity.Should().Be(255);
         }
+
+        [Fact]
+        public async void
+            GivenPartialUpdatedLightBulb_WhenLightBulbDoesNotExist_ThenPartialUpdatedLightBulbAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
+
+            JsonPatchDocument<LightBulbRequest> lightBulbPatch = new JsonPatchDocument<LightBulbRequest>();
+            lightBulbPatch.Replace(lb => lb.Intensity, (byte) 255);
+
+            var result = await repository.PartialUpdateLightBulbAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("b5ce7683-968c-437d-8867-4a2bf4bab88b"), lightBulbPatch);
+
+            result.Should().BeNull();
+        }
+
+        #endregion
+
+        #region DELETE_LIGHT_BULB_ASYNC
+
+        [Fact]
+        public async void GivenLightBulb_WhenLightBulbExists_ThenDeleteLightBulbAsyncShouldReturnLightBulb()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
+
+            var result = await repository.DeleteLightBulbAsync("homeassistantgo@outlook.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"));
+
+            result.Should().BeOfType<LightBulb>();
+        }
+
+        [Fact]
+        public async void GivenLightBulb_WhenLightBulbDoesNotExist_ThenDeleteLightBulbAsyncShouldReturnNull()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
+
+            var result = await repository.DeleteLightBulbAsync("jane.doe@mail.com",
+                Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"));
+
+            result.Should().BeNull();
+        }
+
+        #endregion
     }
 }

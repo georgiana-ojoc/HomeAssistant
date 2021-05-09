@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Interface.Scripts;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
 using Shared.Models;
 
 namespace Interface.Pages
@@ -21,7 +18,7 @@ namespace Interface.Pages
         private async Task GetLightBulbs()
         {
             var responseLightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
-            $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
+                $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
             if (responseLightBulbs != null)
                 _lightBulbs = new List<LightBulb>(responseLightBulbs);
             foreach (var lightBulb in _lightBulbs)
@@ -54,11 +51,11 @@ namespace Interface.Pages
             if (string.IsNullOrWhiteSpace(_newLightBulbName)) return;
 
             var response = await Http.PostAsJsonAsync(
-            $"houses/{_houseId}/rooms/{_roomId}/{LightBulbsPath}",
-            new LightBulb
-            {
-                Name = _newLightBulbName
-            });
+                $"houses/{_houseId}/rooms/{_roomId}/{LightBulbsPath}",
+                new LightBulb
+                {
+                    Name = _newLightBulbName
+                });
             if (response.IsSuccessStatusCode)
             {
                 var newLightBulb = await response.Content.ReadFromJsonAsync<LightBulb>();
