@@ -208,7 +208,9 @@ namespace Shared
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Frequency).HasColumnName("frequency");
+                entity.Property(e => e.Days)
+                    .IsRequired()
+                    .HasColumnName("days");
 
                 entity.Property(e => e.Email)
                     .IsRequired()

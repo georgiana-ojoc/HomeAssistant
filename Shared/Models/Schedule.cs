@@ -18,7 +18,7 @@ namespace Shared.Models
         [Required] public string Email { get; set; }
         [Required] public string Name { get; set; }
         [Required] public TimeSpan Time { get; set; }
-        [Required] public byte Frequency { get; set; }
+        [Required] public byte Days { get; set; }
 
         internal ICollection<LightBulbCommand> LightBulbCommands { get; set; }
         internal ICollection<DoorCommand> DoorCommands { get; set; }
