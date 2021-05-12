@@ -22,6 +22,19 @@ namespace Shared
 
             CreateMap<Thermostat, ThermostatRequest>();
             CreateMap<ThermostatRequest, Thermostat>();
+
+            CreateMap<Schedule, ScheduleRequest>();
+            CreateMap<ScheduleRequest, Schedule>();
+            
+            
+            CreateMap<DoorCommand, DoorCommandRequest>();
+            CreateMap<DoorCommandRequest, DoorCommand>();
+
+            CreateMap<LightBulbCommand, LightBulbCommandRequest>();
+            CreateMap<LightBulbCommandRequest, LightBulbCommand>();
+
+            CreateMap<ThermostatCommand, ThermostatCommandRequest>();
+            CreateMap<ThermostatCommandRequest, ThermostatCommand>();
         }
     }
 }

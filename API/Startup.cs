@@ -72,6 +72,11 @@ namespace API
             services.AddScoped<IDoorRepository, DoorRepository>();
             services.AddScoped<ILightBulbRepository, LightBulbRepository>();
             services.AddScoped<IThermostatRepository, ThermostatRepository>();
+            services.AddScoped<IScheduleRepository, ScheduleRepository>();
+            services.AddScoped<IDoorCommandRepository, DoorCommandRepository>();
+            services.AddScoped<ILightBulbCommandRepository, LightBulbCommandRepository>();
+            services.AddScoped<IThermostatCommandRepository, ThermostatCommandRepository>();
+            
 
             services.AddSwaggerGen(swagger =>
             {
