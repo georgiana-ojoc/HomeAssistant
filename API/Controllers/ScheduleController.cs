@@ -75,6 +75,10 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
+            catch (ArgumentException)
+            {
+                return BadRequest();
+            }
             catch (ConstraintException)
             {
                 return Forbid();
@@ -100,6 +104,10 @@ namespace API.Controllers
                 return Ok(schedule);
             }
             catch (ArgumentNullException)
+            {
+                return BadRequest();
+            }
+            catch (ArgumentException)
             {
                 return BadRequest();
             }
