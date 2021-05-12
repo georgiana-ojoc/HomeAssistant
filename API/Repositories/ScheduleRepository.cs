@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Controllers;
 using API.Interfaces;
 using AutoMapper;
 using Hangfire;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Shared;
@@ -53,9 +55,19 @@ namespace API.Repositories
             schedule.Email = email;
             Schedule newSchedule = (await Context.Schedules.AddAsync(schedule)).Entity;
             await Context.SaveChangesAsync();
+
+            try
+            {
+                RecurringJob.AddOrUpdate(schedule.Id.ToString(),
+                    ()=>Helper.ChangeAllInSchedule(schedule.Id),
+                    Helper.GetCronExpression(schedule.Time,schedule.Days));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             
-            //TO DO
-            //RecurringJob.AddOrUpdate(schedule.Id.ToString(),() => Console.WriteLine("aaa"),Cron.Minutely);
             
             return newSchedule;
         }
@@ -83,8 +95,10 @@ namespace API.Repositories
             Mapper.Map(scheduleToPatch, schedule);
             await Context.SaveChangesAsync();
             RecurringJob.RemoveIfExists(schedule.Id.ToString());
-            //TO DO
-            //RecurringJob.AddOrUpdate(schedule.Id.ToString(),,);
+            RecurringJob.AddOrUpdate(schedule.Id.ToString(),
+             () => Helper.ChangeAllInSchedule(schedule.Id),
+                             Helper.GetCronExpression(schedule.Time,schedule.Days));
+            
             return schedule;
         }
 
