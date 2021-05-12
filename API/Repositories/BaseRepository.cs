@@ -43,8 +43,7 @@ namespace API.Repositories
 
         protected async Task<Room> GetRoomInternalAsync(string email, Guid houseId, Guid id)
         {
-            House house = await Context.Houses.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == houseId);
+            House house = await GetHouseInternalAsync(email, houseId);
             if (house == null)
             {
                 return null;
@@ -52,6 +51,12 @@ namespace API.Repositories
 
             return await Context.Rooms.Where(room => room.HouseId == house.Id)
                 .FirstOrDefaultAsync(room => room.Id == id);
+        }
+
+        protected async Task<Schedule> GetScheduleInternalAsync(string email, Guid id)
+        {
+            return await Context.Schedules.Where(s => s.Email == email)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
     }
 }
