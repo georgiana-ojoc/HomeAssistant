@@ -19,8 +19,7 @@ namespace API.Repositories
         {
         }
 
-        private async Task<LightBulbCommand> GetLightBulbCommandInternalAsync(string email, Guid scheduleId, Guid
-            id)
+        private async Task<LightBulbCommand> GetLightBulbCommandInternalAsync(string email, Guid scheduleId, Guid id)
         {
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -69,6 +68,13 @@ namespace API.Repositories
                 return null;
             }
 
+            LightBulb lightBulb = await Context.LightBulbs.FirstOrDefaultAsync(lb => lb.Id ==
+                lightBulbCommand.LightBulbId);
+            if (lightBulb == null)
+            {
+                return null;
+            }
+
             int lightBulbCommands = await Context.LightBulbCommands.CountAsync(lbc => lbc.ScheduleId ==
                 scheduleId);
             if (lightBulbCommands >= 10)
@@ -98,6 +104,12 @@ namespace API.Repositories
             LightBulbCommandRequest lightBulbCommandToPatch = Mapper.Map<LightBulbCommandRequest>(lightBulbCommand);
             lightBulbCommandPatch.ApplyTo(lightBulbCommandToPatch);
             CheckGuid(lightBulbCommandToPatch.LightBulbId, "light_bulb_id");
+            LightBulb lightBulb = await Context.LightBulbs.FirstOrDefaultAsync(lb => lb.Id ==
+                lightBulbCommand.LightBulbId);
+            if (lightBulb == null)
+            {
+                return null;
+            }
 
             Mapper.Map(lightBulbCommandToPatch, lightBulbCommand);
             await Context.SaveChangesAsync();

@@ -68,6 +68,12 @@ namespace API.Repositories
                 return null;
             }
 
+            Door door = await Context.Doors.FirstOrDefaultAsync(d => d.Id == doorCommand.DoorId);
+            if (door == null)
+            {
+                return null;
+            }
+
             int doorCommands = await Context.DoorCommands.CountAsync(dc => dc.ScheduleId == scheduleId);
             if (doorCommands >= 10)
             {
@@ -96,6 +102,11 @@ namespace API.Repositories
             DoorCommandRequest doorCommandToPatch = Mapper.Map<DoorCommandRequest>(doorCommand);
             doorCommandPatch.ApplyTo(doorCommandToPatch);
             CheckGuid(doorCommandToPatch.DoorId, "door_id");
+            Door door = await Context.Doors.FirstOrDefaultAsync(d => d.Id == doorCommand.DoorId);
+            if (door == null)
+            {
+                return null;
+            }
 
             Mapper.Map(doorCommandToPatch, doorCommand);
             await Context.SaveChangesAsync();

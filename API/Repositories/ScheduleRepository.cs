@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Interfaces;
@@ -38,9 +39,14 @@ namespace API.Repositories
         {
             CheckString(email, "email");
             CheckString(schedule.Name, "name");
-            if (schedule.Days is 0 or 255)
+            if (!TimeSpan.TryParse(schedule.Time, CultureInfo.InvariantCulture, out TimeSpan time))
             {
-                throw new ArgumentException("Days cannot be 0 or 255.");
+                throw new ArgumentException("Time is not valid.");
+            }
+
+            if (schedule.Days is 0 or > 127)
+            {
+                throw new ArgumentException("Days cannot be 0 or bigger than 127.");
             }
 
             int schedules = await Context.Schedules.CountAsync(s => s.Email == email);
@@ -50,6 +56,7 @@ namespace API.Repositories
             }
 
             schedule.Email = email;
+            schedule.Time = time.ToString(@"hh\:mm");
             Schedule newSchedule = (await Context.Schedules.AddAsync(schedule)).Entity;
             await Context.SaveChangesAsync();
             return newSchedule;
@@ -70,9 +77,9 @@ namespace API.Repositories
             ScheduleRequest scheduleToPatch = Mapper.Map<ScheduleRequest>(schedule);
             schedulePatch.ApplyTo(scheduleToPatch);
             CheckString(scheduleToPatch.Name, "name");
-            if (schedule.Days is 0 or 255)
+            if (schedule.Days is 0 or > 127)
             {
-                throw new ArgumentException("Days cannot be 0 or 255.");
+                throw new ArgumentException("Days cannot be 0 or bigger than 127.");
             }
 
             Mapper.Map(scheduleToPatch, schedule);

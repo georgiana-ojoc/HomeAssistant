@@ -5,18 +5,18 @@ using MediatR;
 
 namespace API.Commands.ThermostatCommand.Handlers
 {
-    public class CreateThermostatCommandHandler : Handler,
-        IRequestHandler<CreateThermostatCommand, Shared.Models.ThermostatCommand>
+    public class CreateThermostatCommandCommandHandler : Handler,
+        IRequestHandler<CreateThermostatCommandCommand, Shared.Models.ThermostatCommand>
     {
         private readonly IThermostatCommandRepository _repository;
 
-        public CreateThermostatCommandHandler(Identity identity, IThermostatCommandRepository repository) :
+        public CreateThermostatCommandCommandHandler(Identity identity, IThermostatCommandRepository repository) :
             base(identity)
         {
             _repository = repository;
         }
 
-        public async Task<Shared.Models.ThermostatCommand> Handle(CreateThermostatCommand request,
+        public async Task<Shared.Models.ThermostatCommand> Handle(CreateThermostatCommandCommand request,
             CancellationToken cancellationToken)
         {
             return await _repository.CreateThermostatCommandAsync(Identity.Email, request.ScheduleId,

@@ -6,7 +6,7 @@ using MediatR;
 namespace API.Commands.DoorCommand.Handlers
 {
     public class PartialUpdateDoorCommandHandler : Handler,
-        IRequestHandler<PartialUpdateDoorCommand, Shared.Models.DoorCommand>
+        IRequestHandler<PartialUpdateDoorCommandCommand, Shared.Models.DoorCommand>
     {
         private readonly IDoorCommandRepository _repository;
 
@@ -16,11 +16,11 @@ namespace API.Commands.DoorCommand.Handlers
             _repository = repository;
         }
 
-        public async Task<Shared.Models.DoorCommand> Handle(PartialUpdateDoorCommand request,
+        public async Task<Shared.Models.DoorCommand> Handle(PartialUpdateDoorCommandCommand request,
             CancellationToken cancellationToken)
         {
-            return await _repository.PartialUpdateDoorCommandAsync(Identity.Email, request.ScheduleId,
-                request.Id, request.Patch);
+            return await _repository.PartialUpdateDoorCommandAsync(Identity.Email, request.ScheduleId, request.Id,
+                request.Patch);
         }
     }
 }

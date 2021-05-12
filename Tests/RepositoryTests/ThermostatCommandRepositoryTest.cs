@@ -110,7 +110,7 @@ namespace Tests.RepositoryTests
             var result = await repository.CreateThermostatCommandAsync("homeassistantgo@outlook.com",
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new ThermostatCommand()
                 {
-                    ThermostatId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
+                    ThermostatId = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"),
                     Temperature = (decimal) 22.5
                 });
 

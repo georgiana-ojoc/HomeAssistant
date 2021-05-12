@@ -1,17 +1,23 @@
 ﻿using System;
+using System.Globalization;
 
 namespace API
 {
     public static class Helper
     {
-        public static string GetCronExpression(TimeSpan time, byte days)
+        public static string GetCronExpression(string time, byte days)
         {
+            if (!TimeSpan.TryParse(time, CultureInfo.InvariantCulture, out TimeSpan newTime))
+            {
+                return null;
+            }
+
             if (days is 0 or 255)
             {
                 return null;
             }
 
-            string result = $"{time.Minutes} {time.Hours} * * ";
+            string result = $"{newTime.Minutes} {newTime.Hours} * * ";
             int position = 1;
             while (days != 0)
             {

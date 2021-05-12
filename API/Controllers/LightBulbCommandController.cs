@@ -28,14 +28,14 @@ namespace API.Controllers
         {
             try
             {
-                IEnumerable<LightBulbCommand> LightBulbCommands =
+                IEnumerable<LightBulbCommand> lightBulbCommands =
                     await Mediator.Send(new GetLightBulbCommandsQuery {ScheduleId = schedule_id});
-                if (LightBulbCommands == null)
+                if (lightBulbCommands == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(LightBulbCommands);
+                return Ok(lightBulbCommands);
             }
             catch (ArgumentNullException)
             {
@@ -52,14 +52,14 @@ namespace API.Controllers
         {
             try
             {
-                LightBulbCommand LightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
+                LightBulbCommand lightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
-                if (LightBulbCommand == null)
+                if (lightBulbCommand == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(LightBulbCommand);
+                return Ok(lightBulbCommand);
             }
             catch (ArgumentNullException)
             {
@@ -77,7 +77,7 @@ namespace API.Controllers
         {
             try
             {
-                LightBulbCommand newLightBulbCommand = await Mediator.Send(new CreateLightBulbCommand
+                LightBulbCommand newLightBulbCommand = await Mediator.Send(new CreateLightBulbCommandCommand
                     {ScheduleId = schedule_id, Request = request});
                 if (newLightBulbCommand == null)
                 {
@@ -107,18 +107,18 @@ namespace API.Controllers
         {
             try
             {
-                LightBulbCommand LightBulbCommand = await Mediator.Send(new PartialUpdateLightBulbCommand
+                LightBulbCommand lightBulbCommand = await Mediator.Send(new PartialUpdateLightBulbCommandCommand
                 {
                     ScheduleId = schedule_id,
                     Id = id,
                     Patch = patch
                 });
-                if (LightBulbCommand == null)
+                if (lightBulbCommand == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(LightBulbCommand);
+                return Ok(lightBulbCommand);
             }
             catch (ArgumentNullException)
             {
@@ -135,9 +135,9 @@ namespace API.Controllers
         {
             try
             {
-                LightBulbCommand LightBulbCommand =
-                    await Mediator.Send(new DeleteLightBulbCommand {ScheduleId = schedule_id, Id = id});
-                if (LightBulbCommand == null)
+                LightBulbCommand lightBulbCommand =
+                    await Mediator.Send(new DeleteLightBulbCommandCommand {ScheduleId = schedule_id, Id = id});
+                if (lightBulbCommand == null)
                 {
                     return NotFound();
                 }

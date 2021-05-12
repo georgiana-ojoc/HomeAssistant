@@ -28,14 +28,14 @@ namespace API.Controllers
         {
             try
             {
-                IEnumerable<DoorCommand> DoorCommands =
+                IEnumerable<DoorCommand> doorCommands =
                     await Mediator.Send(new GetDoorCommandsQuery {ScheduleId = schedule_id});
-                if (DoorCommands == null)
+                if (doorCommands == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(DoorCommands);
+                return Ok(doorCommands);
             }
             catch (ArgumentNullException)
             {
@@ -52,14 +52,14 @@ namespace API.Controllers
         {
             try
             {
-                DoorCommand DoorCommand = await Mediator.Send(new GetDoorCommandByIdQuery
+                DoorCommand doorCommand = await Mediator.Send(new GetDoorCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
-                if (DoorCommand == null)
+                if (doorCommand == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(DoorCommand);
+                return Ok(doorCommand);
             }
             catch (ArgumentNullException)
             {
@@ -76,7 +76,7 @@ namespace API.Controllers
         {
             try
             {
-                DoorCommand newDoorCommand = await Mediator.Send(new CreateDoorCommand
+                DoorCommand newDoorCommand = await Mediator.Send(new CreateDoorCommandCommand
                     {ScheduleId = schedule_id, Request = request});
                 if (newDoorCommand == null)
                 {
@@ -105,18 +105,18 @@ namespace API.Controllers
         {
             try
             {
-                DoorCommand DoorCommand = await Mediator.Send(new PartialUpdateDoorCommand
+                DoorCommand doorCommand = await Mediator.Send(new PartialUpdateDoorCommandCommand
                 {
                     ScheduleId = schedule_id,
                     Id = id,
                     Patch = patch
                 });
-                if (DoorCommand == null)
+                if (doorCommand == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(DoorCommand);
+                return Ok(doorCommand);
             }
             catch (ArgumentNullException)
             {
@@ -133,9 +133,9 @@ namespace API.Controllers
         {
             try
             {
-                DoorCommand DoorCommand =
-                    await Mediator.Send(new DeleteDoorCommand {ScheduleId = schedule_id, Id = id});
-                if (DoorCommand == null)
+                DoorCommand doorCommand =
+                    await Mediator.Send(new DeleteDoorCommandCommand {ScheduleId = schedule_id, Id = id});
+                if (doorCommand == null)
                 {
                     return NotFound();
                 }

@@ -154,7 +154,7 @@ namespace Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task GivenPatchedRoom_WhenRoomDoesNotExist_ThenPatchAsyncShouldReturnPatchedRoom()
+        public async Task GivenPatchedRoom_WhenRoomDoesNotExist_ThenPatchAsyncShouldReturnNotFoundStatusCode()
         {
             using HttpClient client = GetClient(GetType().Name);
             Guid id = Guid.Parse("a918cdd5-b15b-4d04-9839-8a74e676dfea");

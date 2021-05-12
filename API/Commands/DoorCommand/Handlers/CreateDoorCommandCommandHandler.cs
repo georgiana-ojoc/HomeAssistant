@@ -5,16 +5,17 @@ using MediatR;
 
 namespace API.Commands.DoorCommand.Handlers
 {
-    public class CreateDoorCommandHandler : Handler, IRequestHandler<CreateDoorCommand, Shared.Models.DoorCommand>
+    public class CreateDoorCommandCommandHandler : Handler,
+        IRequestHandler<CreateDoorCommandCommand, Shared.Models.DoorCommand>
     {
         private readonly IDoorCommandRepository _repository;
 
-        public CreateDoorCommandHandler(Identity identity, IDoorCommandRepository repository) : base(identity)
+        public CreateDoorCommandCommandHandler(Identity identity, IDoorCommandRepository repository) : base(identity)
         {
             _repository = repository;
         }
 
-        public async Task<Shared.Models.DoorCommand> Handle(CreateDoorCommand request,
+        public async Task<Shared.Models.DoorCommand> Handle(CreateDoorCommandCommand request,
             CancellationToken cancellationToken)
         {
             return await _repository.CreateDoorCommandAsync(Identity.Email, request.ScheduleId,

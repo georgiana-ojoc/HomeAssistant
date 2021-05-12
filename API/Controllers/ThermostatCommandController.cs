@@ -28,14 +28,14 @@ namespace API.Controllers
         {
             try
             {
-                IEnumerable<ThermostatCommand> ThermostatCommands =
+                IEnumerable<ThermostatCommand> thermostatCommands =
                     await Mediator.Send(new GetThermostatCommandsQuery {ScheduleId = schedule_id});
-                if (ThermostatCommands == null)
+                if (thermostatCommands == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(ThermostatCommands);
+                return Ok(thermostatCommands);
             }
             catch (ArgumentNullException)
             {
@@ -52,14 +52,14 @@ namespace API.Controllers
         {
             try
             {
-                ThermostatCommand ThermostatCommand = await Mediator.Send(new GetThermostatCommandByIdQuery
+                ThermostatCommand thermostatCommand = await Mediator.Send(new GetThermostatCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
-                if (ThermostatCommand == null)
+                if (thermostatCommand == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(ThermostatCommand);
+                return Ok(thermostatCommand);
             }
             catch (ArgumentNullException)
             {
@@ -77,7 +77,7 @@ namespace API.Controllers
         {
             try
             {
-                ThermostatCommand newThermostatCommand = await Mediator.Send(new CreateThermostatCommand
+                ThermostatCommand newThermostatCommand = await Mediator.Send(new CreateThermostatCommandCommand
                     {ScheduleId = schedule_id, Request = request});
                 if (newThermostatCommand == null)
                 {
@@ -107,18 +107,18 @@ namespace API.Controllers
         {
             try
             {
-                ThermostatCommand ThermostatCommand = await Mediator.Send(new PartialUpdateThermostatCommand
+                ThermostatCommand thermostatCommand = await Mediator.Send(new PartialUpdateThermostatCommandCommand
                 {
                     ScheduleId = schedule_id,
                     Id = id,
                     Patch = patch
                 });
-                if (ThermostatCommand == null)
+                if (thermostatCommand == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(ThermostatCommand);
+                return Ok(thermostatCommand);
             }
             catch (ArgumentNullException)
             {
@@ -135,9 +135,9 @@ namespace API.Controllers
         {
             try
             {
-                ThermostatCommand ThermostatCommand =
-                    await Mediator.Send(new DeleteThermostatCommand {ScheduleId = schedule_id, Id = id});
-                if (ThermostatCommand == null)
+                ThermostatCommand thermostatCommand =
+                    await Mediator.Send(new DeleteThermostatCommandCommand {ScheduleId = schedule_id, Id = id});
+                if (thermostatCommand == null)
                 {
                     return NotFound();
                 }

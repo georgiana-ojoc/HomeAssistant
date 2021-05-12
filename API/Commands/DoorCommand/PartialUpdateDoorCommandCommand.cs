@@ -5,7 +5,7 @@ using Shared.Requests;
 
 namespace API.Commands.DoorCommand
 {
-    public class PartialUpdateDoorCommand : IRequest<Shared.Models.DoorCommand>
+    public class PartialUpdateDoorCommandCommand : IRequest<Shared.Models.DoorCommand>
     {
         public Guid ScheduleId { get; set; }
         public Guid Id { get; set; }

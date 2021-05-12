@@ -69,6 +69,13 @@ namespace API.Repositories
                 return null;
             }
 
+            Thermostat thermostat = await Context.Thermostats.FirstOrDefaultAsync(t => t.Id ==
+                thermostatCommand.ThermostatId);
+            if (thermostat == null)
+            {
+                return null;
+            }
+
             int thermostatCommands = await Context.ThermostatCommands.CountAsync(tc => tc.ScheduleId ==
                 scheduleId);
             if (thermostatCommands >= 10)
@@ -99,6 +106,12 @@ namespace API.Repositories
             ThermostatCommandRequest thermostatCommandToPatch = Mapper.Map<ThermostatCommandRequest>(thermostatCommand);
             thermostatCommandPatch.ApplyTo(thermostatCommandToPatch);
             CheckGuid(thermostatCommandToPatch.ThermostatId, "thermostat_id");
+            Thermostat thermostat = await Context.Thermostats.FirstOrDefaultAsync(t => t.Id ==
+                thermostatCommand.ThermostatId);
+            if (thermostat == null)
+            {
+                return null;
+            }
 
             Mapper.Map(thermostatCommandToPatch, thermostatCommand);
             await Context.SaveChangesAsync();

@@ -139,7 +139,7 @@ namespace Tests
                     Id = Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"),
                     Email = "homeassistantgo@outlook.com",
                     Name = "Night mode",
-                    Time = TimeSpan.Parse("22:00"),
+                    Time = "22:00",
                     Days = 127
                 }
             };

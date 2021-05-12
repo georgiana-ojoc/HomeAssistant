@@ -137,7 +137,7 @@ namespace Tests.IntegrationTests
         #region PATCH_THERMOSTAT
 
         [Fact]
-        public async Task GivenPatchedThermostat_WhenThermostatExists_ThenPatchAsyncShouldReturnPatchedThermostat()
+        public async Task GivenPatchedThermostat_WhenThermostatExists_ThenPatchAsyncShouldReturnNotFoundStatusCode()
         {
             using HttpClient client = GetClient(GetType().Name);
             Guid id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e");

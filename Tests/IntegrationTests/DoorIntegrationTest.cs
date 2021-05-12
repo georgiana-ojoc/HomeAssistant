@@ -156,7 +156,7 @@ namespace Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task GivenPatchedDoor_WhenDoorDoesNotExist_ThenPatchAsyncShouldReturnPatchedDoor()
+        public async Task GivenPatchedDoor_WhenDoorDoesNotExist_ThenPatchAsyncShouldReturnNotFoundStatusCode()
         {
             using HttpClient client = GetClient(GetType().Name);
             Guid id = Guid.Parse("a918cdd5-b15b-4d04-9839-8a74e676dfea");

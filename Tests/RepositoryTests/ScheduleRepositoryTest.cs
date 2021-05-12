@@ -98,7 +98,7 @@ namespace Tests.RepositoryTests
             var result = await repository.CreateScheduleAsync("homeassistantgo@outlook.com", new Schedule()
             {
                 Name = "Day mode",
-                Time = TimeSpan.Parse("08:00"),
+                Time = "08:00",
                 Days = 127
             });
 
@@ -117,13 +117,13 @@ namespace Tests.RepositoryTests
                 await repository.CreateScheduleAsync("homeassistantgo@outlook.com", new Schedule()
                 {
                     Name = "Day mode",
-                    Time = TimeSpan.Parse("08:00"),
+                    Time = "08:00",
                     Days = 0
                 });
             };
 
             await function.Should().ThrowAsync<ArgumentException>()
-                .WithMessage("Days cannot be 0 or 255.");
+                .WithMessage("Days cannot be 0 or bigger than 127.");
         }
 
         #endregion
@@ -139,13 +139,13 @@ namespace Tests.RepositoryTests
             ScheduleRepository repository = new ScheduleRepository(context, mapper);
 
             JsonPatchDocument<ScheduleRequest> schedulePatch = new JsonPatchDocument<ScheduleRequest>();
-            schedulePatch.Replace(s => s.Time, TimeSpan.Parse("07:00"));
+            schedulePatch.Replace(s => s.Time, "07:00");
 
             var result = await repository.PartialUpdateScheduleAsync("homeassistantgo@outlook.com",
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), schedulePatch);
 
             result.Should().BeOfType<Schedule>();
-            result.Time.Should().Be(TimeSpan.Parse("07:00"));
+            result.Time.Should().Be("07:00");
         }
 
         [Fact]
@@ -157,7 +157,7 @@ namespace Tests.RepositoryTests
             ScheduleRepository repository = new ScheduleRepository(context, mapper);
 
             JsonPatchDocument<ScheduleRequest> schedulePatch = new JsonPatchDocument<ScheduleRequest>();
-            schedulePatch.Replace(s => s.Time, TimeSpan.Parse("07:00"));
+            schedulePatch.Replace(s => s.Time, "07:00");
 
             var result = await repository.PartialUpdateScheduleAsync("jane.doe@mail.com",
                 Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"), schedulePatch);

@@ -4,7 +4,7 @@ using Shared.Requests;
 
 namespace API.Commands.LightBulbCommand
 {
-    public class CreateLightBulbCommand : IRequest<Shared.Models.LightBulbCommand>
+    public class CreateLightBulbCommandCommand : IRequest<Shared.Models.LightBulbCommand>
     {
         public Guid ScheduleId { get; set; }
 

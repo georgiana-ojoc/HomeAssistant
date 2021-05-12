@@ -154,7 +154,7 @@ namespace Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task GivenPatchedHouse_WhenHouseDoesNotExist_ThenPatchAsyncShouldReturnPatchedHouse()
+        public async Task GivenPatchedHouse_WhenHouseDoesNotExist_ThenPatchAsyncShouldReturnNotFoundStatusCode()
         {
             using HttpClient client = GetClient(GetType().Name);
             Guid id = Guid.Parse("a918cdd5-b15b-4d04-9839-8a74e676dfea");

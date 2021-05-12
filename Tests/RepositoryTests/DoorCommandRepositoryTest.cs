@@ -110,7 +110,7 @@ namespace Tests.RepositoryTests
             var result = await repository.CreateDoorCommandAsync("homeassistantgo@outlook.com",
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new DoorCommand()
                 {
-                    DoorId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
+                    DoorId = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"),
                     Locked = true
                 });
 
