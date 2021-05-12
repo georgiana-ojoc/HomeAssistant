@@ -5,11 +5,11 @@ using MediatR;
 
 namespace API.Commands.Schedule.Handlers
 {
-    public class DeleteScheduleHandler : Handler, IRequestHandler<DeleteScheduleCommand, Shared.Models.Schedule>
+    public class DeleteScheduleCommandHandler : Handler, IRequestHandler<DeleteScheduleCommand, Shared.Models.Schedule>
     {
         private readonly IScheduleRepository _repository;
 
-        public DeleteScheduleHandler(Identity identity, IScheduleRepository repository) : base(identity)
+        public DeleteScheduleCommandHandler(Identity identity, IScheduleRepository repository) : base(identity)
         {
             _repository = repository;
         }
