@@ -1,7 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
-using API.Queries.LightBulbCommand;
 using MediatR;
 
 namespace API.Queries.LightBulbCommand.Handler

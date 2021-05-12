@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using API.Commands.Schedule;
 using API.Interfaces;
 using MediatR;
 
