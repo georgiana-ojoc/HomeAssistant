@@ -14,7 +14,8 @@ namespace API.Commands.DoorCommand.Handlers
             _repository = repository;
         }
 
-        public async Task<Shared.Models.DoorCommand> Handle(CreateDoorCommand request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.DoorCommand> Handle(CreateDoorCommand request,
+            CancellationToken cancellationToken)
         {
             return await _repository.CreateDoorCommandAsync(Identity.Email, request.ScheduleId,
                 new Shared.Models.DoorCommand()

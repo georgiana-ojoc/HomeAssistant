@@ -5,7 +5,7 @@ using MediatR;
 
 namespace API.Queries.Schedule.Handlers
 {
-    public class GetScheduleByIdQueryHandler:Handler,IRequestHandler<GetScheduleByIdQuery,Shared.Models.Schedule>
+    public class GetScheduleByIdQueryHandler : Handler, IRequestHandler<GetScheduleByIdQuery, Shared.Models.Schedule>
     {
         private readonly IScheduleRepository _repository;
 

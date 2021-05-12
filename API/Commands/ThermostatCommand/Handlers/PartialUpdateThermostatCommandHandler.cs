@@ -11,7 +11,8 @@ namespace API.Commands.ThermostatCommand.Handlers
         private readonly IThermostatCommandRepository _repository;
 
 
-        public PartialUpdateThermostatCommandHandler(Identity identity, IThermostatCommandRepository repository) : base(identity)
+        public PartialUpdateThermostatCommandHandler(Identity identity, IThermostatCommandRepository repository) :
+            base(identity)
         {
             _repository = repository;
         }

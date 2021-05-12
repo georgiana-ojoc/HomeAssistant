@@ -22,7 +22,7 @@ namespace API.Controllers
         public ScheduleController(IMediator mediator) : base(mediator)
         {
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Schedule>>> GetAsync()
         {
@@ -86,7 +86,8 @@ namespace API.Controllers
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<ActionResult<Schedule>> PatchAsync(Guid id, [FromBody] JsonPatchDocument<ScheduleRequest> patch)
+        public async Task<ActionResult<Schedule>> PatchAsync(Guid id,
+            [FromBody] JsonPatchDocument<ScheduleRequest> patch)
         {
             try
             {

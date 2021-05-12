@@ -6,11 +6,13 @@ using MediatR;
 
 namespace API.Queries.ThermostatCommand.Handler
 {
-    public class GetThermostatCommandsQueryHandler:API.Handler,IRequestHandler<GetThermostatCommandsQuery,IEnumerable<Shared.Models.ThermostatCommand>>
+    public class GetThermostatCommandsQueryHandler : API.Handler,
+        IRequestHandler<GetThermostatCommandsQuery, IEnumerable<Shared.Models.ThermostatCommand>>
     {
         private readonly IThermostatCommandRepository _repository;
 
-        public GetThermostatCommandsQueryHandler(Identity identity, IThermostatCommandRepository repository) : base(identity)
+        public GetThermostatCommandsQueryHandler(Identity identity, IThermostatCommandRepository repository) :
+            base(identity)
         {
             _repository = repository;
         }
@@ -20,6 +22,5 @@ namespace API.Queries.ThermostatCommand.Handler
         {
             return await _repository.GetThermostatCommandsAsync(Identity.Email, request.ScheduleId);
         }
-        
     }
 }

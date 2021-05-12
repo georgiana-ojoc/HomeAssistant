@@ -6,7 +6,8 @@ using MediatR;
 
 namespace API.Queries.DoorCommand.Handler
 {
-    public class GetDoorCommandsQueryHandler:API.Handler,IRequestHandler<GetDoorCommandsQuery,IEnumerable<Shared.Models.DoorCommand>>
+    public class GetDoorCommandsQueryHandler : API.Handler,
+        IRequestHandler<GetDoorCommandsQuery, IEnumerable<Shared.Models.DoorCommand>>
     {
         private readonly IDoorCommandRepository _repository;
 
@@ -15,12 +16,11 @@ namespace API.Queries.DoorCommand.Handler
             _repository = repository;
         }
 
-        
+
         public async Task<IEnumerable<Shared.Models.DoorCommand>> Handle(GetDoorCommandsQuery request,
             CancellationToken cancellationToken)
         {
             return await _repository.GetDoorCommandsAsync(Identity.Email, request.ScheduleId);
         }
-        
     }
 }

@@ -11,7 +11,8 @@ namespace API.Commands.LightBulbCommand.Handlers
         private readonly ILightBulbCommandRepository _repository;
 
 
-        public PartialUpdateLightBulbCommandHandler(Identity identity, ILightBulbCommandRepository repository) : base(identity)
+        public PartialUpdateLightBulbCommandHandler(Identity identity, ILightBulbCommandRepository repository) :
+            base(identity)
         {
             _repository = repository;
         }

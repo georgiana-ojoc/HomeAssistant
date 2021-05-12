@@ -14,24 +14,23 @@ namespace Shared
             CreateMap<Room, RoomRequest>();
             CreateMap<RoomRequest, Room>();
 
-            CreateMap<Door, DoorRequest>();
-            CreateMap<DoorRequest, Door>();
-
             CreateMap<LightBulb, LightBulbRequest>();
             CreateMap<LightBulbRequest, LightBulb>();
+
+            CreateMap<Door, DoorRequest>();
+            CreateMap<DoorRequest, Door>();
 
             CreateMap<Thermostat, ThermostatRequest>();
             CreateMap<ThermostatRequest, Thermostat>();
 
             CreateMap<Schedule, ScheduleRequest>();
             CreateMap<ScheduleRequest, Schedule>();
-            
-            
-            CreateMap<DoorCommand, DoorCommandRequest>();
-            CreateMap<DoorCommandRequest, DoorCommand>();
 
             CreateMap<LightBulbCommand, LightBulbCommandRequest>();
             CreateMap<LightBulbCommandRequest, LightBulbCommand>();
+
+            CreateMap<DoorCommand, DoorCommandRequest>();
+            CreateMap<DoorCommandRequest, DoorCommand>();
 
             CreateMap<ThermostatCommand, ThermostatCommandRequest>();
             CreateMap<ThermostatCommandRequest, ThermostatCommand>();
