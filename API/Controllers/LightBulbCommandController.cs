@@ -72,7 +72,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<LightBulbCommand>> PostAsync(Guid schedule_id, [FromBody] LightBulbCommandRequest request)
+        public async Task<ActionResult<LightBulbCommand>> PostAsync(Guid schedule_id,
+            [FromBody] LightBulbCommandRequest request)
         {
             try
             {
@@ -83,7 +84,8 @@ namespace API.Controllers
                     return NotFound();
                 }
 
-                return Created($"schedules/{schedule_id}/light_bulb_commands/{newLightBulbCommand.Id}", newLightBulbCommand);
+                return Created($"schedules/{schedule_id}/light_bulb_commands/{newLightBulbCommand.Id}",
+                    newLightBulbCommand);
             }
             catch (ArgumentNullException)
             {
