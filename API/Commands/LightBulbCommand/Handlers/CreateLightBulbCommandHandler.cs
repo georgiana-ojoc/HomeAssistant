@@ -5,7 +5,8 @@ using MediatR;
 
 namespace API.Commands.LightBulbCommand.Handlers
 {
-    public class CreateLightBulbCommandHandler : Handler, IRequestHandler<CreateLightBulbCommand, Shared.Models.LightBulbCommand>
+    public class CreateLightBulbCommandHandler : Handler,
+        IRequestHandler<CreateLightBulbCommand, Shared.Models.LightBulbCommand>
     {
         private readonly ILightBulbCommandRepository _repository;
 
@@ -14,7 +15,8 @@ namespace API.Commands.LightBulbCommand.Handlers
             _repository = repository;
         }
 
-        public async Task<Shared.Models.LightBulbCommand> Handle(CreateLightBulbCommand request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.LightBulbCommand> Handle(CreateLightBulbCommand request,
+            CancellationToken cancellationToken)
         {
             return await _repository.CreateLightBulbCommandAsync(Identity.Email, request.ScheduleId,
                 new Shared.Models.LightBulbCommand()

@@ -39,6 +39,10 @@ namespace API.Repositories
         {
             CheckString(email, "email");
             CheckString(schedule.Name, "name");
+            if (schedule.Days is 0 or 255)
+            {
+                throw new ArgumentException("Days cannot be 0 or 255.");
+            }
 
             int schedules = await Context.Schedules.CountAsync(s => s.Email == email);
             if (schedules >= 20)
@@ -71,6 +75,10 @@ namespace API.Repositories
             ScheduleRequest scheduleToPatch = Mapper.Map<ScheduleRequest>(schedule);
             schedulePatch.ApplyTo(scheduleToPatch);
             CheckString(scheduleToPatch.Name, "name");
+            if (schedule.Days is 0 or 255)
+            {
+                throw new ArgumentException("Days cannot be 0 or 255.");
+            }
 
             Mapper.Map(scheduleToPatch, schedule);
             await Context.SaveChangesAsync();

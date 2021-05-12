@@ -5,7 +5,8 @@ using MediatR;
 
 namespace API.Queries.DoorCommand.Handler
 {
-    public class GetDoorCommandByIdQueryHandler:API.Handler,IRequestHandler<GetDoorCommandByIdQuery,Shared.Models.DoorCommand>
+    public class GetDoorCommandByIdQueryHandler : API.Handler,
+        IRequestHandler<GetDoorCommandByIdQuery, Shared.Models.DoorCommand>
     {
         private readonly IDoorCommandRepository _repository;
 
@@ -17,7 +18,7 @@ namespace API.Queries.DoorCommand.Handler
         public async Task<Shared.Models.DoorCommand> Handle(GetDoorCommandByIdQuery request,
             CancellationToken cancellationToken)
         {
-            return await _repository.GetDoorCommandByIdAsync(Identity.Email, request.ScheduleId,request.Id);
+            return await _repository.GetDoorCommandByIdAsync(Identity.Email, request.ScheduleId, request.Id);
         }
     }
 }

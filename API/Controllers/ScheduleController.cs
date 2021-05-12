@@ -22,7 +22,7 @@ namespace API.Controllers
         public ScheduleController(IMediator mediator) : base(mediator)
         {
         }
-        
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Schedule>>> GetAsync()
         {
@@ -75,6 +75,10 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
+            catch (ArgumentException)
+            {
+                return BadRequest();
+            }
             catch (ConstraintException)
             {
                 return Forbid();
@@ -86,7 +90,8 @@ namespace API.Controllers
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<ActionResult<Schedule>> PatchAsync(Guid id, [FromBody] JsonPatchDocument<ScheduleRequest> patch)
+        public async Task<ActionResult<Schedule>> PatchAsync(Guid id,
+            [FromBody] JsonPatchDocument<ScheduleRequest> patch)
         {
             try
             {
@@ -99,6 +104,10 @@ namespace API.Controllers
                 return Ok(schedule);
             }
             catch (ArgumentNullException)
+            {
+                return BadRequest();
+            }
+            catch (ArgumentException)
             {
                 return BadRequest();
             }

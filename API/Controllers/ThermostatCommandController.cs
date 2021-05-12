@@ -72,7 +72,8 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ThermostatCommand>> PostAsync(Guid schedule_id, [FromBody] ThermostatCommandRequest request)
+        public async Task<ActionResult<ThermostatCommand>> PostAsync(Guid schedule_id,
+            [FromBody] ThermostatCommandRequest request)
         {
             try
             {
@@ -83,7 +84,8 @@ namespace API.Controllers
                     return NotFound();
                 }
 
-                return Created($"schedules/{schedule_id}/thermostat_commands/{newThermostatCommand.Id}", newThermostatCommand);
+                return Created($"schedules/{schedule_id}/thermostat_commands/{newThermostatCommand.Id}",
+                    newThermostatCommand);
             }
             catch (ArgumentNullException)
             {

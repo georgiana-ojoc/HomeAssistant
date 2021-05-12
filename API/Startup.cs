@@ -70,14 +70,14 @@ namespace API
 
             services.AddScoped<IHouseRepository, HouseRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
-            services.AddScoped<IDoorRepository, DoorRepository>();
             services.AddScoped<ILightBulbRepository, LightBulbRepository>();
+            services.AddScoped<IDoorRepository, DoorRepository>();
             services.AddScoped<IThermostatRepository, ThermostatRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
-            services.AddScoped<IDoorCommandRepository, DoorCommandRepository>();
             services.AddScoped<ILightBulbCommandRepository, LightBulbCommandRepository>();
+            services.AddScoped<IDoorCommandRepository, DoorCommandRepository>();
             services.AddScoped<IThermostatCommandRepository, ThermostatCommandRepository>();
-
+            
             services.AddHangfire(configuration => configuration
                 .UseSqlServerStorage(ConnectionService.Connection));
             services.AddHangfireServer();

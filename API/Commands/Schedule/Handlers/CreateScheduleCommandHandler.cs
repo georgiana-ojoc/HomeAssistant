@@ -1,6 +1,5 @@
 using System.Threading;
 using System.Threading.Tasks;
-using API.Commands.Schedule;
 using API.Interfaces;
 using MediatR;
 
@@ -15,7 +14,8 @@ namespace API.Commands.Schedule.Handlers
             _repository = repository;
         }
 
-        public async Task<Shared.Models.Schedule> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.Schedule> Handle(CreateScheduleCommand request,
+            CancellationToken cancellationToken)
         {
             return await _repository.CreateScheduleAsync(Identity.Email, new Shared.Models.Schedule
             {
