@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Interfaces;
 using AutoMapper;
+using Hangfire;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Shared;
@@ -48,6 +49,10 @@ namespace API.Repositories
             schedule.Email = email;
             Schedule newSchedule = (await Context.Schedules.AddAsync(schedule)).Entity;
             await Context.SaveChangesAsync();
+            
+            //TO DO
+            //RecurringJob.AddOrUpdate(schedule.Id.ToString(),() => Console.WriteLine("aaa"),Cron.Minutely);
+            
             return newSchedule;
         }
 
@@ -69,6 +74,9 @@ namespace API.Repositories
 
             Mapper.Map(scheduleToPatch, schedule);
             await Context.SaveChangesAsync();
+            RecurringJob.RemoveIfExists(schedule.Id.ToString());
+            //TO DO
+            //RecurringJob.AddOrUpdate(schedule.Id.ToString(),,);
             return schedule;
         }
 
@@ -85,6 +93,7 @@ namespace API.Repositories
 
             Context.Schedules.Remove(schedule);
             await Context.SaveChangesAsync();
+            RecurringJob.RemoveIfExists(schedule.Id.ToString());
             return schedule;
         }
     }

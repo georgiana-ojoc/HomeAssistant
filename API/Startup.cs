@@ -2,6 +2,7 @@ using System.Reflection;
 using API.Interfaces;
 using API.Repositories;
 using AutoMapper;
+using Hangfire;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -76,7 +77,10 @@ namespace API
             services.AddScoped<IDoorCommandRepository, DoorCommandRepository>();
             services.AddScoped<ILightBulbCommandRepository, LightBulbCommandRepository>();
             services.AddScoped<IThermostatCommandRepository, ThermostatCommandRepository>();
-            
+
+            services.AddHangfire(configuration => configuration
+                .UseSqlServerStorage(ConnectionService.Connection));
+            services.AddHangfireServer();
 
             services.AddSwaggerGen(swagger =>
             {
@@ -133,6 +137,8 @@ namespace API
             app.UseAuthorization();
 
             app.UseCors("CorsPolicy");
+
+            app.UseHangfireDashboard();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers().RequireAuthorization(); });
         }
