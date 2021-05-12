@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using API.Interfaces;
 using MediatR;
 
 namespace API.Queries.ThermostatCommand.Handler
@@ -16,7 +17,7 @@ namespace API.Queries.ThermostatCommand.Handler
         public async Task<Shared.Models.ThermostatCommand> Handle(GetThermostatCommandByIdQuery request,
             CancellationToken cancellationToken)
         {
-            return await _repository.GetDoorCommandByIdAsync(Identity.Email, request.ScheduleId,request.Id);
+            return await _repository.GetThermostatCommandByIdAsync(Identity.Email, request.ScheduleId,request.Id);
         }
     }
 }

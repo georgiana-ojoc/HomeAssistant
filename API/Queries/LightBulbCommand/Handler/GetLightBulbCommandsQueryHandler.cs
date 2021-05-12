@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using API.Interfaces;
 using MediatR;
 
 namespace API.Queries.LightBulbCommand.Handler
@@ -18,7 +19,7 @@ namespace API.Queries.LightBulbCommand.Handler
         public async Task<IEnumerable<Shared.Models.LightBulbCommand>> Handle(GetLightBulbCommandsQuery request,
             CancellationToken cancellationToken)
         {
-            return await _repository.GetLightBulbCommandByIdAsync(Identity.Email, request.ScheduleId);
+            return await _repository.GetLightBulbCommandsAsync(Identity.Email, request.ScheduleId);
         }
         
     }

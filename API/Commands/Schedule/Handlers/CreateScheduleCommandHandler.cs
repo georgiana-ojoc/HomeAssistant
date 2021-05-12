@@ -19,7 +19,9 @@ namespace API.Commands.Schedule.Handlers
         {
             return await _repository.CreateScheduleAsync(Identity.Email, new Shared.Models.Schedule
             {
-                Name = request.Request.Name
+                Name = request.Request.Name,
+                Time = request.Request.Time,
+                Days = request.Request.Days
             });
         }
     }

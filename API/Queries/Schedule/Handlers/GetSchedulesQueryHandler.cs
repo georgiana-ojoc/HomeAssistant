@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using API.Interfaces;
 using MediatR;
 
 namespace API.Queries.Schedule.Handlers

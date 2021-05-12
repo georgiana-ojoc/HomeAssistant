@@ -3,23 +3,23 @@ using System.Threading.Tasks;
 using API.Interfaces;
 using MediatR;
 
-namespace API.Commands.Door.Handlers
+namespace API.Commands.DoorCommand.Handlers
 {
     public class PartialUpdateDoorCommandHandler : Handler,
-        IRequestHandler<PartialUpdateDoorCommand, Shared.Models.Door>
+        IRequestHandler<PartialUpdateDoorCommand, Shared.Models.DoorCommand>
     {
-        private readonly IDoorRepository _repository;
+        private readonly IDoorCommandRepository _repository;
 
 
-        public PartialUpdateDoorCommandHandler(Identity identity, IDoorRepository repository) : base(identity)
+        public PartialUpdateDoorCommandHandler(Identity identity, IDoorCommandRepository repository) : base(identity)
         {
             _repository = repository;
         }
 
-        public async Task<Shared.Models.Door> Handle(PartialUpdateDoorCommand request,
+        public async Task<Shared.Models.DoorCommand> Handle(PartialUpdateDoorCommand request,
             CancellationToken cancellationToken)
         {
-            return await _repository.PartialUpdateDoorAsync(Identity.Email, request.HouseId, request.RoomId,
+            return await _repository.PartialUpdateDoorCommandAsync(Identity.Email, request.ScheduleId,
                 request.Id, request.Patch);
         }
     }

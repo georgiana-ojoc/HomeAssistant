@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using API.Interfaces;
 using MediatR;
 
 namespace API.Commands.DoorCommand.Handlers
@@ -15,11 +16,12 @@ namespace API.Commands.DoorCommand.Handlers
 
         public async Task<Shared.Models.DoorCommand> Handle(CreateDoorCommand request, CancellationToken cancellationToken)
         {
-            return await _repository.CreateDoorCommandCommandAsync(Identity.Email, request.ScheduleId,
+            return await _repository.CreateDoorCommandAsync(Identity.Email, request.ScheduleId,
                 new Shared.Models.DoorCommand()
                 {
                     DoorId = request.Request.DoorId,
-                    ScheduleId = request.ScheduleId
+                    ScheduleId = request.ScheduleId,
+                    Locked = request.Request.Locked
                 });
         }
     }
