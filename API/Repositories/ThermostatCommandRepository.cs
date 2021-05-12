@@ -69,7 +69,7 @@ namespace API.Repositories
                 return null;
             }
 
-            int thermostatCommands = await Context.ThermostatCommands.CountAsync(dc => dc.ScheduleId == 
+            int thermostatCommands = await Context.ThermostatCommands.CountAsync(tc => tc.ScheduleId ==
                 scheduleId);
             if (thermostatCommands >= 10)
             {
