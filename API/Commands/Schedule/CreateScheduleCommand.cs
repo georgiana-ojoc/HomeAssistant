@@ -3,7 +3,7 @@ using Shared.Requests;
 
 namespace API.Commands.Schedule
 {
-    public class CreateSchedule : IRequest<Shared.Models.Schedule>
+    public class CreateScheduleCommand : IRequest<Shared.Models.Schedule>
     {
         public ScheduleRequest Request { get; set; }
     }

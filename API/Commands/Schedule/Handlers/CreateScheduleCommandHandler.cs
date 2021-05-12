@@ -6,7 +6,7 @@ using MediatR;
 
 namespace API.Commands.Schedule.Handlers
 {
-    public class CreateScheduleHandler : Handler, IRequestHandler<CreateSchedule, Shared.Models.Schedule>
+    public class CreateScheduleHandler : Handler, IRequestHandler<CreateScheduleCommand, Shared.Models.Schedule>
     {
         private readonly IScheduleRepository _repository;
 
@@ -15,7 +15,7 @@ namespace API.Commands.Schedule.Handlers
             _repository = repository;
         }
 
-        public async Task<Shared.Models.Schedule> Handle(CreateSchedule request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.Schedule> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
         {
             return await _repository.CreateScheduleAsync(Identity.Email, new Shared.Models.Schedule
             {

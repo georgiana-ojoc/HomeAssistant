@@ -7,7 +7,7 @@ using MediatR;
 namespace API.Commands.Schedule.Handlers
 {
     public class PartialUpdateScheduleHandler : Handler,
-        IRequestHandler<PartialUpdateSchedule, Shared.Models.Schedule>
+        IRequestHandler<PartialUpdateScheduleCommand, Shared.Models.Schedule>
     {
         private readonly IScheduleRepository _repository;
 
@@ -16,7 +16,7 @@ namespace API.Commands.Schedule.Handlers
             _repository = repository;
         }
 
-        public async Task<Shared.Models.Schedule> Handle(PartialUpdateSchedule request,
+        public async Task<Shared.Models.Schedule> Handle(PartialUpdateScheduleCommand request,
             CancellationToken cancellationToken)
         {
             return await _repository.PartialUpdateScheduleAsync(Identity.Email, request.Id, request.Patch);

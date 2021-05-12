@@ -6,7 +6,7 @@ using MediatR;
 
 namespace API.Commands.Schedule.Handlers
 {
-    public class DeleteScheduleHandler : Handler, IRequestHandler<DeleteSchedule, Shared.Models.Schedule>
+    public class DeleteScheduleHandler : Handler, IRequestHandler<DeleteScheduleCommand, Shared.Models.Schedule>
     {
         private readonly IScheduleRepository _repository;
 
@@ -15,7 +15,7 @@ namespace API.Commands.Schedule.Handlers
             _repository = repository;
         }
 
-        public async Task<Shared.Models.Schedule> Handle(DeleteSchedule request, CancellationToken cancellationToken)
+        public async Task<Shared.Models.Schedule> Handle(DeleteScheduleCommand request, CancellationToken cancellationToken)
         {
             return await _repository.DeleteScheduleAsync(Identity.Email, request.Id);
         }
