@@ -6,12 +6,12 @@ using MediatR;
 
 namespace API.Commands.Schedule.Handlers
 {
-    public class PartialUpdateScheduleHandler : Handler,
+    public class PartialUpdateScheduleCommandHandler : Handler,
         IRequestHandler<PartialUpdateScheduleCommand, Shared.Models.Schedule>
     {
         private readonly IScheduleRepository _repository;
 
-        public PartialUpdateScheduleHandler(Identity identity, IScheduleRepository repository) : base(identity)
+        public PartialUpdateScheduleCommandHandler(Identity identity, IScheduleRepository repository) : base(identity)
         {
             _repository = repository;
         }

@@ -6,11 +6,11 @@ using MediatR;
 
 namespace API.Commands.Schedule.Handlers
 {
-    public class CreateScheduleHandler : Handler, IRequestHandler<CreateScheduleCommand, Shared.Models.Schedule>
+    public class CreateScheduleCommandHandler : Handler, IRequestHandler<CreateScheduleCommand, Shared.Models.Schedule>
     {
         private readonly IScheduleRepository _repository;
 
-        public CreateScheduleHandler(Identity identity, IScheduleRepository repository) : base(identity)
+        public CreateScheduleCommandHandler(Identity identity, IScheduleRepository repository) : base(identity)
         {
             _repository = repository;
         }
