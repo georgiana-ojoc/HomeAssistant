@@ -256,7 +256,6 @@ namespace Shared
                 entity.HasOne(d => d.Schedule)
                     .WithMany(p => p.LightBulbCommands)
                     .HasForeignKey(d => d.ScheduleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("light_bulb_commands_schedules_id_fk");
             });
 
@@ -289,7 +288,6 @@ namespace Shared
                 entity.HasOne(d => d.Schedule)
                     .WithMany(p => p.DoorCommands)
                     .HasForeignKey(d => d.ScheduleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("door_commands_schedules_id_fk");
             });
 
@@ -319,7 +317,6 @@ namespace Shared
                 entity.HasOne(d => d.Schedule)
                     .WithMany(p => p.ThermostatCommands)
                     .HasForeignKey(d => d.ScheduleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("thermostat_commands_schedules_id_fk");
 
                 entity.HasOne(d => d.Thermostat)
