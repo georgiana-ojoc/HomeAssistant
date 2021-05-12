@@ -43,7 +43,7 @@ namespace API
 
         public static async Task<Boolean> ChangeAsync(Guid scheduleId)
         {
-            //TO DO
+            // TO DO
             try
             {
                 string baseUrl = "https://localhost:5001/schedules/{scheduleId}";

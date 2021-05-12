@@ -4,11 +4,9 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Controllers;
 using API.Interfaces;
 using AutoMapper;
 using Hangfire;
-using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Shared;
@@ -63,19 +61,9 @@ namespace API.Repositories
             Schedule newSchedule = (await Context.Schedules.AddAsync(schedule)).Entity;
             await Context.SaveChangesAsync();
 
-            try
-            {
-                RecurringJob.AddOrUpdate(schedule.Id.ToString(),
-                    ()=>Helper.ChangeAllInSchedule(schedule.Id),
-                    Helper.GetCronExpression(schedule.Time,schedule.Days));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
-            
+            RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => Helper.ChangeAllInSchedule(schedule.Id),
+                Helper.GetCronExpression(schedule.Time, schedule.Days));
+
             return newSchedule;
         }
 
@@ -101,11 +89,11 @@ namespace API.Repositories
 
             Mapper.Map(scheduleToPatch, schedule);
             await Context.SaveChangesAsync();
+
             RecurringJob.RemoveIfExists(schedule.Id.ToString());
-            RecurringJob.AddOrUpdate(schedule.Id.ToString(),
-             () => Helper.ChangeAllInSchedule(schedule.Id),
-                             Helper.GetCronExpression(schedule.Time,schedule.Days));
-            
+            RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => Helper.ChangeAllInSchedule(schedule.Id),
+                Helper.GetCronExpression(schedule.Time, schedule.Days));
+
             return schedule;
         }
 
@@ -122,7 +110,9 @@ namespace API.Repositories
 
             Context.Schedules.Remove(schedule);
             await Context.SaveChangesAsync();
+
             RecurringJob.RemoveIfExists(schedule.Id.ToString());
+
             return schedule;
         }
     }

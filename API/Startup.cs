@@ -77,9 +77,8 @@ namespace API
             services.AddScoped<ILightBulbCommandRepository, LightBulbCommandRepository>();
             services.AddScoped<IDoorCommandRepository, DoorCommandRepository>();
             services.AddScoped<IThermostatCommandRepository, ThermostatCommandRepository>();
-            
-            services.AddHangfire(configuration => configuration
-                .UseSqlServerStorage(ConnectionService.Connection));
+
+            services.AddHangfire(configuration => configuration.UseSqlServerStorage(ConnectionService.Connection));
             services.AddHangfireServer();
 
             services.AddSwaggerGen(swagger =>
