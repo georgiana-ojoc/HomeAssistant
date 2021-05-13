@@ -17,7 +17,7 @@ namespace Interface.Pages
         {
             if (string.IsNullOrWhiteSpace(_newHouseName)) return;
 
-            var response = await Http.PostAsJsonAsync("houses",
+            var response = await _http.PostAsJsonAsync("houses",
                 new House
                 {
                     Name = _newHouseName
@@ -32,21 +32,21 @@ namespace Interface.Pages
             }
             else
             {
-                await JsRuntime.InvokeVoidAsync("alert", "Maximum number of houses reached!");
+                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of houses reached!");
             }
         }
 
         private async Task DeleteHouse(Guid id)
         {
-            await Http.DeleteAsync($"houses/{id}");
+            await _http.DeleteAsync($"houses/{id}");
             _houses.Remove(_houses.SingleOrDefault(house => house.Id == id));
             StateHasChanged();
         }
 
         private async Task SetHouseId(Guid id)
         {
-            await IdService.SetHouseId(id);
-            NavManager.NavigateTo("Rooms");
+            await _idService.SetHouseId(id);
+            _navManager.NavigateTo("Rooms");
         }
     }
 }

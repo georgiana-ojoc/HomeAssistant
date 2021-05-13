@@ -1,10 +1,10 @@
 ﻿@page "/Houses"
 @using Interface.Scripts
 @using global::Shared.Models
-@inject IdService IdService
-@inject HttpClient Http
-@inject IJSRuntime JsRuntime;
-@inject NavigationManager NavManager
+@inject IdService _idService
+@inject HttpClient _http
+@inject IJSRuntime _jsRuntime;
+@inject NavigationManager _navManager
 @attribute [Authorize]
 
 <div class="input-group">
@@ -14,29 +14,31 @@
         <button class="btn btn-info" id="add-house-addon" @onclick="AddHouse" style="margin: 1rem"> Add house </button>
     </div>
 </div>
-<div class="row">
-    @if (!(_houses is null))
+<ul class="list-group list-group-horizontal flex-wrap" >
+    @if (_houses is not null)
     {
         foreach (var house in _houses)
         {
-            <div class="card" style="width: 16rem; margin: 1rem">
-                <h3 class="card-header" style="text-align: center"> @house.Name </h3>
-                <div class="card-body" style="margin: auto">
-                    <div class="btn-group">
-                        <button class="btn btn-dark" @onclick="@(() => SetHouseId(house.Id))"> Manage house </button>
-                        <button class="btn btn-danger" @onclick="@(() => DeleteHouse(house.Id))"> Delete house </button>
+            <li class="list-group-item" style="margin: 0.5rem">
+                <div class="card" style="width: 16rem">
+                    <h3 class="card-header" style="text-align: center"> @house.Name </h3>
+                    <div class="card-body" style="margin: auto">
+                        <div class="btn-group">
+                            <button class="btn btn-dark" @onclick="@(() => SetHouseId(house.Id))"> Manage house </button>
+                            <button class="btn btn-danger" @onclick="@(() => DeleteHouse(house.Id))"> Delete house </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </li>
         }
     }
-</div>
+</ul>
 
 @code {
 
     protected override async Task OnInitializedAsync()
     {
-        _houses = await Http.GetFromJsonAsync<IList<House>>("houses");
+        _houses = await _http.GetFromJsonAsync<IList<House>>("houses");
     }
 
 }

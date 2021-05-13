@@ -17,7 +17,7 @@ namespace Interface.Pages
 
         private async Task GetLightBulbs()
         {
-            var responseLightBulbs = await Http.GetFromJsonAsync<IList<LightBulb>>(
+            var responseLightBulbs = await _http.GetFromJsonAsync<IList<LightBulb>>(
                 $"houses/{_houseId}/rooms/{_roomId}/light_bulbs");
             if (responseLightBulbs != null)
                 _lightBulbs = new List<LightBulb>(responseLightBulbs);
@@ -50,7 +50,7 @@ namespace Interface.Pages
         {
             if (string.IsNullOrWhiteSpace(_newLightBulbName)) return;
 
-            var response = await Http.PostAsJsonAsync(
+            var response = await _http.PostAsJsonAsync(
                 $"houses/{_houseId}/rooms/{_roomId}/{LightBulbsPath}",
                 new LightBulb
                 {
@@ -67,13 +67,13 @@ namespace Interface.Pages
             }
             else
             {
-                await JsRuntime.InvokeVoidAsync("alert", "Maximum number of light bulbs reached!");
+                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of light bulbs reached!");
             }
         }
 
         private async Task DeleteLightBulb(Guid id)
         {
-            await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/{LightBulbsPath}/{id}");
+            await _http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/{LightBulbsPath}/{id}");
             _lightBulbs.Remove(_lightBulbs.SingleOrDefault(lightBulb => lightBulb.Id == id));
             StateHasChanged();
         }

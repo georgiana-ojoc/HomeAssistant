@@ -16,7 +16,7 @@ namespace Interface.Pages
         private async Task GetDoors()
         {
             var responseDoors =
-                await Http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}");
+                await _http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}");
             if (responseDoors != null) _doors = new List<Door>(responseDoors);
 
             foreach (var door in _doors)
@@ -33,7 +33,7 @@ namespace Interface.Pages
         {
             if (string.IsNullOrWhiteSpace(_newDoorName)) return;
 
-            var response = await Http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}",
+            var response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}",
                 new Door
                 {
                     Name = _newDoorName
@@ -48,13 +48,13 @@ namespace Interface.Pages
             }
             else
             {
-                await JsRuntime.InvokeVoidAsync("alert", "Maximum number of doors reached!");
+                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of doors reached!");
             }
         }
 
         private async Task DeleteDoor(Guid id)
         {
-            await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
+            await _http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/doors/{id}");
             _doors.Remove(_doors.SingleOrDefault(door => door.Id == id));
             StateHasChanged();
         }

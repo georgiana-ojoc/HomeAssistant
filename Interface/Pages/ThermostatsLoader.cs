@@ -19,7 +19,7 @@ namespace Interface.Pages
 
         private async Task GetThermostats()
         {
-            var responseThermostats = await Http.GetFromJsonAsync<IList<Thermostat>>(
+            var responseThermostats = await _http.GetFromJsonAsync<IList<Thermostat>>(
                 $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}");
             if (responseThermostats != null) _thermostats = new List<Thermostat>(responseThermostats);
 
@@ -33,7 +33,7 @@ namespace Interface.Pages
                     HttpContent patchBody = new StringContent(serializedContent,
                         Encoding.UTF8,
                         "application/json");
-                    await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}/{thermostat.Id}",
+                    await _http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}/{thermostat.Id}",
                         patchBody);
                 }
         }
@@ -42,7 +42,7 @@ namespace Interface.Pages
         {
             if (string.IsNullOrWhiteSpace(_newThermostatName)) return;
 
-            var response = await Http.PostAsJsonAsync(
+            var response = await _http.PostAsJsonAsync(
                 $"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}",
                 new Thermostat
                 {
@@ -58,13 +58,13 @@ namespace Interface.Pages
             }
             else
             {
-                await JsRuntime.InvokeVoidAsync("alert", "Maximum number of thermostats reached!");
+                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of thermostats reached!");
             }
         }
 
         private async Task DeleteThermostat(Guid id)
         {
-            await Http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}/{id}");
+            await _http.DeleteAsync($"houses/{_houseId}/rooms/{_roomId}/{ThermostatsPath}/{id}");
             _thermostats.Remove(_thermostats.SingleOrDefault(thermostat => thermostat.Id == id));
             StateHasChanged();
         }

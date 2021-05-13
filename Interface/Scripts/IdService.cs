@@ -8,6 +8,7 @@ namespace Interface.Scripts
     {
         public Guid HouseId { get; init; }
         public Guid RoomId { get; init; }
+        public Guid ScheduleId { get; init; }
     }
 
     public class IdService
@@ -25,7 +26,8 @@ namespace Interface.Scripts
             var newIdRecord = new IdRecord
             {
                 HouseId = houseId,
-                RoomId = idRecord.RoomId
+                RoomId = idRecord.RoomId,
+                ScheduleId = idRecord.ScheduleId
             };
             await _localStorageService.SetItemAsync("idRecord", newIdRecord);
         }
@@ -36,7 +38,20 @@ namespace Interface.Scripts
             var newIdRecord = new IdRecord
             {
                 HouseId = idRecord.HouseId,
-                RoomId = roomId
+                RoomId = roomId,
+                ScheduleId = idRecord.ScheduleId
+            };
+            await _localStorageService.SetItemAsync("idRecord", newIdRecord);
+        }
+
+        public async Task SetScheduleId(Guid scheduleId)
+        {
+            var idRecord = await GetIdRecord();
+            var newIdRecord = new IdRecord
+            {
+                HouseId = idRecord.HouseId,
+                RoomId = idRecord.RoomId,
+                ScheduleId = scheduleId
             };
             await _localStorageService.SetItemAsync("idRecord", newIdRecord);
         }
@@ -49,6 +64,11 @@ namespace Interface.Scripts
         public async Task<Guid> GetRoomId()
         {
             return (await GetIdRecord()).RoomId;
+        }
+
+        public async Task<Guid> GetScheduleId()
+        {
+            return (await GetIdRecord()).ScheduleId;
         }
 
         private async Task<IdRecord> GetIdRecord()
