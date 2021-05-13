@@ -13,16 +13,12 @@ namespace Interface.Pages
     {
         private IList<Schedule> _schedules;
 
-        private DateTime _newScheduleTime = DateTime.Now;
-
         private Schedule _newSchedule = new();
 
         private IEnumerable<int> _selectedDays = new List<int>();
 
         private async Task AddSchedule(Schedule newScheduleModel)
         {
-            // if (string.IsNullOrWhiteSpace(_newScheduleName)) return;
-
             var response = await _http.PostAsJsonAsync("schedules", _newSchedule);
             if (response.IsSuccessStatusCode)
             {
