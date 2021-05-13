@@ -27,15 +27,6 @@ namespace Shared
         public DbSet<DoorCommand> DoorCommands { get; set; }
         public DbSet<ThermostatCommand> ThermostatCommands { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(ConnectionService.Connection,
-                    builder => builder.EnableRetryOnFailure());
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");

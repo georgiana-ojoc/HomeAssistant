@@ -13,16 +13,12 @@ namespace Interface.Pages
     {
         private IList<Schedule> _schedules;
 
-        private DateTime _newScheduleTime = DateTime.Now;
-
         private Schedule _newSchedule = new();
 
         private IEnumerable<int> _selectedDays = new List<int>();
 
         private async Task AddSchedule(Schedule newScheduleModel)
         {
-            // if (string.IsNullOrWhiteSpace(_newScheduleName)) return;
-
             var response = await _http.PostAsJsonAsync("schedules", _newSchedule);
             if (response.IsSuccessStatusCode)
             {
@@ -51,10 +47,12 @@ namespace Interface.Pages
             await _idService.SetScheduleId(id);
             _navManager.NavigateTo("ScheduleEditor");
         }
+
         private Task OnInvalidSubmit(FormInvalidSubmitEventArgs arg)
         {
             throw new NotImplementedException();
         }
+
         private void OnChangeSelectedDays(IEnumerable<int> selectedDays)
         {
             _newSchedule.Days = 0;
@@ -63,6 +61,7 @@ namespace Interface.Pages
                 _newSchedule.Days += (byte) value;
             }
         }
+
         private void OnChangeTime(DateTime? value, string format)
         {
             _newSchedule.Time = value?.ToString(format);

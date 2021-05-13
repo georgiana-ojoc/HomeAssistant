@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -59,7 +60,10 @@ namespace API
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddScoped<HomeAssistantContext>();
+
+            services.AddDbContext<HomeAssistantContext>(options =>
+                options.UseSqlServer(ConnectionService.Connection,
+                    builder => builder.EnableRetryOnFailure()));
 
             MapperConfiguration mapperConfiguration = new MapperConfiguration(mapperConfigurationExpression =>
             {
@@ -80,6 +84,8 @@ namespace API
 
             services.AddHangfire(configuration => configuration.UseSqlServerStorage(ConnectionService.Connection));
             services.AddHangfireServer();
+
+            services.AddScoped<Helper>();
 
             services.AddSwaggerGen(swagger =>
             {
