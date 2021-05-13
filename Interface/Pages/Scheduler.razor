@@ -33,10 +33,44 @@
                             <RadzenLabel Text="Time:" />
                         </div>
                         <div class="col">
-                            <RadzenDatePicker TValue="TimeSpan?" ShowTime="true" TimeOnly="true" DateFormat="HH:mm"
-                                              Name="Time" Value="_newSchedule.Time"/>
+                            <RadzenDatePicker TValue="DateTime?" ShowTime="true" TimeOnly="true" DateFormat="HH:mm"
+                                              Name="Time" Change=@(args => OnChangeTime(args, "HH:mm")) />
                             <RadzenRequiredValidator Component="Time" Text="Please select a time!"
                                                      Style="position: absolute"/>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-bottom: 48px">
+                        <div class="col-md-4">
+                            <RadzenLabel Text="Repeat:" />
+                        </div>
+                        <div class="col">
+                            <RadzenSelectBar @bind-Value=@_selectedDays TValue="IEnumerable<int>" Multiple="true"
+                                             Disabled="true" Change=@OnChangeSelectedDays>
+                                <Items>
+                                    <RadzenSelectBarItem Text="Monday" Value="1" />
+                                    <RadzenSelectBarItem Text="Tuesday" Value="2" />
+                                    <RadzenSelectBarItem Text="Wednesday" Value="4" />
+                                    <RadzenSelectBarItem Text="Thursday" Value="8" />
+                                    <RadzenSelectBarItem Text="Friday" Value="16" />
+                                    <RadzenSelectBarItem Text="Saturday" Value="32" />
+                                    <RadzenSelectBarItem Text="Sunday" Value="64" />
+                                </Items>
+                            </RadzenSelectBar>
+                            <p>The select bar is not available due to technical difficulties generated during the
+                                migration to .NET 6.0.</p>
+                            <p>Please use the following check-box system until a fix will be found.</p>
+                            <RadzenCheckBoxList @bind-Value=@_selectedDays TValue="int"
+                                                Change=@(args => OnChangeSelectedDays(args))>
+                                <Items>
+                                    <RadzenCheckBoxListItem Text="Monday" Value="1" />
+                                    <RadzenCheckBoxListItem Text="Tuesday" Value="2" />
+                                    <RadzenCheckBoxListItem Text="Wednesday" Value="4" />
+                                    <RadzenCheckBoxListItem Text="Thursday" Value="8" />
+                                    <RadzenCheckBoxListItem Text="Friday" Value="16" />
+                                    <RadzenCheckBoxListItem Text="Saturday" Value="32" />
+                                    <RadzenCheckBoxListItem Text="Sunday" Value="64" />
+                                </Items>
+                          </RadzenCheckBoxList>
                         </div>
                     </div>
                     <RadzenButton ButtonType="ButtonType.Submit" Text="Add Schedule" ></RadzenButton>

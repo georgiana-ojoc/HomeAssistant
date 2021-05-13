@@ -17,7 +17,9 @@ namespace Interface.Pages
 
         private Schedule _newSchedule = new();
 
-        private async Task AddSchedule(Schedule _newSchedule)
+        private IEnumerable<int> _selectedDays = new List<int>();
+
+        private async Task AddSchedule(Schedule newScheduleModel)
         {
             // if (string.IsNullOrWhiteSpace(_newScheduleName)) return;
 
@@ -27,7 +29,8 @@ namespace Interface.Pages
                 var newSchedule = await response.Content.ReadFromJsonAsync<Schedule>();
                 _schedules.Add(newSchedule);
 
-                this._newSchedule = new Schedule();
+                _newSchedule = new Schedule();
+                _selectedDays = new List<int>();
                 StateHasChanged();
             }
             else
@@ -51,6 +54,18 @@ namespace Interface.Pages
         private Task OnInvalidSubmit(FormInvalidSubmitEventArgs arg)
         {
             throw new NotImplementedException();
+        }
+        private void OnChangeSelectedDays(IEnumerable<int> selectedDays)
+        {
+            _newSchedule.Days = 0;
+            foreach (var value in selectedDays)
+            {
+                _newSchedule.Days += (byte) value;
+            }
+        }
+        private void OnChangeTime(DateTime? value, string format)
+        {
+            _newSchedule.Time = value?.ToString(format);
         }
     }
 }
