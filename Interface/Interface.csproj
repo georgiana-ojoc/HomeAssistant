@@ -6,11 +6,14 @@
 
     <ItemGroup>
         <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
+        <PackageReference Include="bootstrap" Version="5.0.0-beta3" />
+        <PackageReference Include="bootstrap.sass" Version="5.0.0-beta3" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.3.21201.13" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.3.21201.13" PrivateAssets="all" />
         <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.0-preview.3.21201.13" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0-preview.3.21201.4" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Radzen.Blazor" Version="3.2.8" />
         <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.3.21201.4" />
     </ItemGroup>
 
@@ -36,6 +39,21 @@
       </Compile>
       <Compile Update="Pages\RoomsLoader.cs">
         <DependentUpon>Rooms.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\SchedulesLoader.cs">
+        <DependentUpon>Scheduler.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\LightBulbsCommandsLoader.cs">
+        <DependentUpon>ScheduleEditor.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\DoorsCommandsLoader.cs">
+        <DependentUpon>ScheduleEditor.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\ThermostatsCommandsLoader.cs">
+        <DependentUpon>ScheduleEditor.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\ScheduleEditor.cs">
+        <DependentUpon>ScheduleEditor.razor</DependentUpon>
       </Compile>
     </ItemGroup>
 
