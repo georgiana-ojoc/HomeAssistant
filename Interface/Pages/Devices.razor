@@ -34,10 +34,13 @@
                                     <div class="row">
                                         <RadzenColorPicker @bind-Value="_lightColors[lightBulbIndex].RadzenColor"
                                                            ShowHSV="true" ShowRGBA="true" ShowColors="true"
-                                                           Change=@(async () => {
-                                                                      await _jsRuntime.InvokeVoidAsync("alert", _lightColors[lightBulbIndex].RadzenColor);
-                                                                      await PatchLightBulbColor(_lightBulbs[lightBulbIndex].Id);
-                                                                  }) />
+                                                           Change=@(async () => { await _jsRuntime.InvokeVoidAsync(
+                                                                      "alert", 
+                                                                      _lightColors[lightBulbIndex].RadzenColor); 
+                                                                                    await PatchLightBulbColor(
+                                                                                        _lightBulbs[lightBulbIndex].Id); 
+                                                                  })
+                                                           />
                                     </div>
                                     <div class="row">
                                         <input type="range" class="form-range" min="@byte.MinValue" max="@byte.MaxValue" id="Red"
