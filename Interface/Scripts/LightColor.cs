@@ -39,9 +39,9 @@ namespace Interface.Scripts
             set
             {
                 _radzenColor = value;
-                _redValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(".")[0]);
-                _greenValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(".")[1]);
-                _blueValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(".")[2]);
+                _redValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(", ")[0]);
+                _greenValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(", ")[1]);
+                _blueValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(", ")[2]);
                 OnValueChanged();
             }
         }
