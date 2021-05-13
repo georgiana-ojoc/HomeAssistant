@@ -29,7 +29,7 @@ namespace Interface.Pages
             HttpContent patchBody = new StringContent(serializedContent,
                 Encoding.UTF8,
                 "application/json");
-            await Http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{path}/{id}",
+            await _http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{path}/{id}",
                 patchBody);
         }
     }

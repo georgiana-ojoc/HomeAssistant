@@ -1,8 +1,8 @@
 ﻿@page "/Devices"
 @using Interface.Scripts
-@inject IdService IdService
-@inject HttpClient Http
-@inject IJSRuntime JsRuntime
+@inject IdService _idService
+@inject HttpClient _http
+@inject IJSRuntime _jsRuntime
 @attribute [Authorize]
 
 <div class="row">
@@ -17,7 +17,7 @@
         </div>
     </div>
     <ul class="list-group list-group-vertical">
-        @if (!(_lightBulbs is null))
+        @if (_lightBulbs is not null)
         {
             @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
             {
@@ -109,7 +109,7 @@
         </div>
     </div>
     <ul class="list-group list-group-vertical">
-        @if (!(_doors is null))
+        @if (_doors is not null)
         {
             @foreach (var door in _doors)
             {
@@ -163,7 +163,7 @@
         </div>
     </div>
     <ul class="list-group list-group-vertical">
-        @if (!(_thermostats is null))
+        @if (_thermostats is not null)
         {
             @foreach (var thermostat in _thermostats)
             {
@@ -221,8 +221,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _houseId = await IdService.GetHouseId();
-        _roomId = await IdService.GetRoomId();
+        _houseId = await _idService.GetHouseId();
+        _roomId = await _idService.GetRoomId();
         await GetDevices();
     }
 

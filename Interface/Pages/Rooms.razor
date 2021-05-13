@@ -1,10 +1,10 @@
 ﻿@page "/Rooms"
 @using Interface.Scripts
 @using global::Shared.Models
-@inject IdService IdService
-@inject HttpClient Http
-@inject IJSRuntime JsRuntime;
-@inject NavigationManager NavManager
+@inject IdService _idService
+@inject HttpClient _http
+@inject IJSRuntime _jsRuntime;
+@inject NavigationManager _navManager
 @attribute [Authorize]
 
 <div class="input-group">
@@ -14,20 +14,22 @@
         <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom" style="margin: 1rem"> Add room </span>
     </div>
 </div>
-<div class="row">
-    @if (!(_rooms is null))
+<div class="list-group list-group-horizontal flex-wrap">
+    @if (_rooms is not null)
     {
         @foreach (var room in _rooms)
         {
-            <div class="card" style="width: 16rem; margin: 1rem">
-                <h3 class="card-header" style="text-align: center"> @room.Name </h3>
-                <div class="card-body" style="margin: auto">
-                    <div class="btn-group">
-                        <button class="btn btn-dark" @onclick="@(() => SetRoomId(room.Id))"> Manage room </button>
-                        <button class="btn btn-danger" @onclick="@(() => DeleteRoom(room.Id))"> Delete room </button>
+            <li class="list-group-item" style="margin: 0.5rem">
+                <div class="card" style="width: 16rem">
+                    <h3 class="card-header" style="text-align: center"> @room.Name </h3>
+                    <div class="card-body" style="margin: auto">
+                        <div class="btn-group">
+                            <button class="btn btn-dark" @onclick="@(() => SetRoomId(room.Id))"> Manage room </button>
+                            <button class="btn btn-danger" @onclick="@(() => DeleteRoom(room.Id))"> Delete room </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </li>
         }
     }
 </div>
@@ -36,8 +38,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _houseId = await IdService.GetHouseId();
-        _rooms = await Http.GetFromJsonAsync<IList<Room>>($"houses/{_houseId}/rooms");
+        _houseId = await _idService.GetHouseId();
+        _rooms = await _http.GetFromJsonAsync<IList<Room>>($"houses/{_houseId}/rooms");
     }
 
 }
