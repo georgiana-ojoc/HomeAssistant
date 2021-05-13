@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Shared.Models;
 
 #nullable disable
@@ -222,7 +223,10 @@ namespace Shared
                     .HasMaxLength(128)
                     .HasColumnName("name");
 
-                entity.Property(e => e.Time).HasColumnName("time");
+                entity.Property(e => e.Time)
+                    .HasColumnName("time")
+                    .HasConversion(value => TimeSpan.Parse(value),
+                        value => value.ToString(@"hh\:mm"));
             });
 
             modelBuilder.Entity<LightBulbCommand>(entity =>
