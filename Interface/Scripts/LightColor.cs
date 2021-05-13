@@ -6,8 +6,8 @@ namespace Interface.Scripts
     {
         private byte _blueValue;
         private byte _greenValue;
-
         private byte _redValue;
+        private string _radzenColor;
 
         public LightColor()
         {
@@ -32,6 +32,19 @@ namespace Interface.Scripts
         }
 
         public string Color { get; private set; }
+
+        public string RadzenColor
+        {
+            get => _radzenColor;
+            set
+            {
+                _radzenColor = value;
+                _redValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(".")[0]);
+                _greenValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(".")[1]);
+                _blueValue = byte.Parse(_radzenColor.Substring(4).Replace(")", "").Split(".")[2]);
+                OnValueChanged();
+            }
+        }
 
         public byte RedValue
         {
