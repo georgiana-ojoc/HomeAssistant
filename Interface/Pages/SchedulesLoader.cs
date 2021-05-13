@@ -47,10 +47,12 @@ namespace Interface.Pages
             await _idService.SetScheduleId(id);
             _navManager.NavigateTo("ScheduleEditor");
         }
+
         private Task OnInvalidSubmit(FormInvalidSubmitEventArgs arg)
         {
             throw new NotImplementedException();
         }
+
         private void OnChangeSelectedDays(IEnumerable<int> selectedDays)
         {
             _newSchedule.Days = 0;
@@ -59,6 +61,7 @@ namespace Interface.Pages
                 _newSchedule.Days += (byte) value;
             }
         }
+
         private void OnChangeTime(DateTime? value, string format)
         {
             _newSchedule.Time = value?.ToString(format);

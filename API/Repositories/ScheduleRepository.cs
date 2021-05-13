@@ -17,8 +17,27 @@ namespace API.Repositories
 {
     public class ScheduleRepository : BaseRepository, IScheduleRepository
     {
-        public ScheduleRepository(HomeAssistantContext context, IMapper mapper) : base(context, mapper)
+        private readonly Helper _helper;
+
+        private static void CheckTime(string time)
         {
+            if (!TimeSpan.TryParse(time, CultureInfo.InvariantCulture, out _))
+            {
+                throw new ArgumentException("Time is not valid.");
+            }
+        }
+
+        private static void CheckDays(byte days)
+        {
+            if (days is 0 or > 127)
+            {
+                throw new ArgumentException("Days cannot be 0 or bigger than 127.");
+            }
+        }
+
+        public ScheduleRepository(HomeAssistantContext context, IMapper mapper, Helper helper) : base(context, mapper)
+        {
+            _helper = helper;
         }
 
         public async Task<IEnumerable<Schedule>> GetSchedulesAsync(string email)
@@ -33,6 +52,8 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckGuid(id, "id");
 
+            await _helper.ChangeLightBulbsAsync(id);
+
             return await GetScheduleInternalAsync(email, id);
         }
 
@@ -40,15 +61,8 @@ namespace API.Repositories
         {
             CheckString(email, "email");
             CheckString(schedule.Name, "name");
-            if (!TimeSpan.TryParse(schedule.Time, CultureInfo.InvariantCulture, out TimeSpan time))
-            {
-                throw new ArgumentException("Time is not valid.");
-            }
-
-            if (schedule.Days is 0 or > 127)
-            {
-                throw new ArgumentException("Days cannot be 0 or bigger than 127.");
-            }
+            CheckTime(schedule.Time);
+            CheckDays(schedule.Days);
 
             int schedules = await Context.Schedules.CountAsync(s => s.Email == email);
             if (schedules >= 20)
@@ -57,11 +71,11 @@ namespace API.Repositories
             }
 
             schedule.Email = email;
-            schedule.Time = time.ToString(@"hh\:mm");
+            schedule.Time = TimeSpan.Parse(schedule.Time).ToString(@"hh\:mm");
             Schedule newSchedule = (await Context.Schedules.AddAsync(schedule)).Entity;
             await Context.SaveChangesAsync();
 
-            RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => Helper.ChangeAllInSchedule(schedule.Id),
+            RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => _helper.Change(schedule.Id),
                 Helper.GetCronExpression(schedule.Time, schedule.Days));
 
             return newSchedule;
@@ -82,16 +96,15 @@ namespace API.Repositories
             ScheduleRequest scheduleToPatch = Mapper.Map<ScheduleRequest>(schedule);
             schedulePatch.ApplyTo(scheduleToPatch);
             CheckString(scheduleToPatch.Name, "name");
-            if (schedule.Days is 0 or > 127)
-            {
-                throw new ArgumentException("Days cannot be 0 or bigger than 127.");
-            }
+            CheckTime(schedule.Time);
+            CheckDays(schedule.Days);
+            schedule.Time = TimeSpan.Parse(schedule.Time).ToString(@"hh\:mm");
 
             Mapper.Map(scheduleToPatch, schedule);
             await Context.SaveChangesAsync();
 
             RecurringJob.RemoveIfExists(schedule.Id.ToString());
-            RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => Helper.ChangeAllInSchedule(schedule.Id),
+            RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => _helper.Change(schedule.Id),
                 Helper.GetCronExpression(schedule.Time, schedule.Days));
 
             return schedule;
