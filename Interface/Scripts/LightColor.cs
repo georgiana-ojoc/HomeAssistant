@@ -21,6 +21,7 @@ namespace Interface.Scripts
             RedValue = byte.Parse(hexColor.Substring(1, 2), NumberStyles.HexNumber);
             GreenValue = byte.Parse(hexColor.Substring(3, 2), NumberStyles.HexNumber);
             BlueValue = byte.Parse(hexColor.Substring(5, 2), NumberStyles.HexNumber);
+            RadzenColor = "rgb(" + RedValue + ", " + GreenValue + ", " + BlueValue + ")";
         }
 
         public LightColor(int intColor)
@@ -29,6 +30,7 @@ namespace Interface.Scripts
             RedValue = byte.Parse(hexColor.Substring(0, 2), NumberStyles.HexNumber);
             GreenValue = byte.Parse(hexColor.Substring(2, 2), NumberStyles.HexNumber);
             BlueValue = byte.Parse(hexColor.Substring(4, 2), NumberStyles.HexNumber);
+            RadzenColor = "rgb(" + RedValue + ", " + GreenValue + ", " + BlueValue + ")";
         }
 
         public string Color { get; private set; }

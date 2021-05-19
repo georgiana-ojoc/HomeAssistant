@@ -9,9 +9,6 @@ namespace Interface.Pages
 {
     public partial class Devices
     {
-        private const string LightBulbsPath = "light_bulbs";
-        private const string ThermostatsPath = "thermostats";
-        private const string DoorsPath = "doors";
         private static Guid _houseId;
         private static Guid _roomId;
 

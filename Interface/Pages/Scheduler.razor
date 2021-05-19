@@ -23,7 +23,7 @@
                             <RadzenLabel Text="Schedule Name:"/>
                         </div>
                         <div class="col">
-                            <RadzenTextBox style="display: block" Name="ScheduleName" @bind-Value=@_newSchedule.Name/>
+                            <RadzenTextBox style="display: block" Name="ScheduleName" @bind-Value=@_newSchedule.Name />
                             <RadzenRequiredValidator Component="ScheduleName" Text="Please name the schedule"
                                                      Style="position: absolute"/>
                         </div>
@@ -34,7 +34,7 @@
                         </div>
                         <div class="col">
                             <RadzenDatePicker TValue="DateTime?" ShowTime="true" TimeOnly="true" DateFormat="HH:mm"
-                                              Name="Time" Change=@(args => OnChangeTime(args, "HH:mm"))/>
+                                              Name="Time" Change=@(args => OnChangeTime(args, "HH:mm")) />
                             <RadzenRequiredValidator Component="Time" Text="Please select a time!"
                                                      Style="position: absolute"/>
                         </div>
