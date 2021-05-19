@@ -53,7 +53,7 @@
         <DependentUpon>ScheduleEditor.razor</DependentUpon>
       </Compile>
       <Compile Update="Pages\ScheduleEditor.cs">
-        <DependentUpon>ScheduleEditor.razor</DependentUpon>
+        <DependentUpon>ScheduleEditorLoader.razor</DependentUpon>
       </Compile>
     </ItemGroup>
 

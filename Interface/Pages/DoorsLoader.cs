@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Interface.Scripts;
 using Microsoft.JSInterop;
 using Shared.Models;
 
@@ -16,7 +17,7 @@ namespace Interface.Pages
         private async Task GetDoors()
         {
             var responseDoors =
-                await _http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}");
+                await _http.GetFromJsonAsync<IList<Door>>($"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}");
             if (responseDoors != null) _doors = new List<Door>(responseDoors);
 
             foreach (var door in _doors)
@@ -25,7 +26,7 @@ namespace Interface.Pages
                     door.Locked = false;
                     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
                     patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-                    await PatchDevice(patchList, DoorsPath, door.Id);
+                    await PatchDevice(patchList, Paths.DoorsPath, door.Id);
                 }
         }
 
@@ -33,7 +34,7 @@ namespace Interface.Pages
         {
             if (string.IsNullOrWhiteSpace(_newDoorName)) return;
 
-            var response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{DoorsPath}",
+            var response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}",
                 new Door
                 {
                     Name = _newDoorName
@@ -65,7 +66,7 @@ namespace Interface.Pages
             door.Locked = true;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-            await PatchDevice(patchList, DoorsPath, door.Id);
+            await PatchDevice(patchList, Paths.DoorsPath, door.Id);
         }
 
         private async Task SetFalseLockedAndPatchDoor(Guid id)
@@ -74,7 +75,7 @@ namespace Interface.Pages
             door.Locked = false;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateDoorLockedPatch(door.Locked.Value));
-            await PatchDevice(patchList, DoorsPath, door.Id);
+            await PatchDevice(patchList, Paths.DoorsPath, door.Id);
         }
 
         private static Dictionary<string, string> GenerateDoorLockedPatch(bool locked)

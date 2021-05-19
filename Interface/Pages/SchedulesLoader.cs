@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
@@ -31,7 +32,10 @@ namespace Interface.Pages
             }
             else
             {
-                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of schedules reached!");
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of schedules reached!");
+                }
             }
         }
 
@@ -48,9 +52,9 @@ namespace Interface.Pages
             _navManager.NavigateTo("ScheduleEditor");
         }
 
-        private Task OnInvalidSubmit(FormInvalidSubmitEventArgs arg)
+        private async Task OnInvalidSubmit(FormInvalidSubmitEventArgs arg)
         {
-            throw new NotImplementedException();
+            await _jsRuntime.InvokeVoidAsync("alert", "Check input and try again!");
         }
 
         private void OnChangeSelectedDays(IEnumerable<int> selectedDays)
