@@ -76,7 +76,7 @@ namespace API.Repositories
             await Context.SaveChangesAsync();
 
             RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => _helper.Change(schedule.Id),
-                Helper.GetCronExpression(schedule.Time, schedule.Days));
+                Helper.GetCronExpression(schedule.Time, schedule.Days), TimeZoneInfo.Local);
 
             return newSchedule;
         }
@@ -102,10 +102,9 @@ namespace API.Repositories
 
             Mapper.Map(scheduleToPatch, schedule);
             await Context.SaveChangesAsync();
-
-            RecurringJob.RemoveIfExists(schedule.Id.ToString());
+            
             RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => _helper.Change(schedule.Id),
-                Helper.GetCronExpression(schedule.Time, schedule.Days));
+                Helper.GetCronExpression(schedule.Time, schedule.Days), TimeZoneInfo.Local);
 
             return schedule;
         }

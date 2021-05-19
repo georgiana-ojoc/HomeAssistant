@@ -49,7 +49,7 @@ namespace Shared
 
         public void Change(Guid id)
         {
-            Task.Run(async () => await ChangeAsync(id));
+            ChangeAsync(id).Wait();
         }
 
         private async Task<bool> ChangeAsync(Guid id)
