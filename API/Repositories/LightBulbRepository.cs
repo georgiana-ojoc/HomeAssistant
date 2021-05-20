@@ -77,10 +77,17 @@ namespace API.Repositories
                 return null;
             }
 
-            int lightBulbs = await Context.LightBulbs.CountAsync(lb => lb.RoomId == roomId);
-            if (lightBulbs >= 10)
+            int lightBulbsByRoomId = await Context.LightBulbs.CountAsync(lb => lb.RoomId == roomId);
+            if (lightBulbsByRoomId >= 10)
             {
                 throw new ConstraintException(nameof(CreateLightBulbAsync));
+            }
+
+            int lightBulbsByRoomIdAndName = await Context.LightBulbs.CountAsync(lb => lb.RoomId == roomId &&
+                lb.Name == lightBulb.Name);
+            if (lightBulbsByRoomIdAndName > 0)
+            {
+                throw new DuplicateNameException(nameof(CreateLightBulbAsync));
             }
 
             lightBulb.RoomId = room.Id;

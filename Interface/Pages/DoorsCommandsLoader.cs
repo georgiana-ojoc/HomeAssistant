@@ -20,9 +20,9 @@ namespace Interface.Pages
         {
             _roomId = roomId;
             _doors = await _http.GetFromJsonAsync<IList<Door>>(
-            $"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}");
+                $"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}");
         }
-        
+
         private void SetNewCommandDoorId(Guid doorId)
         {
             _newCommandDoorId = doorId;
@@ -31,9 +31,8 @@ namespace Interface.Pages
         private async Task GetDoorCommands()
         {
             var responseDoorCommands = await _http.GetFromJsonAsync<IList<DoorCommand>>(
-            $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}");
+                $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}");
             if (responseDoorCommands != null) _doorCommands = new List<DoorCommand>(responseDoorCommands);
-
         }
 
         private async Task AddDoorCommand()

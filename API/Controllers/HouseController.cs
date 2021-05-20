@@ -77,7 +77,11 @@ namespace API.Controllers
             }
             catch (ConstraintException)
             {
-                return Forbid();
+                return Forbid("You do not have any houses left.");
+            }
+            catch (DuplicateNameException)
+            {
+                return Conflict("You already have a house with the specified name.");
             }
             catch (Exception)
             {

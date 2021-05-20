@@ -21,9 +21,9 @@ namespace Interface.Pages
             _newCommandLightBulbId = Guid.Empty;
             _roomId = roomId;
             _lightBulbs = await _http.GetFromJsonAsync<IList<LightBulb>>(
-            $"houses/{_houseId}/rooms/{_roomId}/{Paths.LightBulbsPath}");
+                $"houses/{_houseId}/rooms/{_roomId}/{Paths.LightBulbsPath}");
         }
-        
+
         private void SetNewCommandLightBulbId(Guid lightBulbId)
         {
             _newCommandLightBulbId = lightBulbId;

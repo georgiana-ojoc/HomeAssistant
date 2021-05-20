@@ -78,10 +78,17 @@ namespace API.Repositories
                 return null;
             }
 
-            int thermostats = await Context.Thermostats.CountAsync(t => t.RoomId == roomId);
-            if (thermostats >= 10)
+            int thermostatsByRoomId = await Context.Thermostats.CountAsync(t => t.RoomId == roomId);
+            if (thermostatsByRoomId >= 10)
             {
                 throw new ConstraintException(nameof(CreateThermostatAsync));
+            }
+
+            int thermostatsByRoomIdAndName = await Context.Thermostats.CountAsync(t => t.RoomId == roomId &&
+                t.Name == thermostat.Name);
+            if (thermostatsByRoomIdAndName > 0)
+            {
+                throw new DuplicateNameException(nameof(CreateThermostatAsync));
             }
 
             thermostat.RoomId = room.Id;

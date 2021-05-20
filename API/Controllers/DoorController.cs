@@ -102,7 +102,11 @@ namespace API.Controllers
             }
             catch (ConstraintException)
             {
-                return Forbid();
+                return Forbid("You do not have any doors left in this room.");
+            }
+            catch (DuplicateNameException)
+            {
+                return Conflict("You already have a door with the specified name in this room.");
             }
             catch (Exception)
             {

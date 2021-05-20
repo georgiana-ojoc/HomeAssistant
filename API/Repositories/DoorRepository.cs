@@ -77,10 +77,17 @@ namespace API.Repositories
                 return null;
             }
 
-            int doors = await Context.Doors.CountAsync(d => d.RoomId == roomId);
-            if (doors >= 10)
+            int doorsByRoomId = await Context.Doors.CountAsync(d => d.RoomId == roomId);
+            if (doorsByRoomId >= 10)
             {
                 throw new ConstraintException(nameof(CreateDoorAsync));
+            }
+
+            int doorsByRoomIdAndName = await Context.Doors.CountAsync(d => d.RoomId == roomId &&
+                                                                           d.Name == door.Name);
+            if (doorsByRoomIdAndName > 0)
+            {
+                throw new DuplicateNameException(nameof(CreateDoorAsync));
             }
 
             door.RoomId = room.Id;
