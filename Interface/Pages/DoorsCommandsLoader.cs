@@ -15,14 +15,15 @@ namespace Interface.Pages
         private IList<DoorCommand> _doorCommands;
         private Guid _newCommandDoorId;
         private IList<Door> _doors = new List<Door>();
+        private bool _addDoorCollapsed = true;
 
         private async Task GetDoors(Guid roomId)
         {
             _roomId = roomId;
             _doors = await _http.GetFromJsonAsync<IList<Door>>(
-                $"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}");
+            $"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}");
         }
-
+        
         private void SetNewCommandDoorId(Guid doorId)
         {
             _newCommandDoorId = doorId;
@@ -31,8 +32,9 @@ namespace Interface.Pages
         private async Task GetDoorCommands()
         {
             var responseDoorCommands = await _http.GetFromJsonAsync<IList<DoorCommand>>(
-                $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}");
+            $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}");
             if (responseDoorCommands != null) _doorCommands = new List<DoorCommand>(responseDoorCommands);
+
         }
 
         private async Task AddDoorCommand()
@@ -51,6 +53,7 @@ namespace Interface.Pages
                 _doorCommands.Add(newDoorCommand);
 
                 _newCommandDoorId = Guid.Empty;
+                _addDoorCollapsed = !_addDoorCollapsed;
                 StateHasChanged();
             }
             else

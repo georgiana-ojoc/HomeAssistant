@@ -6,207 +6,207 @@
 @attribute [Authorize]
 
 <div class="row">
-<div class="col" id="light-bulbs-col">
-    <div class="input-group">
-        <input class="form-control" style="margin: 0.5rem" placeholder="Light bulb name" @bind="_newLightBulbName"
-               aria-describedby="add-light-bulb-addon"/>
-        <div class="input-group-append">
-            <span class="btn btn-info" id="add-light-bulb-addon" style="margin: 0.5rem" @onclick="AddLightBulb">
-                Add light bulb
-            </span>
+    <div class="col" id="light-bulbs-col">
+        <div class="input-group">
+            <input class="form-control" style="margin: 0.5rem" placeholder="Light bulb name" @bind="_newLightBulbName"
+                   aria-describedby="add-light-bulb-addon"/>
+            <div class="input-group-append">
+                <span class="btn btn-info" id="add-light-bulb-addon" style="margin: 0.5rem" @onclick="AddLightBulb">
+                    Add light bulb
+                </span>
+            </div>
         </div>
-    </div>
-    <ul class="list-group list-group-vertical">
-        @if (_lightBulbs is not null)
-        {
-            @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
+        <ul class="list-group list-group-vertical">
+            @if (_lightBulbs is not null)
             {
-                <li class="list-group-item">
-                    <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @_lightBulbs[lightBulbIndex].Name </h3>
-                        <div class="card-body" style="margin: auto; text-align: center">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-dark"
-                                        @onclick="@(() => SetOffColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                    Off
-                                </button>
-                                <div class="col" style="text-align: center">
-                                    <div class="row">
-                                        <RadzenColorPicker @bind-Value="_lightColors[lightBulbIndex].RadzenColor"
-                                                           ShowHSV="true" ShowRGBA="true" ShowColors="true"
-                                                           Change=@(() => PatchLightBulbColor(_lightBulbs[lightBulbIndex].Id))/>
+                @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
+                {
+                    <li class="list-group-item" style="margin: 0.25rem">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @_lightBulbs[lightBulbIndex].Name </h3>
+                            <div class="card-body" style="margin: auto; text-align: center">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetOffColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        Off
+                                    </button>
+                                    <div class="col" style="text-align: center">
+                                        <div class="row">
+                                            <RadzenColorPicker @bind-Value="_lightColors[lightBulbIndex].RadzenColor"
+                                                               ShowHSV="true" ShowRGBA="true" ShowColors="true"
+                                                               Change=@(() => PatchLightBulbColor(_lightBulbs[lightBulbIndex].Id)) />
+                                        </div>
                                     </div>
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetWhiteColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        On
+                                    </button>
                                 </div>
-                                <button type="button" class="btn btn-light"
-                                        @onclick="@(() => SetWhiteColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                    On
+                                <p/>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetOffIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        Min
+                                    </button>
+
+                                    <div class="col" style="text-align: center">
+                                        <div class="row">
+                                            @if (_lightBulbs[lightBulbIndex].Intensity is not null)
+                                            {
+                                                <label>
+                                                    Intensity: @(Math.Round((double) _lightBulbs[lightBulbIndex].Intensity
+                                                                   .Value / byte.MaxValue * 100)) %
+                                                </label>
+                                            }
+                                        </div>
+                                        <div class="row" style="margin: 0.5rem">
+                                            <RadzenSlider @bind-Value="_lightBulbs[lightBulbIndex].Intensity" TValue="byte?"
+                                                          Min="byte.MinValue" Max="byte.MaxValue" />
+                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
+                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-info"
+                                                    style="margin: 0.25rem; height: 2.5rem; width: 100%"
+                                                    @onclick="@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id))">
+                                                Press to set
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetMaxIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        Max
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    Delete
                                 </button>
                             </div>
-                            <p/>
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
-                                <button type="button" class="btn btn-dark"
-                                        @onclick="@(() => SetOffIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                    Min
-                                </button>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
 
-                                <div class="col" style="text-align: center">
-                                    <div class="row">
-                                        @if (_lightBulbs[lightBulbIndex].Intensity is not null)
+    <div class="col" id="doors-col">
+        <div class="input-group">
+            <input class="form-control" style="margin: 0.5rem" placeholder="Door name" @bind="_newDoorName"
+                   ria-describedby="add-door-addon"/>
+            <div class="input-group-append">
+                <span class="btn btn-info" id="add-door-addon" style="margin: 0.5rem" @onclick="AddDoor"> Add door </span>
+            </div>
+        </div>
+        <ul class="list-group list-group-vertical">
+            @if (_doors is not null)
+            {
+                @foreach (var door in _doors)
+                {
+                    <li class="list-group-item" style="margin: 0.25rem">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @door.Name </h3>
+                            <div class="card-body" style="margin: auto">
+                                <div style="text-align: center; margin: 0.25rem">
+                                    @if (door.Locked != null)
+                                    {
+                                        <label>Status: </label>
+                                        if (door.Locked.Value)
                                         {
-                                            <label>
-                                                Intensity: @(Math.Round((double) _lightBulbs[lightBulbIndex].Intensity
-                                                               .Value / byte.MaxValue * 100)) %
-                                            </label>
+                                            <span class="oi oi-lock-locked" aria-hidden="true" style="margin: 0.25rem"></span>
                                         }
-                                    </div>
-                                    <div class="row" style="margin: 0.5rem">
-                                        <RadzenSlider @bind-Value="_lightBulbs[lightBulbIndex].Intensity" TValue="byte?"
-                                                      Min="byte.MinValue" Max="byte.MaxValue"/>
-                                        @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                        @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                    </div>
-                                    <div class="row">
-                                        <button type="button" class="btn btn-info"
-                                                style="margin: 0.25rem; height: 2.5rem; width: 100%"
-                                                @onclick="@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id))">
-                                            Press to set
-                                        </button>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-light"
-                                        @onclick="@(() => SetMaxIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                    Max
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-footer" style="text-align: center">
-                            <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(_lightBulbs[lightBulbIndex].Id))">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            }
-        }
-    </ul>
-</div>
-
-<div class="col" id="doors-col">
-    <div class="input-group">
-        <input class="form-control" style="margin: 0.5rem" placeholder="Door name" @bind="_newDoorName"
-               ria-describedby="add-door-addon"/>
-        <div class="input-group-append">
-            <span class="btn btn-info" id="add-door-addon" style="margin: 0.5rem" @onclick="AddDoor"> Add door </span>
-        </div>
-    </div>
-    <ul class="list-group list-group-vertical">
-        @if (_doors is not null)
-        {
-            @foreach (var door in _doors)
-            {
-                <li class="list-group-item">
-                    <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @door.Name </h3>
-                        <div class="card-body" style="margin: auto">
-                            <div style="text-align: center; margin: 0.25rem">
-                                @if (door.Locked != null)
-                                {
-                                    <label>Status: </label>
-                                    if (door.Locked.Value)
-                                    {
-                                        <span class="oi oi-lock-locked" aria-hidden="true" style="margin: 0.25rem"></span>
+                                        else
+                                        {
+                                            <span class="oi oi-lock-unlocked" aria-hidden="true" style="margin: 0.25rem"></span>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <span class="oi oi-lock-unlocked" aria-hidden="true" style="margin: 0.25rem"></span>
-                                    }
-                                }
-                            </div>
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-danger"
-                                        @onclick="@(() => SetTrueLockedAndPatchDoor(door.Id))">
-                                    Lock
-                                </button>
-                                <button type="button" class="btn btn-success"
-                                        @onclick="@(() => SetFalseLockedAndPatchDoor(door.Id))">
-                                    Unlock
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-footer" style="text-align: center">
-                            <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))"> Delete </button>
-                        </div>
-                    </div>
-                </li>
-            }
-        }
-    </ul>
-</div>
-
-<div class="col" id="thermostats-col">
-    <div class="input-group">
-        <input class="form-control" style="margin: 0.5rem" placeholder="Thermostat name" @bind="_newThermostatName"
-               aria-describedby="add-thermostat-addon"/>
-        <div class="input-group-append">
-            <span class="btn btn-info" style="margin: 0.5rem" id="add-thermostat-addon" @onclick="AddThermostat">
-                Add thermostat
-            </span>
-        </div>
-    </div>
-    <ul class="list-group list-group-vertical">
-        @if (_thermostats is not null)
-        {
-            @foreach (var thermostat in _thermostats)
-            {
-                <li class="list-group-item">
-                    <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
-                        <div class="card-body" style="text-align: center; margin: auto">
-                            <div style="text-align: center; margin: 0.25rem">
-                                @if (thermostat.Temperature != null)
-                                {
-                                    <label>Temperature: @thermostat.Temperature.Value &#8451;</label>
-                                }
-                            </div>
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
-                                <button type="button" class="btn btn-dark"
-                                        @onclick="@(() => SetMinTemperatureAndPatchThermostat(thermostat.Id))">
-                                    Min
-                                </button>
-
-                                <div class="col" style="text-align: center">
-                                    <div class="row" style="margin: 0.5rem">
-                                        <RadzenSlider @bind-Value="thermostat.Temperature" TValue="decimal?"
-                                                      Min="7" Max="30" Step="0.5"/>
-                                        @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                        @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                    </div>
-                                    <div class="row">
-                                        <button type="button" class="btn btn-info"
-                                                style="margin: 0.25rem; height: 2.5rem; width: 100%"
-                                                @onclick="@(() => PatchThermostatTemperature(thermostat.Id))">
-                                            Press to set
-                                        </button>
-                                    </div>
                                 </div>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-danger"
+                                            @onclick="@(() => SetTrueLockedAndPatchDoor(door.Id))">
+                                        Lock
+                                    </button>
+                                    <button type="button" class="btn btn-success"
+                                            @onclick="@(() => SetFalseLockedAndPatchDoor(door.Id))">
+                                        Unlock
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))"> Delete </button>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
 
-                                <button type="button" class="btn btn-light"
-                                        @onclick="@(() => SetMaxTemperatureAndPatchThermostat(thermostat.Id))">
-                                    Max
+    <div class="col" id="thermostats-col">
+        <div class="input-group">
+            <input class="form-control" style="margin: 0.5rem" placeholder="Thermostat name" @bind="_newThermostatName"
+                   aria-describedby="add-thermostat-addon"/>
+            <div class="input-group-append">
+                <span class="btn btn-info" style="margin: 0.5rem" id="add-thermostat-addon" @onclick="AddThermostat">
+                    Add thermostat
+                </span>
+            </div>
+        </div>
+        <ul class="list-group list-group-vertical">
+            @if (_thermostats is not null)
+            {
+                @foreach (var thermostat in _thermostats)
+                {
+                    <li class="list-group-item" style="margin: 0.25rem">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
+                            <div class="card-body" style="text-align: center; margin: auto">
+                                <div style="text-align: center; margin: 0.25rem">
+                                    @if (thermostat.Temperature != null)
+                                    {
+                                        <label>Temperature: @thermostat.Temperature.Value &#8451;</label>
+                                    }
+                                </div>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetMinTemperatureAndPatchThermostat(thermostat.Id))">
+                                        Min
+                                    </button>
+
+                                    <div class="col" style="text-align: center">
+                                        <div class="row" style="margin: 0.5rem">
+                                            <RadzenSlider @bind-Value="thermostat.Temperature" TValue="decimal?"
+                                                          Min="7" Max="30" Step="0.5" />
+                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
+                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-info"
+                                                    style="margin: 0.25rem; height: 2.5rem; width: 100%"
+                                                    @onclick="@(() => PatchThermostatTemperature(thermostat.Id))">
+                                                Press to set
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetMaxTemperatureAndPatchThermostat(thermostat.Id))">
+                                        Max
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">
+                                    Delete
                                 </button>
                             </div>
                         </div>
-                        <div class="card-footer" style="text-align: center">
-                            <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </li>
+                    </li>
+                }
             }
-        }
-    </ul>
-</div>
+        </ul>
+    </div>
 </div>
 
 @code {

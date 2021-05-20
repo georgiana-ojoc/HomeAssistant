@@ -16,14 +16,15 @@ namespace Interface.Pages
         private Guid _newCommandThermostatId;
         private IList<ThermostatCommand> _thermostatCommands;
         private IList<Thermostat> _thermostats = new List<Thermostat>();
+        private bool _addThermostatCollapsed = true;
 
         private async Task GetThermostats(Guid roomId)
         {
             _roomId = roomId;
             _thermostats = await _http.GetFromJsonAsync<IList<Thermostat>>(
-                $"houses/{_houseId}/rooms/{_roomId}/{Paths.ThermostatsPath}");
+            $"houses/{_houseId}/rooms/{_roomId}/{Paths.ThermostatsPath}");
         }
-
+        
         private void SetNewCommandThermostatId(Guid thermostatId)
         {
             _newCommandThermostatId = thermostatId;
@@ -33,8 +34,7 @@ namespace Interface.Pages
         {
             var responseThermostatCommands = await _http.GetFromJsonAsync<IList<ThermostatCommand>>(
                 $"schedules/{_scheduleId}/{Paths.ThermostatCommandsPath}");
-            if (responseThermostatCommands != null)
-                _thermostatCommands = new List<ThermostatCommand>(responseThermostatCommands);
+            if (responseThermostatCommands != null) _thermostatCommands = new List<ThermostatCommand>(responseThermostatCommands);
         }
 
         private async Task AddThermostatCommand()
@@ -54,6 +54,7 @@ namespace Interface.Pages
                 _thermostatCommands.Add(newThermostatCommand);
 
                 _newCommandThermostatId = Guid.Empty;
+                _addThermostatCollapsed = !_addThermostatCollapsed;
                 StateHasChanged();
             }
             else
@@ -68,8 +69,7 @@ namespace Interface.Pages
         private async Task DeleteThermostatCommand(Guid id)
         {
             await _http.DeleteAsync($"schedules/{_scheduleId}/{Paths.ThermostatCommandsPath}/{id}");
-            _thermostatCommands.Remove(
-                _thermostatCommands.SingleOrDefault(thermostatCommand => thermostatCommand.Id == id));
+            _thermostatCommands.Remove(_thermostatCommands.SingleOrDefault(thermostatCommand => thermostatCommand.Id == id));
             StateHasChanged();
         }
 

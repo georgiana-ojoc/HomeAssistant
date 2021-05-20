@@ -14,9 +14,19 @@ namespace Interface.Pages
     {
         private IList<Schedule> _schedules;
 
-        private Schedule _newSchedule = new();
+        private Schedule _newSchedule = new()
+        {
+            Time = DateTime.Parse(TimeSpan.Zero.ToString()).ToString("HH:mm"),
+            Days = 1
+        };
 
-        private IEnumerable<int> _selectedDays = new List<int>();
+        private IEnumerable<int> _selectedDays = new List<int>
+        {
+            1
+        };
+
+        private DateTime _newScheduleTime = DateTime.Parse(TimeSpan.Zero.ToString());
+        private bool _addScheduleCollapsed = true;
 
         private async Task AddSchedule(Schedule newScheduleModel)
         {
@@ -26,8 +36,16 @@ namespace Interface.Pages
                 var newSchedule = await response.Content.ReadFromJsonAsync<Schedule>();
                 _schedules.Add(newSchedule);
 
-                _newSchedule = new Schedule();
-                _selectedDays = new List<int>();
+                _newSchedule = new Schedule
+                {
+                    Time = DateTime.Parse(TimeSpan.Zero.ToString()).ToString("HH:mm"),
+                    Days = 1
+                };
+                _selectedDays = new List<int>
+                {
+                    1
+                };
+                _addScheduleCollapsed = !_addScheduleCollapsed;
                 StateHasChanged();
             }
             else
@@ -35,6 +53,10 @@ namespace Interface.Pages
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of schedules reached!");
+                }
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", "Check your input and try again!\nMake sure you have selected at least 1 day to repeat on!");
                 }
             }
         }

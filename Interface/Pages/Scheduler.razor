@@ -8,22 +8,17 @@
 @attribute [Authorize]
 
 <div class="card">
-    <div class="card-header">
-        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
-                aria-expanded="false" aria-controls="collapseExample">
-            Add a new schedule
-        </button>
-    </div>
-    <div class="collapse" id="collapseExample">
-        <div class="card card-body">
+    <div class="card card-body">
+        <RadzenPanel Text="Create a new schedule" AllowCollapse="true" Collapsed=@(_addScheduleCollapsed)
+                     Expand="@(() => _addScheduleCollapsed = false)" Collapse="@(() => _addScheduleCollapsed = true)">
             <RadzenTemplateForm TItem="Schedule" Data=@_newSchedule Submit=@AddSchedule InvalidSubmit=@OnInvalidSubmit>
-                <RadzenFieldset Text="Personal information">
+                <RadzenFieldset Text="New schedule">
                     <div class="row" style="margin-bottom: 48px">
                         <div class="col-md-4 align-right">
                             <RadzenLabel Text="Schedule Name:"/>
                         </div>
                         <div class="col">
-                            <RadzenTextBox style="display: block" Name="ScheduleName" @bind-Value=@_newSchedule.Name/>
+                            <RadzenTextBox style="display: block" Name="ScheduleName" @bind-Value=@_newSchedule.Name />
                             <RadzenRequiredValidator Component="ScheduleName" Text="Please name the schedule"
                                                      Style="position: absolute"/>
                         </div>
@@ -33,19 +28,19 @@
                             <RadzenLabel Text="Time:"/>
                         </div>
                         <div class="col">
-                            <RadzenDatePicker TValue="DateTime?" ShowTime="true" TimeOnly="true" DateFormat="HH:mm"
-                                              Name="Time" Change=@(args => OnChangeTime(args, "HH:mm"))/>
+                            <RadzenDatePicker @bind-value=@_newScheduleTime AllowClear="false" TValue="DateTime" ShowTime="true" TimeOnly="true" DateFormat="HH:mm"
+                                              Name="Time" Change=@(args => OnChangeTime(args, "HH:mm")) />
                             <RadzenRequiredValidator Component="Time" Text="Please select a time!"
                                                      Style="position: absolute"/>
                         </div>
                     </div>
                     <div class="row" style="margin-bottom: 48px">
                         <div class="col-md-4">
-                            <RadzenLabel Text="Repeat:"/>
+                            <RadzenLabel Text="Repeat"/>
                         </div>
                         <div class="col">
                             <RadzenSelectBar @bind-Value=@_selectedDays TValue="IEnumerable<int>" Multiple="true"
-                                             Disabled="true" Change=@OnChangeSelectedDays>
+                                             Disabled="true" Change=@OnChangeSelectedDays Visible="false">
                                 <Items>
                                     <RadzenSelectBarItem Text="Monday" Value="1"/>
                                     <RadzenSelectBarItem Text="Tuesday" Value="2"/>
@@ -78,27 +73,28 @@
                     <RadzenButton ButtonType="ButtonType.Submit" Text="Add Schedule"></RadzenButton>
                 </RadzenFieldset>
             </RadzenTemplateForm>
-        </div>
+        </RadzenPanel>
     </div>
-
 </div>
-<div class="row">
+<ul class="list-group list-group-horizontal flex-wrap">
     @if (_schedules is not null)
     {
         foreach (var schedule in _schedules)
         {
-            <div class="card" style="width: 16rem; margin: 1rem">
-                <h3 class="card-header" style="text-align: center"> @schedule.Name </h3>
-                <div class="card-body" style="margin: auto">
-                    <div class="btn-group">
-                        <button class="btn btn-dark" @onclick="@(() => SetScheduleId(schedule.Id))"> Manage schedule </button>
-                        <button class="btn btn-danger" @onclick="@(() => DeleteSchedule(schedule.Id))"> Delete schedule </button>
+            <li class="list-group-item" style="margin: 0.5rem">
+                <div class="card" style="width: 16rem; margin: 1rem">
+                    <h3 class="card-header" style="text-align: center"> @schedule.Name </h3>
+                    <div class="card-body" style="margin: auto">
+                        <div class="btn-group">
+                            <button class="btn btn-dark" @onclick="@(() => SetScheduleId(schedule.Id))"> Manage schedule </button>
+                            <button class="btn btn-danger" @onclick="@(() => DeleteSchedule(schedule.Id))"> Delete schedule </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </li>
         }
     }
-</div>
+</ul>
 
 @code {
 
