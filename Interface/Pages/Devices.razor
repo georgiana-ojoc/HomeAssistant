@@ -21,7 +21,7 @@
             {
                 @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
                 {
-                    <li class="list-group-item">
+                    <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
                             <h3 class="card-header" style="text-align: center"> @_lightBulbs[lightBulbIndex].Name </h3>
                             <div class="card-body" style="margin: auto; text-align: center">
@@ -62,8 +62,6 @@
                                         <div class="row" style="margin: 0.5rem">
                                             <RadzenSlider @bind-Value="_lightBulbs[lightBulbIndex].Intensity" TValue="byte?"
                                                           Min="byte.MinValue" Max="byte.MaxValue" />
-                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-info"
@@ -104,7 +102,7 @@
             {
                 @foreach (var door in _doors)
                 {
-                    <li class="list-group-item">
+                    <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
                             <h3 class="card-header" style="text-align: center"> @door.Name </h3>
                             <div class="card-body" style="margin: auto">
@@ -158,7 +156,7 @@
             {
                 @foreach (var thermostat in _thermostats)
                 {
-                    <li class="list-group-item">
+                    <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
                             <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
                             <div class="card-body" style="text-align: center; margin: auto">
@@ -178,8 +176,6 @@
                                         <div class="row" style="margin: 0.5rem">
                                             <RadzenSlider @bind-Value="thermostat.Temperature" TValue="decimal?"
                                                           Min="7" Max="30" Step="0.5" />
-                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-info"

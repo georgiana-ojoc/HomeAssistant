@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Interface.Scripts;
 using Microsoft.JSInterop;
 using Shared.Models;
+using Shared.Responses;
 
 namespace Interface.Pages
 {
     public partial class ScheduleEditor
     {
         private readonly IList<LightColor> _lightColors = new List<LightColor>();
-        private IList<LightBulbCommand> _lightBulbCommands;
+        private IList<LightBulbCommandResponse> _lightBulbCommands;
         private Guid _newCommandLightBulbId = Guid.Empty;
         private IList<LightBulb> _lightBulbs = new List<LightBulb>();
+        private bool _addLightBulbCollapsed = true;
 
         private async Task GetLightBulbs(Guid roomId)
         {
@@ -31,10 +34,10 @@ namespace Interface.Pages
 
         private async Task GetLightBulbCommands()
         {
-            var responseLightBulbs = await _http.GetFromJsonAsync<IList<LightBulbCommand>>(
+            var responseLightBulbs = await _http.GetFromJsonAsync<IList<LightBulbCommandResponse>>(
                 $"schedules/{_scheduleId}/{Paths.LightBulbCommandsPath}");
             if (responseLightBulbs != null)
-                _lightBulbCommands = new List<LightBulbCommand>(responseLightBulbs);
+                _lightBulbCommands = new List<LightBulbCommandResponse>(responseLightBulbs);
             foreach (var lightBulb in _lightBulbCommands)
             {
                 _lightColors.Add(new LightColor(lightBulb.Color));
@@ -55,18 +58,26 @@ namespace Interface.Pages
                 });
             if (response.IsSuccessStatusCode)
             {
-                var newLightBulbCommand = await response.Content.ReadFromJsonAsync<LightBulbCommand>();
+                var newLightBulbCommand = await response.Content.ReadFromJsonAsync<LightBulbCommandResponse>();
                 _lightBulbCommands.Add(newLightBulbCommand);
                 _lightColors.Add(new LightColor());
 
                 _houseId = Guid.Empty;
                 _roomId = Guid.Empty;
                 _newCommandLightBulbId = Guid.Empty;
+                _addLightBulbCollapsed = !_addLightBulbCollapsed;
                 StateHasChanged();
             }
             else
             {
-                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of light bulbs reached!");
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
             }
         }
 

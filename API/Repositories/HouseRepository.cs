@@ -39,10 +39,17 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckString(house.Name, "name");
 
-            int houses = await Context.Houses.CountAsync(h => h.Email == email);
-            if (houses >= 5)
+            int housesByEmail = await Context.Houses.CountAsync(h => h.Email == email);
+            if (housesByEmail >= 5)
             {
                 throw new ConstraintException(nameof(CreateHouseAsync));
+            }
+
+            int housesByEmailAndName = await Context.Houses.CountAsync(h => h.Email == email &&
+                                                                            h.Name == house.Name);
+            if (housesByEmailAndName > 0)
+            {
+                throw new DuplicateNameException(nameof(CreateHouseAsync));
             }
 
             house.Email = email;

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace API.Queries.DoorCommand
 {
-    public class GetDoorCommandsQuery : IRequest<IEnumerable<Shared.Models.DoorCommand>>
+    public class GetDoorCommandsQuery : IRequest<IEnumerable<Shared.Responses.DoorCommandResponse>>
     {
         public Guid ScheduleId { get; set; }
     }

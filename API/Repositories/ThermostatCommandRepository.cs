@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 
 namespace API.Repositories
 {
@@ -32,7 +33,8 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(thermostatCommand => thermostatCommand.Id == id);
         }
 
-        public async Task<IEnumerable<ThermostatCommand>> GetThermostatCommandsAsync(string email, Guid scheduleId)
+        public async Task<IEnumerable<ThermostatCommandResponse>> GetThermostatCommandsAsync(string email,
+            Guid scheduleId)
         {
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule_id");
@@ -43,8 +45,33 @@ namespace API.Repositories
                 return null;
             }
 
-            return await Context.ThermostatCommands.Where(thermostatCommand => thermostatCommand.ScheduleId ==
-                                                                               schedule.Id).ToListAsync();
+            var results = await Context.ThermostatCommands
+                .Join(Context.Thermostats,
+                    tc => tc.ThermostatId,
+                    t => t.Id,
+                    (tc, t) => new
+                    {
+                        tc.Id,
+                        tc.ScheduleId,
+                        tc.ThermostatId,
+                        ThermostatName = t.Name,
+                        tc.Temperature
+                    }).Where(tc => tc.ScheduleId == scheduleId).ToListAsync();
+
+            IList<ThermostatCommandResponse> thermostatCommandResponses = new List<ThermostatCommandResponse>();
+            foreach (var result in results)
+            {
+                thermostatCommandResponses.Add(new ThermostatCommandResponse()
+                {
+                    Id = result.Id,
+                    ScheduleId = result.ScheduleId,
+                    ThermostatId = result.ThermostatId,
+                    ThermostatName = result.ThermostatName,
+                    Temperature = result.Temperature
+                });
+            }
+
+            return thermostatCommandResponses;
         }
 
         public async Task<ThermostatCommand> GetThermostatCommandByIdAsync(string email, Guid scheduleId, Guid id)

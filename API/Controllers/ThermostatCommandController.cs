@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 
 namespace API.Controllers
 {
@@ -24,11 +25,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ThermostatCommand>>> GetAsync(Guid schedule_id)
+        public async Task<ActionResult<IEnumerable<ThermostatCommandResponse>>> GetAsync(Guid schedule_id)
         {
             try
             {
-                IEnumerable<ThermostatCommand> thermostatCommands =
+                IEnumerable<ThermostatCommandResponse> thermostatCommands =
                     await Mediator.Send(new GetThermostatCommandsQuery {ScheduleId = schedule_id});
                 if (thermostatCommands == null)
                 {

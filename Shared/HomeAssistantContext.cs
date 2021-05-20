@@ -33,25 +33,28 @@ namespace Shared
 
             modelBuilder.Entity<House>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(h => h.Id)
                     .HasName("houses_pk")
                     .IsClustered(false);
 
                 entity.ToTable("houses");
 
-                entity.HasIndex(e => e.Id, "houses_id_uindex")
+                entity.HasIndex(h => h.Id, "houses_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(h => new {h.Name, h.Email}, "houses_email_name_uindex")
+                    .IsUnique();
+
+                entity.Property(h => h.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Email)
+                entity.Property(h => h.Email)
                     .IsRequired()
                     .HasMaxLength(256)
                     .HasColumnName("email");
 
-                entity.Property(e => e.Name)
+                entity.Property(h => h.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
@@ -59,162 +62,183 @@ namespace Shared
 
             modelBuilder.Entity<Room>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(r => r.Id)
                     .HasName("rooms_pk")
                     .IsClustered(false);
 
                 entity.ToTable("rooms");
 
-                entity.HasIndex(e => e.Id, "rooms_id_uindex")
+                entity.HasIndex(r => r.Id, "rooms_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(r => new {r.HouseId, r.Name}, "rooms_house_id_name_uindex")
+                    .IsUnique();
+
+                entity.Property(r => r.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.HouseId).HasColumnName("house_id");
+                entity.Property(r => r.HouseId).HasColumnName("house_id");
 
-                entity.Property(e => e.Name)
+                entity.Property(r => r.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
 
-                entity.HasOne(d => d.House)
-                    .WithMany(p => p.Rooms)
-                    .HasForeignKey(d => d.HouseId)
+                entity.HasOne(r => r.House)
+                    .WithMany(h => h.Rooms)
+                    .HasForeignKey(r => r.HouseId)
                     .HasConstraintName("rooms_houses_id_fk");
             });
 
             modelBuilder.Entity<LightBulb>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(lb => lb.Id)
                     .HasName("light_bulb_pk")
                     .IsClustered(false);
 
                 entity.ToTable("light_bulbs");
 
-                entity.HasIndex(e => e.Id, "light_bulb_id_uindex")
+                entity.HasIndex(lb => lb.Id, "light_bulb_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(lb => new {lb.RoomId, lb.Name}, "light_bulbs_room_id_name_uindex")
+                    .IsUnique();
+
+                entity.Property(lb => lb.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Color).HasColumnName("color");
+                entity.Property(lb => lb.Color).HasColumnName("color");
 
-                entity.Property(e => e.Intensity).HasColumnName("intensity");
+                entity.Property(lb => lb.Intensity).HasColumnName("intensity");
 
-                entity.Property(e => e.Name)
+                entity.Property(lb => lb.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
 
-                entity.Property(e => e.RoomId).HasColumnName("room_id");
+                entity.Property(lb => lb.RoomId).HasColumnName("room_id");
 
-                entity.Property(e => e.Status).HasDefaultValue(false).HasColumnName("status");
+                entity.Property(lb => lb.Status).HasDefaultValue(false).HasColumnName("status");
 
-                entity.HasOne(d => d.Room)
-                    .WithMany(p => p.LightBulbs)
-                    .HasForeignKey(d => d.RoomId)
+                entity.HasOne(lb => lb.Room)
+                    .WithMany(r => r.LightBulbs)
+                    .HasForeignKey(lb => lb.RoomId)
                     .HasConstraintName("light_bulb_rooms_id_fk");
             });
 
             modelBuilder.Entity<Door>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(d => d.Id)
                     .HasName("doors_pk")
                     .IsClustered(false);
 
                 entity.ToTable("doors");
 
-                entity.HasIndex(e => e.Id, "doors_id_uindex")
+                entity.HasIndex(d => d.Id, "doors_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(d => new {d.RoomId, d.Name}, "doors_room_id_name_uindex")
+                    .IsUnique();
+
+                entity.Property(d => d.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Locked).HasColumnName("locked");
+                entity.Property(d => d.Locked).HasColumnName("locked");
 
-                entity.Property(e => e.Name)
+                entity.Property(d => d.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
 
-                entity.Property(e => e.RoomId).HasColumnName("room_id");
+                entity.Property(d => d.RoomId).HasColumnName("room_id");
 
-                entity.Property(e => e.Status).HasDefaultValue(false).HasColumnName("status");
+                entity.Property(d => d.Status).HasDefaultValue(false).HasColumnName("status");
 
                 entity.HasOne(d => d.Room)
-                    .WithMany(p => p.Doors)
+                    .WithMany(r => r.Doors)
                     .HasForeignKey(d => d.RoomId)
                     .HasConstraintName("doors_rooms_id_fk");
             });
 
             modelBuilder.Entity<Thermostat>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(t => t.Id)
                     .HasName("thermostats_pk")
                     .IsClustered(false);
 
                 entity.ToTable("thermostats");
 
-                entity.HasIndex(e => e.Id, "thermostats_id_uindex")
+                entity.HasIndex(t => t.Id, "thermostats_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(t => t.Id, "thermostats_room_id_name_uindex")
+                    .IsUnique();
+
+                entity.HasCheckConstraint("thermostats_temperature_ck",
+                    "temperature >= 7.0 and temperature <= 30.0");
+
+                entity.Property(t => t.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Name)
+                entity.Property(t => t.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
 
-                entity.Property(e => e.RoomId).HasColumnName("room_id");
+                entity.Property(t => t.RoomId).HasColumnName("room_id");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(t => t.Status).HasColumnName("status");
 
-                entity.Property(e => e.Temperature)
+                entity.Property(t => t.Temperature)
                     .HasColumnType("decimal(3, 1)")
                     .HasColumnName("temperature");
 
-                entity.HasOne(d => d.Room)
-                    .WithMany(p => p.Thermostats)
-                    .HasForeignKey(d => d.RoomId)
+                entity.HasOne(t => t.Room)
+                    .WithMany(r => r.Thermostats)
+                    .HasForeignKey(t => t.RoomId)
                     .HasConstraintName("thermostats_rooms_id_fk");
             });
 
             modelBuilder.Entity<Schedule>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(s => s.Id)
                     .HasName("schedules_pk")
                     .IsClustered(false);
 
                 entity.ToTable("schedules");
 
-                entity.HasIndex(e => e.Id, "schedules_id_uindex")
+                entity.HasIndex(s => s.Id, "schedules_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(s => new {s.Email, s.Name}, "schedules_email_name_uindex")
+                    .IsUnique();
+
+                entity.HasCheckConstraint("schedules_days_ck",
+                    "days > 0 and days <= 127");
+
+                entity.Property(s => s.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Days)
+                entity.Property(s => s.Days)
                     .IsRequired()
                     .HasColumnName("days");
 
-                entity.Property(e => e.Email)
+                entity.Property(s => s.Email)
                     .IsRequired()
                     .HasMaxLength(256)
                     .HasColumnName("email");
 
-                entity.Property(e => e.Name)
+                entity.Property(s => s.Name)
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
 
-                entity.Property(e => e.Time)
+                entity.Property(s => s.Time)
                     .HasColumnName("time")
                     .HasConversion(value => TimeSpan.Parse(value),
                         value => value.ToString(@"hh\:mm"));
@@ -228,96 +252,111 @@ namespace Shared
 
                 entity.ToTable("light_bulb_commands");
 
-                entity.HasIndex(e => e.Id, "light_bulb_commands_id_uindex")
+                entity.HasIndex(lbc => lbc.Id, "light_bulb_commands_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(lbc => new {lbc.LightBulbId, lbc.ScheduleId},
+                        "light_bulb_commands_light_bulb_id_schedule_id_uindex")
+                    .IsUnique();
+
+                entity.Property(lbc => lbc.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.Color).HasColumnName("color");
+                entity.Property(lbc => lbc.Color).HasColumnName("color");
 
-                entity.Property(e => e.Intensity).HasColumnName("intensity");
+                entity.Property(lbc => lbc.Intensity).HasColumnName("intensity");
 
-                entity.Property(e => e.LightBulbId).HasColumnName("light_bulb_id");
+                entity.Property(lbc => lbc.LightBulbId).HasColumnName("light_bulb_id");
 
-                entity.Property(e => e.ScheduleId).HasColumnName("schedule_id");
+                entity.Property(lbc => lbc.ScheduleId).HasColumnName("schedule_id");
 
-                entity.HasOne(d => d.LightBulb)
-                    .WithMany(p => p.LightBulbCommands)
-                    .HasForeignKey(d => d.LightBulbId)
+                entity.HasOne(lbc => lbc.LightBulb)
+                    .WithMany(lb => lb.LightBulbCommands)
+                    .HasForeignKey(lbc => lbc.LightBulbId)
                     .HasConstraintName("light_bulb_commands_light_bulbs_id_fk");
 
-                entity.HasOne(d => d.Schedule)
-                    .WithMany(p => p.LightBulbCommands)
-                    .HasForeignKey(d => d.ScheduleId)
+                entity.HasOne(lbc => lbc.Schedule)
+                    .WithMany(s => s.LightBulbCommands)
+                    .HasForeignKey(lbc => lbc.ScheduleId)
                     .HasConstraintName("light_bulb_commands_schedules_id_fk");
             });
 
             modelBuilder.Entity<DoorCommand>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(dc => dc.Id)
                     .HasName("door_commands_pk")
                     .IsClustered(false);
 
                 entity.ToTable("door_commands");
 
-                entity.HasIndex(e => e.Id, "door_commands_id_uindex")
+                entity.HasIndex(dc => dc.Id, "door_commands_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(dc => new {dc.DoorId, dc.ScheduleId},
+                        "door_commands_door_id_schedule_id_uindex")
+                    .IsUnique();
+
+                entity.Property(dc => dc.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.DoorId).HasColumnName("door_id");
+                entity.Property(dc => dc.DoorId).HasColumnName("door_id");
 
-                entity.Property(e => e.Locked).HasColumnName("locked");
+                entity.Property(dc => dc.Locked).HasColumnName("locked");
 
-                entity.Property(e => e.ScheduleId).HasColumnName("schedule_id");
+                entity.Property(dc => dc.ScheduleId).HasColumnName("schedule_id");
 
-                entity.HasOne(d => d.Door)
-                    .WithMany(p => p.DoorCommands)
-                    .HasForeignKey(d => d.DoorId)
+                entity.HasOne(dc => dc.Door)
+                    .WithMany(d => d.DoorCommands)
+                    .HasForeignKey(dc => dc.DoorId)
                     .HasConstraintName("door_commands_doors_id_fk");
 
-                entity.HasOne(d => d.Schedule)
-                    .WithMany(p => p.DoorCommands)
-                    .HasForeignKey(d => d.ScheduleId)
+                entity.HasOne(dc => dc.Schedule)
+                    .WithMany(s => s.DoorCommands)
+                    .HasForeignKey(dc => dc.ScheduleId)
                     .HasConstraintName("door_commands_schedules_id_fk");
             });
 
             modelBuilder.Entity<ThermostatCommand>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(tc => tc.Id)
                     .HasName("thermostat_commands_pk")
                     .IsClustered(false);
 
                 entity.ToTable("thermostat_commands");
 
-                entity.HasIndex(e => e.Id, "thermostat_commands_id_uindex")
+                entity.HasIndex(tc => tc.Id, "thermostat_commands_id_uindex")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
+                entity.HasIndex(tc => new {tc.ThermostatId, tc.ScheduleId},
+                        "thermostat_commands_thermostat_id_schedule_id_uindex")
+                    .IsUnique();
+
+                entity.HasCheckConstraint("thermostat_commands_temperature_ck",
+                    "temperature >= 7.0 and temperature <= 30.0");
+
+                entity.Property(tc => tc.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.ScheduleId).HasColumnName("schedule_id");
+                entity.Property(tc => tc.ScheduleId).HasColumnName("schedule_id");
 
-                entity.Property(e => e.Temperature)
+                entity.Property(tc => tc.Temperature)
                     .HasColumnType("decimal(3, 1)")
                     .HasColumnName("temperature");
 
-                entity.Property(e => e.ThermostatId).HasColumnName("thermostat_id");
+                entity.Property(tc => tc.ThermostatId).HasColumnName("thermostat_id");
 
-                entity.HasOne(d => d.Schedule)
-                    .WithMany(p => p.ThermostatCommands)
-                    .HasForeignKey(d => d.ScheduleId)
-                    .HasConstraintName("thermostat_commands_schedules_id_fk");
-
-                entity.HasOne(d => d.Thermostat)
-                    .WithMany(p => p.ThermostatCommands)
-                    .HasForeignKey(d => d.ThermostatId)
+                entity.HasOne(tc => tc.Thermostat)
+                    .WithMany(t => t.ThermostatCommands)
+                    .HasForeignKey(tc => tc.ThermostatId)
                     .HasConstraintName("thermostat_commands_thermostats_id_fk");
+
+                entity.HasOne(tc => tc.Schedule)
+                    .WithMany(s => s.ThermostatCommands)
+                    .HasForeignKey(tc => tc.ScheduleId)
+                    .HasConstraintName("thermostat_commands_schedules_id_fk");
             });
         }
     }

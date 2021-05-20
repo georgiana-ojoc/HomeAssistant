@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
@@ -32,7 +33,14 @@ namespace Interface.Pages
             }
             else
             {
-                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of houses reached!");
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
             }
         }
 

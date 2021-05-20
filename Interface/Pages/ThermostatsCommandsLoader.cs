@@ -8,14 +8,16 @@ using System.Threading.Tasks;
 using Interface.Scripts;
 using Microsoft.JSInterop;
 using Shared.Models;
+using Shared.Responses;
 
 namespace Interface.Pages
 {
     public partial class ScheduleEditor
     {
         private Guid _newCommandThermostatId;
-        private IList<ThermostatCommand> _thermostatCommands;
+        private IList<ThermostatCommandResponse> _thermostatCommands;
         private IList<Thermostat> _thermostats = new List<Thermostat>();
+        private bool _addThermostatCollapsed = true;
 
         private async Task GetThermostats(Guid roomId)
         {
@@ -31,9 +33,9 @@ namespace Interface.Pages
 
         private async Task GetThermostatCommands()
         {
-            var responseThermostatCommands = await _http.GetFromJsonAsync<IList<ThermostatCommand>>(
+            var responseThermostatCommands = await _http.GetFromJsonAsync<IList<ThermostatCommandResponse>>(
                 $"schedules/{_scheduleId}/{Paths.ThermostatCommandsPath}");
-            if (responseThermostatCommands != null) _thermostatCommands = new List<ThermostatCommand>(responseThermostatCommands);
+            if (responseThermostatCommands != null) _thermostatCommands = new List<ThermostatCommandResponse>(responseThermostatCommands);
         }
 
         private async Task AddThermostatCommand()
@@ -49,17 +51,22 @@ namespace Interface.Pages
                 });
             if (response.IsSuccessStatusCode)
             {
-                var newThermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommand>();
+                var newThermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommandResponse>();
                 _thermostatCommands.Add(newThermostatCommand);
 
                 _newCommandThermostatId = Guid.Empty;
+                _addThermostatCollapsed = !_addThermostatCollapsed;
                 StateHasChanged();
             }
             else
             {
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of thermostat commands reached!");
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
                 }
             }
         }

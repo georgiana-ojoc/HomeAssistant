@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 
 namespace API.Repositories
 {
@@ -31,7 +32,7 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(doorCommand => doorCommand.Id == id);
         }
 
-        public async Task<IEnumerable<DoorCommand>> GetDoorCommandsAsync(string email, Guid scheduleId)
+        public async Task<IEnumerable<DoorCommandResponse>> GetDoorCommandsAsync(string email, Guid scheduleId)
         {
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule_id");
@@ -42,8 +43,33 @@ namespace API.Repositories
                 return null;
             }
 
-            return await Context.DoorCommands.Where(doorCommand => doorCommand.ScheduleId == schedule.Id)
-                .ToListAsync();
+            var results = await Context.DoorCommands
+                .Join(Context.Doors,
+                    dc => dc.DoorId,
+                    d => d.Id,
+                    (dc, d) => new
+                    {
+                        dc.Id,
+                        dc.ScheduleId,
+                        dc.DoorId,
+                        DoorName = d.Name,
+                        dc.Locked
+                    }).Where(dc => dc.ScheduleId == scheduleId).ToListAsync();
+
+            IList<DoorCommandResponse> doorCommandResponses = new List<DoorCommandResponse>();
+            foreach (var result in results)
+            {
+                doorCommandResponses.Add(new DoorCommandResponse()
+                {
+                    Id = result.Id,
+                    ScheduleId = result.ScheduleId,
+                    DoorId = result.DoorId,
+                    DoorName = result.DoorName,
+                    Locked = result.Locked
+                });
+            }
+
+            return doorCommandResponses;
         }
 
         public async Task<DoorCommand> GetDoorCommandByIdAsync(string email, Guid scheduleId, Guid id)

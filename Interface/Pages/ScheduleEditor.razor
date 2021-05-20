@@ -7,39 +7,35 @@
 
 <div class="row">
     <div class="col" id="light-bulbs-col">
-        <div class="input-group">
-            <RadzenDropDown Placeholder="House" AllowClear="false" TValue="Guid"
-                            Data=@(_houses.Select(house => new { HouseId = house.Id, HouseName = house.Name }).Distinct())
-                            TextProperty="HouseName" ValueProperty="HouseId" Value="_houseId"
-                            Change=@(houseId => GetRooms(Guid.Parse(houseId.ToString()!))) />
-            <RadzenDropDown Placeholder="Room" AllowClear="false" TValue="Guid"
-                            Data=@(_rooms.Select(room => new { RoomId = room.Id, RoomName = room.Name }).Distinct())
-                            TextProperty="RoomName" ValueProperty="RoomId" Value="_roomId"
-                            Change=@(roomId => GetLightBulbs(Guid.Parse(roomId.ToString()!))) />
-            <RadzenDropDown Placeholder="Light bulb" AllowClear="false" TValue="Guid"
-                            Data=@(_lightBulbs.Select(lightBulb => new { LightBulbId = lightBulb.Id,LightBulbName = lightBulb.Name }).Distinct())
-                            TextProperty="LightBulbName" ValueProperty="LightBulbId" Value="_newCommandLightBulbId"
-                            Change=@(lightBulbId => SetNewCommandLightBulbId(Guid.Parse(lightBulbId.ToString()!))) />
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-light-bulb-addon" style="margin: 0.5rem" @onclick="AddLightBulbCommand">
-                    Create light bulb command
-                </span>
+        <RadzenPanel Text="Create light bulb command" AllowCollapse="true" Collapsed=@(_addLightBulbCollapsed)
+                     Expand="@(() => {_addLightBulbCollapsed = false;
+                                 _addDoorCollapsed = true;
+                                 _addThermostatCollapsed = true;})" Collapse="@(() => _addLightBulbCollapsed = true)"
+                     Style="margin: 0.5rem">
+            <div class="col">
+                <RadzenDropDown Placeholder="House" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                Data=@(_houses.Select(house => new { HouseId = house.Id, HouseName = house.Name }).Distinct())
+                                TextProperty="HouseName" ValueProperty="HouseId" Value="_houseId"
+                                Change=@(houseId => GetRooms(Guid.Parse(houseId.ToString()!))) />
+                <RadzenDropDown Placeholder="Room" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                Data=@(_rooms.Select(room => new { RoomId = room.Id, RoomName = room.Name }).Distinct())
+                                TextProperty="RoomName" ValueProperty="RoomId" Value="_roomId"
+                                Change=@(roomId => GetLightBulbs(Guid.Parse(roomId.ToString()!))) />
+                <RadzenDropDown Placeholder="Light bulb" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                Data=@(_lightBulbs.Select(lightBulb => new { LightBulbId = lightBulb.Id,LightBulbName = lightBulb.Name }).Distinct())
+                                TextProperty="LightBulbName" ValueProperty="LightBulbId" Value="_newCommandLightBulbId"
+                                Change=@(lightBulbId => SetNewCommandLightBulbId(Guid.Parse(lightBulbId.ToString()!))) />
+                <RadzenButton Text="Add command" Style="margin: 0.5rem" id="add-light-bulb-addon" Click="AddLightBulbCommand"/>
             </div>
-        </div>
+        </RadzenPanel>
         <ul class="list-group list-group-vertical">
             @if (_lightBulbCommands is not null)
             {
                 @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbCommands.Count))
                 {
-                    <li class="list-group-item">
+                    <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
-                            <h3 class="card-header" style="text-align: center">
-                                 @(_lightBulbs.SingleOrDefault(lightBulb =>
-                                     lightBulb.Id == _lightBulbCommands[lightBulbIndex].LightBulbId) is not null ?
-                                     _lightBulbs.SingleOrDefault(lightBulb =>
-                                         lightBulb.Id == _lightBulbCommands[lightBulbIndex].LightBulbId)?.Name :
-                                     _lightBulbCommands[lightBulbIndex].LightBulbId)
-                            </h3>
+                            <h3 class="card-header" style="text-align: center"> @_lightBulbCommands[lightBulbIndex].LightBulbName </h3>
                             <div class="card-body" style="margin: auto; text-align: center">
                                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                     <button type="button" class="btn btn-dark"
@@ -75,8 +71,6 @@
                                         <div class="row" style="margin: 0.5rem">
                                             <RadzenSlider @bind-Value="_lightBulbCommands[lightBulbIndex].Intensity" TValue="byte"
                                                           Min="byte.MinValue" Max="byte.MaxValue" />
-                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-info"
@@ -105,31 +99,35 @@
     </div>
 
     <div class="col" id="doors-col">
-        <div class="input-group">
-            <RadzenDropDown Placeholder="House" AllowClear="false" TValue="Guid"
-                            Data=@(_houses.Select(house => new { HouseId = house.Id, HouseName = house.Name }).Distinct())
-                            TextProperty="HouseName" ValueProperty="HouseId" Value="_houseId"
-                            Change=@(houseId => GetRooms(Guid.Parse(houseId.ToString()!))) />
-            <RadzenDropDown Placeholder="Room" AllowClear="false" TValue="Guid"
-                            Data=@(_rooms.Select(room => new { RoomId = room.Id, RoomName = room.Name }).Distinct())
-                            TextProperty="RoomName" ValueProperty="RoomId" Value="_roomId"
-                            Change=@(roomId => GetDoors(Guid.Parse(roomId.ToString()!))) />
-            <RadzenDropDown Placeholder="Door" AllowClear="false" TValue="Guid"
-                            Data=@(_doors.Select(door => new { DoorId = door.Id, DoorName = door.Name }).Distinct())
-                            TextProperty="DoorName" ValueProperty="DoorId" Value="_newCommandDoorId"
-                            Change=@(doorId => SetNewCommandDoorId(Guid.Parse(doorId.ToString()!))) />
-            <div class="input-group-append">
-                <span class="btn btn-info" id="add-door-addon" style="margin: 0.5rem" @onclick="AddDoorCommand"> Add door </span>
+        <RadzenPanel Text="Create door command" AllowCollapse="true" Collapsed=@(_addDoorCollapsed)
+                     Expand="@(() => {_addLightBulbCollapsed = true;
+                                 _addDoorCollapsed = false;
+                                 _addThermostatCollapsed = true;})" Collapse="@(() => _addDoorCollapsed = true)"
+                     Style="margin: 0.5rem">
+            <div class="col">
+                <RadzenDropDown Placeholder="House" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                            Data=@(_houses.Select(house => new { HouseId = house.Id, HouseName = house.Name }).Distinct())
+                                            TextProperty="HouseName" ValueProperty="HouseId" Value="_houseId"
+                                            Change=@(houseId => GetRooms(Guid.Parse(houseId.ToString()!))) />
+                        <RadzenDropDown Placeholder="Room" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                        Data=@(_rooms.Select(room => new { RoomId = room.Id, RoomName = room.Name }).Distinct())
+                                        TextProperty="RoomName" ValueProperty="RoomId" Value="_roomId"
+                                        Change=@(roomId => GetDoors(Guid.Parse(roomId.ToString()!))) />
+                        <RadzenDropDown Placeholder="Door" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                        Data=@(_doors.Select(door => new { DoorId = door.Id, DoorName = door.Name }).Distinct())
+                                        TextProperty="DoorName" ValueProperty="DoorId" Value="_newCommandDoorId"
+                                        Change=@(doorId => SetNewCommandDoorId(Guid.Parse(doorId.ToString()!))) />
+                <RadzenButton Text="Add command" Style="margin: 0.5rem" id="add-door-addon" Click="AddDoorCommand"/>
             </div>
-        </div>
+        </RadzenPanel>
         <ul class="list-group list-group-vertical">
             @if (_doorCommands is not null)
             {
                 @foreach (var doorCommand in _doorCommands)
                 {
-                    <li class="list-group-item">
+                    <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
-                            <h3 class="card-header" style="text-align: center"> @doorCommand.DoorId </h3>
+                            <h3 class="card-header" style="text-align: center"> @doorCommand.DoorName </h3>
                             <div class="card-body" style="margin: auto">
                                 <div style="text-align: center; margin: 0.25rem">
                                     <label>Status: </label>
@@ -164,33 +162,35 @@
     </div>
 
     <div class="col" id="thermostats-col">
-        <div class="input-group">
-            <RadzenDropDown Placeholder="House" AllowClear="false" TValue="Guid"
-                            Data=@(_houses.Select(house => new { HouseId = house.Id, HouseName = house.Name }).Distinct())
-                            TextProperty="HouseName" ValueProperty="HouseId" Value="_houseId"
-                            Change=@(houseId => GetRooms(Guid.Parse(houseId.ToString()!))) />
-            <RadzenDropDown Placeholder="Room" AllowClear="false" TValue="Guid"
-                            Data=@(_rooms.Select(room => new { RoomId = room.Id, RoomName = room.Name }).Distinct())
-                            TextProperty="RoomName" ValueProperty="RoomId" Value="_roomId"
-                            Change=@(roomId => GetThermostats(Guid.Parse(roomId.ToString()!))) />
-            <RadzenDropDown Placeholder="Thermostat" AllowClear="false" TValue="Guid"
-                            Data=@(_thermostats.Select(thermostat => new { ThermostatId = thermostat.Id, ThermostatName = thermostat.Name }).Distinct())
-                            TextProperty="ThermostatName" ValueProperty="ThermostatId" Value="_newCommandThermostatId"
-                            Change=@(doorId => SetNewCommandThermostatId(Guid.Parse(doorId.ToString()!))) />
-            <div class="input-group-append">
-                <span class="btn btn-info" style="margin: 0.5rem" id="add-thermostat-addon" @onclick="AddThermostatCommand">
-                    Add thermostat
-                </span>
+        <RadzenPanel Text="Create thermostat command" AllowCollapse="true" Collapsed=@(_addThermostatCollapsed)
+                     Expand="@(() => {_addLightBulbCollapsed = true;
+                                 _addDoorCollapsed = true;
+                                 _addThermostatCollapsed = false;})" Collapse="@(() => _addThermostatCollapsed = true)"
+                     Style="margin: 0.5rem">
+            <div class="col">
+                <RadzenDropDown Placeholder="House" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                Data=@(_houses.Select(house => new { HouseId = house.Id, HouseName = house.Name }).Distinct())
+                                TextProperty="HouseName" ValueProperty="HouseId" Value="_houseId"
+                                Change=@(houseId => GetRooms(Guid.Parse(houseId.ToString()!))) />
+                <RadzenDropDown Placeholder="Room" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                Data=@(_rooms.Select(room => new { RoomId = room.Id, RoomName = room.Name }).Distinct())
+                                TextProperty="RoomName" ValueProperty="RoomId" Value="_roomId"
+                                Change=@(roomId => GetThermostats(Guid.Parse(roomId.ToString()!))) />
+                <RadzenDropDown Placeholder="Thermostat" AllowClear="false" TValue="Guid" Style="margin: 0.5rem"
+                                Data=@(_thermostats.Select(thermostat => new { ThermostatId = thermostat.Id, ThermostatName = thermostat.Name }).Distinct())
+                                TextProperty="ThermostatName" ValueProperty="ThermostatId" Value="_newCommandThermostatId"
+                                Change=@(doorId => SetNewCommandThermostatId(Guid.Parse(doorId.ToString()!))) />
+                <RadzenButton Text="Add command" Style="margin: 0.5rem" id="add-thermostat-addon" Click="AddThermostatCommand"/>
             </div>
-        </div>
+        </RadzenPanel>
         <ul class="list-group list-group-vertical">
             @if (_thermostatCommands is not null)
             {
                 @foreach (var thermostatCommand in _thermostatCommands)
                 {
-                    <li class="list-group-item">
+                    <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
-                            <h3 class="card-header" style="text-align: center"> @thermostatCommand.ThermostatId </h3>
+                            <h3 class="card-header" style="text-align: center"> @thermostatCommand.ThermostatName </h3>
                             <div class="card-body" style="text-align: center; margin: auto">
                                 <div style="text-align: center; margin: 0.25rem">
                                     <label>Temperature: @thermostatCommand.Temperature &#8451;</label>
@@ -205,8 +205,6 @@
                                         <div class="row" style="margin: 0.5rem">
                                             <RadzenSlider @bind-Value="thermostatCommand.Temperature" TValue="decimal"
                                                           Min="7" Max="30" Step="0.5" />
-                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-info"

@@ -103,7 +103,11 @@ namespace API.Controllers
             }
             catch (ConstraintException)
             {
-                return Forbid();
+                return Forbid("You do not have any thermostats left in this room.");
+            }
+            catch (DuplicateNameException)
+            {
+                return Conflict("You already have a thermostat with the specified name in this room.");
             }
             catch (Exception)
             {

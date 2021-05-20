@@ -102,7 +102,7 @@ namespace API.Repositories
 
             Mapper.Map(scheduleToPatch, schedule);
             await Context.SaveChangesAsync();
-            
+
             RecurringJob.AddOrUpdate(schedule.Id.ToString(), () => _helper.Change(schedule.Id),
                 Helper.GetCronExpression(schedule.Time, schedule.Days), TimeZoneInfo.Local);
 
