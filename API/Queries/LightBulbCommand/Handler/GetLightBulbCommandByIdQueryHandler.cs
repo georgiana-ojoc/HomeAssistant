@@ -7,7 +7,7 @@ using Shared.Responses;
 namespace API.Queries.LightBulbCommand.Handler
 {
     public class GetLightBulbCommandByIdQueryHandler : API.Handler,
-        IRequestHandler<GetLightBulbCommandByIdQuery, LightBulbCommandResponse>
+        IRequestHandler<GetLightBulbCommandByIdQuery, Shared.Models.LightBulbCommand>
     {
         private readonly ILightBulbCommandRepository _repository;
 
@@ -17,7 +17,7 @@ namespace API.Queries.LightBulbCommand.Handler
             _repository = repository;
         }
 
-        public async Task<LightBulbCommandResponse> Handle(GetLightBulbCommandByIdQuery request,
+        public async Task<Shared.Models.LightBulbCommand> Handle(GetLightBulbCommandByIdQuery request,
             CancellationToken cancellationToken)
         {
             return await _repository.GetLightBulbCommandByIdAsync(Identity.Email, request.ScheduleId, request.Id);

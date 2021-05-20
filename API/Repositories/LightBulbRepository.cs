@@ -42,8 +42,8 @@ namespace API.Repositories
         public async Task<IEnumerable<LightBulb>> GetLightBulbsAsync(string email, Guid houseId, Guid roomId)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
 
             Room room = await GetRoomInternalAsync(email, houseId, roomId);
             if (room == null)
@@ -57,8 +57,8 @@ namespace API.Repositories
         public async Task<LightBulb> GetLightBulbByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             return await GetLightBulbInternalAsync(email, houseId, roomId, id);
@@ -67,8 +67,8 @@ namespace API.Repositories
         public async Task<LightBulb> CreateLightBulbAsync(string email, Guid houseId, Guid roomId, LightBulb lightBulb)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckString(lightBulb.Name, "name");
 
             Room room = await GetRoomInternalAsync(email, houseId, roomId);
@@ -80,14 +80,15 @@ namespace API.Repositories
             int lightBulbsByRoomId = await Context.LightBulbs.CountAsync(lb => lb.RoomId == roomId);
             if (lightBulbsByRoomId >= 10)
             {
-                throw new ConstraintException(nameof(CreateLightBulbAsync));
+                throw new ConstraintException("You have no light bulbs left in this room. Upgrade your plan.");
             }
 
             int lightBulbsByRoomIdAndName = await Context.LightBulbs.CountAsync(lb => lb.RoomId == roomId &&
                 lb.Name == lightBulb.Name);
             if (lightBulbsByRoomIdAndName > 0)
             {
-                throw new DuplicateNameException(nameof(CreateLightBulbAsync));
+                throw new DuplicateNameException("You already have a light bulb with the specified name in this " +
+                                                 "room.");
             }
 
             lightBulb.RoomId = room.Id;
@@ -100,8 +101,8 @@ namespace API.Repositories
             JsonPatchDocument<LightBulbRequest> lightBulbPatch)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             LightBulb lightBulb = await GetLightBulbInternalAsync(email, houseId, roomId, id);
@@ -122,8 +123,8 @@ namespace API.Repositories
         public async Task<LightBulb> DeleteLightBulbAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             LightBulb lightBulb = await GetLightBulbInternalAsync(email, houseId, roomId, id);

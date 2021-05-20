@@ -19,11 +19,16 @@ namespace API.Repositories
             Mapper = mapper;
         }
 
+        private string ToUpper(string input)
+        {
+            return input.First().ToString().ToUpper() + input.Substring(1);
+        }
+
         protected void CheckString(string field, string name)
         {
             if (string.IsNullOrWhiteSpace(field))
             {
-                throw new ArgumentNullException(name);
+                throw new ArgumentNullException($"{ToUpper(name)} cannot be empty.");
             }
         }
 
@@ -31,7 +36,7 @@ namespace API.Repositories
         {
             if (field == Guid.Empty)
             {
-                throw new ArgumentNullException(name);
+                throw new ArgumentNullException($"{ToUpper(name)} cannot be empty.");
             }
         }
 

@@ -40,9 +40,9 @@ namespace API.Controllers
 
                 return Ok(lightBulbs);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -68,9 +68,9 @@ namespace API.Controllers
 
                 return Ok(lightBulb);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -97,17 +97,17 @@ namespace API.Controllers
 
                 return Created($"houses/{house_id}/rooms/{room_id}/light_bulbs/{newLightBulb.Id}", newLightBulb);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ConstraintException)
+            catch (ConstraintException exception)
             {
-                return Forbid("You do not have any light bulbs left in this room.");
+                return Forbid(exception.Message);
             }
-            catch (DuplicateNameException)
+            catch (DuplicateNameException exception)
             {
-                return Conflict("You already have a light bulb with the specified name in this room.");
+                return Conflict(exception.Message);
             }
             catch (Exception)
             {
@@ -135,9 +135,9 @@ namespace API.Controllers
 
                 return Ok(lightBulb);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -163,9 +163,9 @@ namespace API.Controllers
 
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {

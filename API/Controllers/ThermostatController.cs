@@ -40,9 +40,9 @@ namespace API.Controllers
 
                 return Ok(thermostats);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -68,9 +68,9 @@ namespace API.Controllers
 
                 return Ok(thermostat);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -79,7 +79,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Thermostat>> PatchAsync(Guid house_id, Guid room_id,
+        public async Task<ActionResult<Thermostat>> PostAsync(Guid house_id, Guid room_id,
             [FromBody] ThermostatRequest request)
         {
             try
@@ -97,17 +97,21 @@ namespace API.Controllers
 
                 return Created($"houses/{house_id}/rooms/{room_id}/thermostats/{newThermostat.Id}", newThermostat);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ConstraintException)
+            catch (ArgumentException exception)
             {
-                return Forbid("You do not have any thermostats left in this room.");
+                return BadRequest(exception.Message);
             }
-            catch (DuplicateNameException)
+            catch (ConstraintException exception)
             {
-                return Conflict("You already have a thermostat with the specified name in this room.");
+                return Forbid(exception.Message);
+            }
+            catch (DuplicateNameException exception)
+            {
+                return Conflict(exception.Message);
             }
             catch (Exception)
             {
@@ -116,7 +120,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<ActionResult<Thermostat>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
+        public async Task<ActionResult<Thermostat>> PatchAsync(Guid house_id, Guid room_id, Guid id,
             [FromBody] JsonPatchDocument<ThermostatRequest> patch)
         {
             try
@@ -135,9 +139,13 @@ namespace API.Controllers
 
                 return Ok(thermostat);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -163,9 +171,9 @@ namespace API.Controllers
 
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {

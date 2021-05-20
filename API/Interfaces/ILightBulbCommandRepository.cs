@@ -11,7 +11,7 @@ namespace API.Interfaces
     public interface ILightBulbCommandRepository
     {
         Task<IEnumerable<LightBulbCommandResponse>> GetLightBulbCommandsAsync(string email, Guid scheduleId);
-        Task<LightBulbCommandResponse> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id);
+        Task<LightBulbCommand> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id);
 
         Task<LightBulbCommand> CreateLightBulbCommandAsync(string email, Guid scheduleId, LightBulbCommand
             lightBulbCommand);

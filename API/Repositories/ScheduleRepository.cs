@@ -64,10 +64,17 @@ namespace API.Repositories
             CheckTime(schedule.Time);
             CheckDays(schedule.Days);
 
-            int schedules = await Context.Schedules.CountAsync(s => s.Email == email);
-            if (schedules >= 20)
+            int schedulesByEmail = await Context.Schedules.CountAsync(s => s.Email == email);
+            if (schedulesByEmail >= 20)
             {
-                throw new ConstraintException(nameof(CreateScheduleAsync));
+                throw new ConstraintException("You have no schedules left. Upgrade your plan.");
+            }
+            
+            int schedulesByEmailAndName = await Context.Schedules.CountAsync(s => s.Email == email &&
+                s.Name == schedule.Name);
+            if (schedulesByEmailAndName > 0)
+            {
+                throw new DuplicateNameException("You already have a schedule with the specified name.");
             }
 
             schedule.Email = email;

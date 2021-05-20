@@ -36,7 +36,7 @@ namespace API.Repositories
             Guid scheduleId)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -75,48 +75,21 @@ namespace API.Repositories
             return lightBulbCommandResponses;
         }
 
-        public async Task<LightBulbCommandResponse> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id)
+        public async Task<LightBulbCommand> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
-            var result = await Context.LightBulbCommands
-                .Join(Context.LightBulbs,
-                    lbc => lbc.LightBulbId,
-                    lb => lb.Id,
-                    (lbc, lb) => new
-                    {
-                        lbc.Id,
-                        lbc.ScheduleId,
-                        lbc.LightBulbId,
-                        LightBulbName = lb.Name,
-                        lbc.Color,
-                        lbc.Intensity
-                    }).Where(lbc => lbc.ScheduleId == scheduleId)
-                .FirstOrDefaultAsync(lbc => lbc.Id == id);
-            if (result == null)
-            {
-                return null;
-            }
-
-            return new LightBulbCommandResponse
-            {
-                Id = result.Id,
-                ScheduleId = result.ScheduleId,
-                LightBulbId = result.LightBulbId,
-                LightBulbName = result.LightBulbName,
-                Color = result.Color,
-                Intensity = result.Intensity
-            };
+            return await GetLightBulbCommandInternalAsync(email, scheduleId, id);
         }
 
         public async Task<LightBulbCommand> CreateLightBulbCommandAsync(string email, Guid scheduleId,
             LightBulbCommand lightBulbCommand)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
-            CheckGuid(lightBulbCommand.LightBulbId, "light_bulb_id");
+            CheckGuid(scheduleId, "schedule id");
+            CheckGuid(lightBulbCommand.LightBulbId, "light bulb id");
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -135,7 +108,17 @@ namespace API.Repositories
                 scheduleId);
             if (lightBulbCommands >= 10)
             {
-                throw new ConstraintException(nameof(CreateLightBulbCommandAsync));
+                throw new ConstraintException("You have no light bulb commands left in this schedule. Upgrade your " +
+                                              "plan.");
+            }
+
+            int lightBulbCommandsByScheduleIdAndLightBulbId = await Context.LightBulbCommands
+                .CountAsync(lbc => lbc.ScheduleId == scheduleId &&
+                                   lbc.LightBulbId == lightBulbCommand.LightBulbId);
+            if (lightBulbCommandsByScheduleIdAndLightBulbId > 0)
+            {
+                throw new DuplicateNameException(
+                    "You already have a command for the specified light bulb in this schedule.");
             }
 
             lightBulbCommand.ScheduleId = schedule.Id;
@@ -148,7 +131,7 @@ namespace API.Repositories
             JsonPatchDocument<LightBulbCommandRequest> lightBulbCommandPatch)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             LightBulbCommand lightBulbCommand = await GetLightBulbCommandInternalAsync(email, scheduleId, id);
@@ -159,9 +142,9 @@ namespace API.Repositories
 
             LightBulbCommandRequest lightBulbCommandToPatch = Mapper.Map<LightBulbCommandRequest>(lightBulbCommand);
             lightBulbCommandPatch.ApplyTo(lightBulbCommandToPatch);
-            CheckGuid(lightBulbCommandToPatch.LightBulbId, "light_bulb_id");
+            CheckGuid(lightBulbCommandToPatch.LightBulbId, "light bulb id");
             LightBulb lightBulb = await Context.LightBulbs.FirstOrDefaultAsync(lb => lb.Id ==
-                lightBulbCommand.LightBulbId);
+                lightBulbCommandToPatch.LightBulbId);
             if (lightBulb == null)
             {
                 return null;
@@ -175,7 +158,7 @@ namespace API.Repositories
         public async Task<LightBulbCommand> DeleteLightBulbCommandAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             LightBulbCommand lightBulbCommand = await GetLightBulbCommandInternalAsync(email, scheduleId, id);

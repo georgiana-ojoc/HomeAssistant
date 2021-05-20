@@ -40,9 +40,9 @@ namespace API.Controllers
 
                 return Ok(doors);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -68,9 +68,9 @@ namespace API.Controllers
 
                 return Ok(door);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -79,7 +79,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Door>> PatchAsync(Guid house_id, Guid room_id, [FromBody] DoorRequest request)
+        public async Task<ActionResult<Door>> PostAsync(Guid house_id, Guid room_id, [FromBody] DoorRequest request)
         {
             try
             {
@@ -96,17 +96,17 @@ namespace API.Controllers
 
                 return Created($"houses/{house_id}/rooms/{room_id}/doors/{newDoor.Id}", newDoor);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ConstraintException)
+            catch (ConstraintException exception)
             {
-                return Forbid("You do not have any doors left in this room.");
+                return Forbid(exception.Message);
             }
-            catch (DuplicateNameException)
+            catch (DuplicateNameException exception)
             {
-                return Conflict("You already have a door with the specified name in this room.");
+                return Conflict(exception.Message);
             }
             catch (Exception)
             {
@@ -115,7 +115,7 @@ namespace API.Controllers
         }
 
         [HttpPatch("{id:guid}")]
-        public async Task<ActionResult<Door>> UpdateAsync(Guid house_id, Guid room_id, Guid id,
+        public async Task<ActionResult<Door>> PatchAsync(Guid house_id, Guid room_id, Guid id,
             [FromBody] JsonPatchDocument<DoorRequest> patch)
         {
             try
@@ -134,9 +134,9 @@ namespace API.Controllers
 
                 return Ok(door);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -162,9 +162,9 @@ namespace API.Controllers
 
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {

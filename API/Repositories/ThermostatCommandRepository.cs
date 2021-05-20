@@ -19,6 +19,14 @@ namespace API.Repositories
         public ThermostatCommandRepository(HomeAssistantContext context, IMapper mapper) : base(context, mapper)
         {
         }
+        
+        private void CheckTemperature(decimal? temperature)
+        {
+            if (temperature is not (>= (decimal)7.0 and <= (decimal)30.0))
+            {
+                throw new ArgumentException($"Temperature should be between 7.0 and 30.0.");
+            }
+        }
 
         private async Task<ThermostatCommand> GetThermostatCommandInternalAsync(string email, Guid scheduleId, Guid id)
         {
@@ -89,6 +97,7 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule_id");
             CheckGuid(thermostatCommand.ThermostatId, "thermostat_id");
+            CheckTemperature(thermostatCommand.Temperature);
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -107,7 +116,17 @@ namespace API.Repositories
                 scheduleId);
             if (thermostatCommands >= 10)
             {
-                throw new ConstraintException(nameof(CreateThermostatCommandAsync));
+                throw new ConstraintException("You have no thermostat commands left in this schedule. Upgrade your " +
+                                              "plan.");
+            }
+            
+            int thermostatCommandsByScheduleIdAndThermostatId = await Context.ThermostatCommands
+                .CountAsync(tc => tc.ScheduleId == scheduleId &&
+                                  tc.ThermostatId == thermostatCommand.ThermostatId);
+            if (thermostatCommandsByScheduleIdAndThermostatId > 0)
+            {
+                throw new DuplicateNameException(
+                    "You already have a command for the specified thermostat in this schedule.");
             }
 
             thermostatCommand.ScheduleId = schedule.Id;
@@ -134,12 +153,13 @@ namespace API.Repositories
             thermostatCommandPatch.ApplyTo(thermostatCommandToPatch);
             CheckGuid(thermostatCommandToPatch.ThermostatId, "thermostat_id");
             Thermostat thermostat = await Context.Thermostats.FirstOrDefaultAsync(t => t.Id ==
-                thermostatCommand.ThermostatId);
+                thermostatCommandToPatch.ThermostatId);
             if (thermostat == null)
             {
                 return null;
             }
-
+            CheckTemperature(thermostatCommand.Temperature);
+            
             Mapper.Map(thermostatCommandToPatch, thermostatCommand);
             await Context.SaveChangesAsync();
             return thermostatCommand;

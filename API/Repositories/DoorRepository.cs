@@ -42,8 +42,8 @@ namespace API.Repositories
         public async Task<IEnumerable<Door>> GetDoorsAsync(string email, Guid houseId, Guid roomId)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
 
             Room room = await GetRoomInternalAsync(email, houseId, roomId);
             if (room == null)
@@ -57,8 +57,8 @@ namespace API.Repositories
         public async Task<Door> GetDoorByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             return await GetDoorInternalAsync(email, houseId, roomId, id);
@@ -67,8 +67,8 @@ namespace API.Repositories
         public async Task<Door> CreateDoorAsync(string email, Guid houseId, Guid roomId, Door door)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckString(door.Name, "name");
 
             Room room = await GetRoomInternalAsync(email, houseId, roomId);
@@ -80,14 +80,14 @@ namespace API.Repositories
             int doorsByRoomId = await Context.Doors.CountAsync(d => d.RoomId == roomId);
             if (doorsByRoomId >= 10)
             {
-                throw new ConstraintException(nameof(CreateDoorAsync));
+                throw new ConstraintException("You have no doors left in this room. Upgrade your plan.");
             }
 
             int doorsByRoomIdAndName = await Context.Doors.CountAsync(d => d.RoomId == roomId &&
                                                                            d.Name == door.Name);
             if (doorsByRoomIdAndName > 0)
             {
-                throw new DuplicateNameException(nameof(CreateDoorAsync));
+                throw new DuplicateNameException("You already have a door with the specified name in this room.");
             }
 
             door.RoomId = room.Id;
@@ -100,8 +100,8 @@ namespace API.Repositories
             JsonPatchDocument<DoorRequest> doorPatch)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             Door door = await GetDoorInternalAsync(email, houseId, roomId, id);
@@ -122,8 +122,8 @@ namespace API.Repositories
         public async Task<Door> DeleteDoorAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             Door door = await GetDoorInternalAsync(email, houseId, roomId, id);
