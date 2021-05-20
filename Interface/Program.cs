@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Stripe;
 
 namespace Interface
 {
@@ -15,6 +16,7 @@ namespace Interface
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:ApiKey"];
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
