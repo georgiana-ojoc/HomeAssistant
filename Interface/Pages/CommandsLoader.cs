@@ -14,7 +14,7 @@ namespace Interface.Pages
         private static Guid _scheduleId;
         private Guid _houseId = Guid.Empty;
         private Guid _roomId = Guid.Empty;
-
+        
         private IList<House> _houses = new List<House>();
         private IList<Room> _rooms = new List<Room>();
 
@@ -43,10 +43,10 @@ namespace Interface.Pages
         {
             var serializedContent = JsonConvert.SerializeObject(patchList);
             HttpContent patchBody = new StringContent(serializedContent,
-                Encoding.UTF8,
-                "application/json");
+            Encoding.UTF8,
+            "application/json");
             await _http.PatchAsync($"schedules/{_scheduleId}/{path}/{id}",
-                patchBody);
+            patchBody);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Interface.Scripts;
@@ -15,15 +16,16 @@ namespace Interface.Pages
         private IList<LightBulbCommand> _lightBulbCommands;
         private Guid _newCommandLightBulbId = Guid.Empty;
         private IList<LightBulb> _lightBulbs = new List<LightBulb>();
+        private bool _addLightBulbCollapsed = true;
 
         private async Task GetLightBulbs(Guid roomId)
         {
             _newCommandLightBulbId = Guid.Empty;
             _roomId = roomId;
             _lightBulbs = await _http.GetFromJsonAsync<IList<LightBulb>>(
-                $"houses/{_houseId}/rooms/{_roomId}/{Paths.LightBulbsPath}");
+            $"houses/{_houseId}/rooms/{_roomId}/{Paths.LightBulbsPath}");
         }
-
+        
         private void SetNewCommandLightBulbId(Guid lightBulbId)
         {
             _newCommandLightBulbId = lightBulbId;
@@ -62,11 +64,19 @@ namespace Interface.Pages
                 _houseId = Guid.Empty;
                 _roomId = Guid.Empty;
                 _newCommandLightBulbId = Guid.Empty;
+                _addLightBulbCollapsed = !_addLightBulbCollapsed;
                 StateHasChanged();
             }
             else
             {
-                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of light bulbs reached!");
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
             }
         }
 
