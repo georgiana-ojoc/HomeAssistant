@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using Interface.Scripts;
 using Microsoft.JSInterop;
 using Shared.Models;
+using Shared.Responses;
 
 namespace Interface.Pages
 {
     public partial class ScheduleEditor
     {
-        private IList<DoorCommand> _doorCommands;
+        private IList<DoorCommandResponse> _doorCommands;
         private Guid _newCommandDoorId;
         private IList<Door> _doors = new List<Door>();
         private bool _addDoorCollapsed = true;
@@ -31,9 +32,9 @@ namespace Interface.Pages
 
         private async Task GetDoorCommands()
         {
-            var responseDoorCommands = await _http.GetFromJsonAsync<IList<DoorCommand>>(
+            var responseDoorCommands = await _http.GetFromJsonAsync<IList<DoorCommandResponse>>(
             $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}");
-            if (responseDoorCommands != null) _doorCommands = new List<DoorCommand>(responseDoorCommands);
+            if (responseDoorCommands != null) _doorCommands = new List<DoorCommandResponse>(responseDoorCommands);
 
         }
 
@@ -49,7 +50,7 @@ namespace Interface.Pages
                 });
             if (response.IsSuccessStatusCode)
             {
-                var newDoorCommand = await response.Content.ReadFromJsonAsync<DoorCommand>();
+                var newDoorCommand = await response.Content.ReadFromJsonAsync<DoorCommandResponse>();
                 _doorCommands.Add(newDoorCommand);
 
                 _newCommandDoorId = Guid.Empty;
