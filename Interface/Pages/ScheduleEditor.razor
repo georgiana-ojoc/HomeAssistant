@@ -77,8 +77,6 @@
                                         <div class="row" style="margin: 0.5rem">
                                             <RadzenSlider @bind-Value="_lightBulbCommands[lightBulbIndex].Intensity" TValue="byte"
                                                           Min="byte.MinValue" Max="byte.MaxValue" />
-                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-info"
@@ -213,8 +211,6 @@
                                         <div class="row" style="margin: 0.5rem">
                                             <RadzenSlider @bind-Value="thermostatCommand.Temperature" TValue="decimal"
                                                           Min="7" Max="30" Step="0.5" />
-                                            @* MouseLeave=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
-                                            @* Change=@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id)) /> *@
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-info"
