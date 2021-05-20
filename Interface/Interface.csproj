@@ -53,8 +53,8 @@
       <Compile Update="Pages\ThermostatsCommandsLoader.cs">
         <DependentUpon>ScheduleEditor.razor</DependentUpon>
       </Compile>
-      <Compile Update="Pages\ScheduleEditor.cs">
-        <DependentUpon>ScheduleEditorLoader.razor</DependentUpon>
+      <Compile Update="Pages\CommandsLoader.cs">
+        <DependentUpon>ScheduleEditor.razor</DependentUpon>
       </Compile>
     </ItemGroup>
 

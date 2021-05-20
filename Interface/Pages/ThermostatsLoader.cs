@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
@@ -59,7 +60,14 @@ namespace Interface.Pages
             }
             else
             {
-                await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of thermostats reached!");
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
             }
         }
 

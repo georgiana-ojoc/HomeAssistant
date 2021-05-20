@@ -60,7 +60,11 @@ namespace Interface.Pages
             {
                 if (response.StatusCode == HttpStatusCode.Forbidden)
                 {
-                    await _jsRuntime.InvokeVoidAsync("alert", "Maximum number of door commands reached!");
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
+                }
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
                 }
             }
         }
