@@ -159,7 +159,7 @@ namespace Tests.RepositoryTests
             await function.Should().ThrowAsync<ArgumentException>()
                 .WithMessage("Temperature should be between 7.0 and 30.0.");
         }
-        
+
         #endregion
 
         #region PARTIAL_UPDATE_THERMOSTAT_ASYNC

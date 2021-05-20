@@ -155,7 +155,7 @@ namespace Tests.RepositoryTests
             await function.Should().ThrowAsync<DuplicateNameException>()
                 .WithMessage("You already have a schedule with the specified name.");
         }
-        
+
         #endregion
 
         #region PARTIAL_UPDATE_SCHEDULE_ASYNC

@@ -19,10 +19,10 @@ namespace API.Repositories
         public ThermostatCommandRepository(HomeAssistantContext context, IMapper mapper) : base(context, mapper)
         {
         }
-        
+
         private void CheckTemperature(decimal? temperature)
         {
-            if (temperature is not (>= (decimal)7.0 and <= (decimal)30.0))
+            if (temperature is not (>= (decimal) 7.0 and <= (decimal) 30.0))
             {
                 throw new ArgumentException("Temperature should be between 7.0 and 30.0.");
             }
@@ -119,7 +119,7 @@ namespace API.Repositories
                 throw new ConstraintException("You have no thermostat commands left in this schedule. Upgrade your " +
                                               "plan.");
             }
-            
+
             int thermostatCommandsByScheduleIdAndThermostatId = await Context.ThermostatCommands
                 .CountAsync(tc => tc.ScheduleId == scheduleId &&
                                   tc.ThermostatId == thermostatCommand.ThermostatId);
@@ -158,8 +158,9 @@ namespace API.Repositories
             {
                 return null;
             }
+
             CheckTemperature(thermostatCommand.Temperature);
-            
+
             Mapper.Map(thermostatCommandToPatch, thermostatCommand);
             await Context.SaveChangesAsync();
             return thermostatCommand;

@@ -136,7 +136,7 @@ namespace Tests.RepositoryTests
             await function.Should().ThrowAsync<ArgumentNullException>()
                 .WithMessage("Thermostat id cannot be empty.");
         }
-        
+
         [Fact]
         public async void
             GivenNewThermostatCommand_WhenThermostatExists_ThenCreateThermostatCommandAsyncShouldThrowDuplicateNameException()

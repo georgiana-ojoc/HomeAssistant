@@ -158,7 +158,7 @@ namespace Tests.RepositoryTests
             await function.Should().ThrowAsync<DuplicateNameException>()
                 .WithMessage("You already have a light bulb with the specified name in this room.");
         }
-        
+
         #endregion
 
         #region PARTIAL_UPDATE_LIGHT_BULB_ASYNC

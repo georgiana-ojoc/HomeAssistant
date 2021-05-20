@@ -105,10 +105,10 @@ namespace API.Repositories
             {
                 throw new ConstraintException("You have no door commands left in this schedule. Upgrade your plan.");
             }
-            
+
             int doorCommandsByScheduleIdAndDoorId = await Context.DoorCommands
                 .CountAsync(dc => dc.ScheduleId == scheduleId &&
-                                   dc.DoorId == doorCommand.DoorId);
+                                  dc.DoorId == doorCommand.DoorId);
             if (doorCommandsByScheduleIdAndDoorId > 0)
             {
                 throw new DuplicateNameException(

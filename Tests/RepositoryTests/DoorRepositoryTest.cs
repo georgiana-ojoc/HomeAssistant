@@ -158,7 +158,7 @@ namespace Tests.RepositoryTests
             await function.Should().ThrowAsync<DuplicateNameException>()
                 .WithMessage("You already have a door with the specified name in this room.");
         }
-        
+
         #endregion
 
         #region PARTIAL_UPDATE_DOOR_ASYNC

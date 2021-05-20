@@ -69,7 +69,7 @@ namespace API.Repositories
             {
                 throw new ConstraintException("You have no schedules left. Upgrade your plan.");
             }
-            
+
             int schedulesByEmailAndName = await Context.Schedules.CountAsync(s => s.Email == email &&
                 s.Name == schedule.Name);
             if (schedulesByEmailAndName > 0)

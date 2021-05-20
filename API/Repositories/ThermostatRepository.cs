@@ -25,7 +25,8 @@ namespace API.Repositories
             {
                 return;
             }
-            if (temperature is not (>= (decimal)7.0 and <= (decimal)30.0))
+
+            if (temperature is not (>= (decimal) 7.0 and <= (decimal) 30.0))
             {
                 throw new ArgumentException("Temperature should be between 7.0 and 30.0.");
             }
