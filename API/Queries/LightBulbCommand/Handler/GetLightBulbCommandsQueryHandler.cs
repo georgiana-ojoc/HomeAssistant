@@ -3,11 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
 using MediatR;
+using Shared.Responses;
 
 namespace API.Queries.LightBulbCommand.Handler
 {
     public class GetLightBulbCommandsQueryHandler : API.Handler,
-        IRequestHandler<GetLightBulbCommandsQuery, IEnumerable<Shared.Models.LightBulbCommand>>
+        IRequestHandler<GetLightBulbCommandsQuery, IEnumerable<LightBulbCommandResponse>>
     {
         private readonly ILightBulbCommandRepository _repository;
 
@@ -18,7 +19,7 @@ namespace API.Queries.LightBulbCommand.Handler
         }
 
 
-        public async Task<IEnumerable<Shared.Models.LightBulbCommand>> Handle(GetLightBulbCommandsQuery request,
+        public async Task<IEnumerable<LightBulbCommandResponse>> Handle(GetLightBulbCommandsQuery request,
             CancellationToken cancellationToken)
         {
             return await _repository.GetLightBulbCommandsAsync(Identity.Email, request.ScheduleId);

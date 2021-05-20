@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Interfaces;
-using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 
 namespace API.Repositories
 {
@@ -31,7 +32,8 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(lightBulbCommand => lightBulbCommand.Id == id);
         }
 
-        public async Task<IEnumerable<LightBulbCommand>> GetLightBulbCommandsAsync(string email, Guid scheduleId)
+        public async Task<IEnumerable<LightBulbCommandResponse>> GetLightBulbCommandsAsync(string email,
+            Guid scheduleId)
         {
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule_id");
@@ -42,17 +44,71 @@ namespace API.Repositories
                 return null;
             }
 
-            return await Context.LightBulbCommands.Where(lightBulbCommand => lightBulbCommand.ScheduleId == schedule.Id)
-                .ToListAsync();
+            var results = await Context.LightBulbCommands
+                .Join(Context.LightBulbs,
+                    lbc => lbc.LightBulbId,
+                    lb => lb.Id,
+                    (lbc, lb) => new
+                    {
+                        lbc.Id,
+                        lbc.ScheduleId,
+                        lbc.LightBulbId,
+                        LightBulbName = lb.Name,
+                        lbc.Color,
+                        lbc.Intensity
+                    }).Where(lbc => lbc.ScheduleId == scheduleId).ToListAsync();
+
+            IList<LightBulbCommandResponse> lightBulbCommandResponses = new List<LightBulbCommandResponse>();
+            foreach (var result in results)
+            {
+                lightBulbCommandResponses.Add(new LightBulbCommandResponse()
+                {
+                    Id = result.Id,
+                    ScheduleId = result.ScheduleId,
+                    LightBulbId = result.LightBulbId,
+                    LightBulbName = result.LightBulbName,
+                    Color = result.Color,
+                    Intensity = result.Intensity
+                });
+            }
+
+            return lightBulbCommandResponses;
         }
 
-        public async Task<LightBulbCommand> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id)
+        public async Task<LightBulbCommandResponse> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule_id");
             CheckGuid(id, "id");
 
-            return await GetLightBulbCommandInternalAsync(email, scheduleId, id);
+            var result = await Context.LightBulbCommands
+                .Join(Context.LightBulbs,
+                    lbc => lbc.LightBulbId,
+                    lb => lb.Id,
+                    (lbc, lb) => new
+                    {
+                        lbc.Id,
+                        lbc.ScheduleId,
+                        lbc.LightBulbId,
+                        LightBulbName = lb.Name,
+                        lbc.Color,
+                        lbc.Intensity
+                    }).Where(lbc => lbc.ScheduleId == scheduleId)
+                .FirstOrDefaultAsync(lbc => lbc.Id == id);
+            if (result == null)
+            {
+                return null;
+            }
+
+            return new LightBulbCommandResponse
+            {
+                Id = result.Id,
+                ScheduleId = result.ScheduleId,
+                LightBulbId = result.LightBulbId,
+                LightBulbName = result.LightBulbName,
+                Color = result.Color,
+                Intensity = result.Intensity
+            };
         }
 
         public async Task<LightBulbCommand> CreateLightBulbCommandAsync(string email, Guid scheduleId,
