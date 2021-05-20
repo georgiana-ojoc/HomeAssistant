@@ -3,11 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using API.Interfaces;
 using MediatR;
+using Shared.Responses;
 
 namespace API.Queries.DoorCommand.Handler
 {
     public class GetDoorCommandsQueryHandler : API.Handler,
-        IRequestHandler<GetDoorCommandsQuery, IEnumerable<Shared.Models.DoorCommand>>
+        IRequestHandler<GetDoorCommandsQuery, IEnumerable<DoorCommandResponse>>
     {
         private readonly IDoorCommandRepository _repository;
 
@@ -17,7 +18,7 @@ namespace API.Queries.DoorCommand.Handler
         }
 
 
-        public async Task<IEnumerable<Shared.Models.DoorCommand>> Handle(GetDoorCommandsQuery request,
+        public async Task<IEnumerable<DoorCommandResponse>> Handle(GetDoorCommandsQuery request,
             CancellationToken cancellationToken)
         {
             return await _repository.GetDoorCommandsAsync(Identity.Email, request.ScheduleId);
