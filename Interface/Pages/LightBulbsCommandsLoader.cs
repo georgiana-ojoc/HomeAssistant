@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using Interface.Scripts;
 using Microsoft.JSInterop;
 using Shared.Models;
+using Shared.Responses;
 
 namespace Interface.Pages
 {
     public partial class ScheduleEditor
     {
         private readonly IList<LightColor> _lightColors = new List<LightColor>();
-        private IList<LightBulbCommand> _lightBulbCommands;
+        private IList<LightBulbCommandResponse> _lightBulbCommands;
         private Guid _newCommandLightBulbId = Guid.Empty;
         private IList<LightBulb> _lightBulbs = new List<LightBulb>();
         private bool _addLightBulbCollapsed = true;
@@ -33,10 +34,10 @@ namespace Interface.Pages
 
         private async Task GetLightBulbCommands()
         {
-            var responseLightBulbs = await _http.GetFromJsonAsync<IList<LightBulbCommand>>(
+            var responseLightBulbs = await _http.GetFromJsonAsync<IList<LightBulbCommandResponse>>(
                 $"schedules/{_scheduleId}/{Paths.LightBulbCommandsPath}");
             if (responseLightBulbs != null)
-                _lightBulbCommands = new List<LightBulbCommand>(responseLightBulbs);
+                _lightBulbCommands = new List<LightBulbCommandResponse>(responseLightBulbs);
             foreach (var lightBulb in _lightBulbCommands)
             {
                 _lightColors.Add(new LightColor(lightBulb.Color));
@@ -57,7 +58,7 @@ namespace Interface.Pages
                 });
             if (response.IsSuccessStatusCode)
             {
-                var newLightBulbCommand = await response.Content.ReadFromJsonAsync<LightBulbCommand>();
+                var newLightBulbCommand = await response.Content.ReadFromJsonAsync<LightBulbCommandResponse>();
                 _lightBulbCommands.Add(newLightBulbCommand);
                 _lightColors.Add(new LightColor());
 

@@ -35,13 +35,7 @@
                 {
                     <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
-                            <h3 class="card-header" style="text-align: center">
-                                 @(_lightBulbs.SingleOrDefault(lightBulb =>
-                                     lightBulb.Id == _lightBulbCommands[lightBulbIndex].LightBulbId) is not null ?
-                                     _lightBulbs.SingleOrDefault(lightBulb =>
-                                         lightBulb.Id == _lightBulbCommands[lightBulbIndex].LightBulbId)?.Name :
-                                     _lightBulbCommands[lightBulbIndex].LightBulbId)
-                            </h3>
+                            <h3 class="card-header" style="text-align: center"> @_lightBulbCommands[lightBulbIndex].LightBulbName </h3>
                             <div class="card-body" style="margin: auto; text-align: center">
                                 <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                     <button type="button" class="btn btn-dark"
@@ -196,7 +190,7 @@
                 {
                     <li class="list-group-item" style="margin: 0.25rem">
                         <div class="card">
-                            <h3 class="card-header" style="text-align: center"> @thermostatCommand.ThermostatId </h3>
+                            <h3 class="card-header" style="text-align: center"> @thermostatCommand.ThermostatName </h3>
                             <div class="card-body" style="text-align: center; margin: auto">
                                 <div style="text-align: center; margin: 0.25rem">
                                     <label>Temperature: @thermostatCommand.Temperature &#8451;</label>
