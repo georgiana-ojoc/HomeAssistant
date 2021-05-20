@@ -15,8 +15,8 @@ namespace Interface
     {
         public static async Task Main(string[] args)
         {
-            StripeConfiguration.ApiKey = "";
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:ApiKey"];
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
