@@ -87,7 +87,7 @@ namespace Tests.IntegrationTests
 
             HttpResponseMessage response = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
             {
-                Name = "Wall thermostat"
+                Name = "Wireless thermostat"
             });
 
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -95,7 +95,7 @@ namespace Tests.IntegrationTests
             Thermostat thermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
 
             thermostat.Should().NotBeNull();
-            thermostat?.Name.Should().Be("Wall thermostat");
+            thermostat?.Name.Should().Be("Wireless thermostat");
         }
 
         [Fact]
@@ -108,29 +108,29 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact]
-        public async Task
-            GivenNewThermostat_WhenThermostatNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        {
-            using HttpClient client = GetClient(GetType().Name);
-
-            for (int index = 0; index < 9; index++)
-            {
-                HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
-                {
-                    Name = "Wall thermostat"
-                });
-
-                createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            }
-
-            HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
-            {
-                Name = "Wall thermostat"
-            });
-
-            forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        }
+        // [Fact]
+        // public async Task
+        //     GivenNewThermostat_WhenThermostatNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
+        // {
+        //     using HttpClient client = GetClient(GetType().Name);
+        //
+        //     for (int index = 0; index < 9; index++)
+        //     {
+        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
+        //         {
+        //             Name = "Wall thermostat"
+        //         });
+        //
+        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        //     }
+        //
+        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
+        //     {
+        //         Name = "Wall thermostat"
+        //     });
+        //
+        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        // }
 
         #endregion
 

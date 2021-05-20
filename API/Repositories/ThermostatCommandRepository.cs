@@ -24,7 +24,7 @@ namespace API.Repositories
         {
             if (temperature is not (>= (decimal)7.0 and <= (decimal)30.0))
             {
-                throw new ArgumentException($"Temperature should be between 7.0 and 30.0.");
+                throw new ArgumentException("Temperature should be between 7.0 and 30.0.");
             }
         }
 
@@ -45,7 +45,7 @@ namespace API.Repositories
             Guid scheduleId)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -85,7 +85,7 @@ namespace API.Repositories
         public async Task<ThermostatCommand> GetThermostatCommandByIdAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             return await GetThermostatCommandInternalAsync(email, scheduleId, id);
@@ -95,8 +95,8 @@ namespace API.Repositories
             ThermostatCommand thermostatCommand)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
-            CheckGuid(thermostatCommand.ThermostatId, "thermostat_id");
+            CheckGuid(scheduleId, "schedule id");
+            CheckGuid(thermostatCommand.ThermostatId, "thermostat id");
             CheckTemperature(thermostatCommand.Temperature);
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
@@ -140,7 +140,7 @@ namespace API.Repositories
             JsonPatchDocument<ThermostatCommandRequest> thermostatCommandPatch)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             ThermostatCommand thermostatCommand = await GetThermostatCommandInternalAsync(email, scheduleId, id);
@@ -151,7 +151,7 @@ namespace API.Repositories
 
             ThermostatCommandRequest thermostatCommandToPatch = Mapper.Map<ThermostatCommandRequest>(thermostatCommand);
             thermostatCommandPatch.ApplyTo(thermostatCommandToPatch);
-            CheckGuid(thermostatCommandToPatch.ThermostatId, "thermostat_id");
+            CheckGuid(thermostatCommandToPatch.ThermostatId, "thermostat id");
             Thermostat thermostat = await Context.Thermostats.FirstOrDefaultAsync(t => t.Id ==
                 thermostatCommandToPatch.ThermostatId);
             if (thermostat == null)
@@ -168,7 +168,7 @@ namespace API.Repositories
         public async Task<ThermostatCommand> DeleteThermostatCommandAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             ThermostatCommand thermostatCommand = await GetThermostatCommandInternalAsync(email, scheduleId, id);

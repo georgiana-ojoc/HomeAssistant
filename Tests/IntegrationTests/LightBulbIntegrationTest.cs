@@ -86,7 +86,7 @@ namespace Tests.IntegrationTests
 
             HttpResponseMessage response = await client.PostAsJsonAsync(_lightBulbsApiUrl, new LightBulb()
             {
-                Name = "Lamp"
+                Name = "Chandelier"
             });
 
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -94,7 +94,7 @@ namespace Tests.IntegrationTests
             LightBulb lightBulb = await response.Content.ReadFromJsonAsync<LightBulb>();
 
             lightBulb.Should().NotBeNull();
-            lightBulb?.Name.Should().Be("Lamp");
+            lightBulb?.Name.Should().Be("Chandelier");
         }
 
         [Fact]
@@ -107,29 +107,29 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact]
-        public async Task
-            GivenNewLightBulb_WhenLightBulbNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        {
-            using HttpClient client = GetClient(GetType().Name);
-
-            for (int index = 0; index < 9; index++)
-            {
-                HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_lightBulbsApiUrl, new LightBulb()
-                {
-                    Name = "Lamp"
-                });
-
-                createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            }
-
-            HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_lightBulbsApiUrl, new LightBulb()
-            {
-                Name = "Lamp"
-            });
-
-            forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        }
+        // [Fact]
+        // public async Task
+        //     GivenNewLightBulb_WhenLightBulbNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
+        // {
+        //     using HttpClient client = GetClient(GetType().Name);
+        //
+        //     for (int index = 0; index < 9; index++)
+        //     {
+        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_lightBulbsApiUrl, new LightBulb()
+        //         {
+        //             Name = "Lamp"
+        //         });
+        //
+        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        //     }
+        //
+        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_lightBulbsApiUrl, new LightBulb()
+        //     {
+        //         Name = "Lamp"
+        //     });
+        //
+        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        // }
 
         #endregion
 

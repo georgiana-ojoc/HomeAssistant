@@ -94,6 +94,12 @@ namespace Tests
                     Id = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
                     RoomId = Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
                     Name = "Lamp"
+                },
+                new()
+                {
+                    Id = Guid.Parse("0365f802-bb3a-487a-997b-0d34c270a385"),
+                    RoomId = Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                    Name = "Spotlight"
                 }
             };
             context.LightBulbs.AddRange(lightBulbs);
@@ -109,6 +115,12 @@ namespace Tests
                     Id = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"),
                     RoomId = Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
                     Name = "Balcony door"
+                },
+                new()
+                {
+                    Id = Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"),
+                    RoomId = Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                    Name = "Terrace door"
                 }
             };
             context.Doors.AddRange(doors);
@@ -124,6 +136,12 @@ namespace Tests
                     Id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"),
                     RoomId = Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
                     Name = "Wall thermostat"
+                },
+                new()
+                {
+                    Id = Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"),
+                    RoomId = Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"),
+                    Name = "Thermostat"
                 }
             };
             context.Thermostats.AddRange(thermostats);

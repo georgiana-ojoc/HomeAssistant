@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using API.Repositories;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Shared;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 using Xunit;
 
 namespace Tests.RepositoryTests
@@ -27,7 +29,7 @@ namespace Tests.RepositoryTests
             var result = await repository.GetThermostatCommandsAsync(
                 "homeassistantgo@outlook.com", Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"));
 
-            result.Should().BeOfType<List<ThermostatCommand>>();
+            result.Should().BeOfType<List<ThermostatCommandResponse>>();
         }
 
         [Fact]
@@ -58,7 +60,7 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'schedule_id')");
+                .WithMessage("Schedule id cannot be empty.");
         }
 
         #endregion
@@ -110,7 +112,7 @@ namespace Tests.RepositoryTests
             var result = await repository.CreateThermostatCommandAsync("homeassistantgo@outlook.com",
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new ThermostatCommand()
                 {
-                    ThermostatId = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"),
+                    ThermostatId = Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"),
                     Temperature = (decimal) 22.5
                 });
 
@@ -132,7 +134,30 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'thermostat_id')");
+                .WithMessage("Thermostat id cannot be empty.");
+        }
+        
+        [Fact]
+        public async void
+            GivenNewThermostatCommand_WhenThermostatExists_ThenCreateThermostatCommandAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateThermostatCommandAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new ThermostatCommand()
+                    {
+                        ThermostatId = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"),
+                        Temperature = (decimal) 22.5
+                    });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a command for the specified thermostat in this " +
+                             "schedule.");
         }
 
         #endregion

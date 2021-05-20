@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Repositories;
@@ -51,7 +52,7 @@ namespace Tests.RepositoryTests
             Func<Task> function = async () => { await repository.GetHousesAsync(null); };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'email')");
+                .WithMessage("Email cannot be empty.");
         }
 
         #endregion
@@ -112,12 +113,30 @@ namespace Tests.RepositoryTests
 
             Func<Task> function = async () =>
             {
-                await repository.CreateHouseAsync("homeassistantgo@outlook.com",
-                    new House());
+                await repository.CreateHouseAsync("homeassistantgo@outlook.com", new House());
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'name')");
+                .WithMessage("Name cannot be empty.");
+        }
+
+        [Fact]
+        public async void GivenNewHouse_WhenNameExists_ThenCreateHouseAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            HouseRepository repository = new HouseRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateHouseAsync("homeassistantgo@outlook.com", new House()
+                {
+                    Name = "Apartment"
+                });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a house with the specified name.");
         }
 
         #endregion

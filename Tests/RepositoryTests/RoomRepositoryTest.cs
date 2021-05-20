@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using API.Repositories;
 using AutoMapper;
@@ -56,7 +57,7 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'house_id')");
+                .WithMessage("House id cannot be empty.");
         }
 
         #endregion
@@ -125,7 +126,27 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'name')");
+                .WithMessage("Name cannot be empty.");
+        }
+
+        [Fact]
+        public async void GivenNewRoom_WhenNameExists_ThenCreateRoomAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            RoomRepository repository = new RoomRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateRoomAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"), new Room()
+                    {
+                        Name = "Kitchen"
+                    });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a room with the specified name in this house.");
         }
 
         #endregion

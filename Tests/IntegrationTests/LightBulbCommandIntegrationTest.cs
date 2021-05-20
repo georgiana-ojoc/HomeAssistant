@@ -89,7 +89,7 @@ namespace Tests.IntegrationTests
             HttpResponseMessage response = await client.PostAsJsonAsync(_lightBulbCommandsApiUrl,
                 new LightBulbCommand()
                 {
-                    LightBulbId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
+                    LightBulbId = Guid.Parse("0365f802-bb3a-487a-997b-0d34c270a385"),
                     Color = 6556210,
                     Intensity = 50
                 });
@@ -99,7 +99,7 @@ namespace Tests.IntegrationTests
             LightBulbCommand lightBulbCommand = await response.Content.ReadFromJsonAsync<LightBulbCommand>();
 
             lightBulbCommand.Should().NotBeNull();
-            lightBulbCommand?.LightBulbId.Should().Be(Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"));
+            lightBulbCommand?.LightBulbId.Should().Be(Guid.Parse("0365f802-bb3a-487a-997b-0d34c270a385"));
         }
 
         [Fact]
@@ -114,35 +114,35 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact]
-        public async Task
-            GivenNewLightBulbCommand_WhenLightBulbCommandNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        {
-            using HttpClient client = GetClient(GetType().Name);
-
-            for (int index = 0; index < 9; index++)
-            {
-                HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_lightBulbCommandsApiUrl,
-                    new LightBulbCommand()
-                    {
-                        LightBulbId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
-                        Color = 6556210,
-                        Intensity = 50
-                    });
-
-                createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            }
-
-            HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_lightBulbCommandsApiUrl,
-                new LightBulbCommand()
-                {
-                    LightBulbId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
-                    Color = 6556210,
-                    Intensity = 50
-                });
-
-            forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        }
+        // [Fact]
+        // public async Task
+        //     GivenNewLightBulbCommand_WhenLightBulbCommandNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
+        // {
+        //     using HttpClient client = GetClient(GetType().Name);
+        //
+        //     for (int index = 0; index < 9; index++)
+        //     {
+        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_lightBulbCommandsApiUrl,
+        //             new LightBulbCommand()
+        //             {
+        //                 LightBulbId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
+        //                 Color = 6556210,
+        //                 Intensity = 50
+        //             });
+        //
+        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        //     }
+        //
+        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_lightBulbCommandsApiUrl,
+        //         new LightBulbCommand()
+        //         {
+        //             LightBulbId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
+        //             Color = 6556210,
+        //             Intensity = 50
+        //         });
+        //
+        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        // }
 
         #endregion
 

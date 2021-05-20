@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using API.Repositories;
 using AutoMapper;
@@ -59,7 +60,7 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'room_id')");
+                .WithMessage("Room id cannot be empty.");
         }
 
         #endregion
@@ -133,9 +134,31 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'name')");
+                .WithMessage("Name cannot be empty.");
         }
 
+        [Fact]
+        public async void
+            GivenNewLightBulb_WhenNameExists_ThenCreateLightBulbAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbRepository repository = new LightBulbRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateLightBulbAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                    Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new LightBulb()
+                    {
+                        Name = "Lamp"
+                    });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a light bulb with the specified name in this room.");
+        }
+        
         #endregion
 
         #region PARTIAL_UPDATE_LIGHT_BULB_ASYNC

@@ -85,8 +85,8 @@ namespace API.Repositories
             DoorCommand doorCommand)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
-            CheckGuid(doorCommand.DoorId, "door_id");
+            CheckGuid(scheduleId, "schedule id");
+            CheckGuid(doorCommand.DoorId, "door id");
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -125,7 +125,7 @@ namespace API.Repositories
             JsonPatchDocument<DoorCommandRequest> doorCommandPatch)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             DoorCommand doorCommand = await GetDoorCommandInternalAsync(email, scheduleId, id);
@@ -136,7 +136,7 @@ namespace API.Repositories
 
             DoorCommandRequest doorCommandToPatch = Mapper.Map<DoorCommandRequest>(doorCommand);
             doorCommandPatch.ApplyTo(doorCommandToPatch);
-            CheckGuid(doorCommandToPatch.DoorId, "door_id");
+            CheckGuid(doorCommandToPatch.DoorId, "door id");
             Door door = await Context.Doors.FirstOrDefaultAsync(d => d.Id == doorCommandToPatch.DoorId);
             if (door == null)
             {
@@ -151,7 +151,7 @@ namespace API.Repositories
         public async Task<DoorCommand> DeleteDoorCommandAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             DoorCommand doorCommand = await GetDoorCommandInternalAsync(email, scheduleId, id);

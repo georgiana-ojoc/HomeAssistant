@@ -83,6 +83,10 @@ namespace API.Controllers
             {
                 return Forbid(exception.Message);
             }
+            catch (DuplicateNameException exception)
+            {
+                return Conflict(exception.Message);
+            }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);

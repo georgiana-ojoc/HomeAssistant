@@ -28,7 +28,7 @@ namespace API.Repositories
         {
             if (string.IsNullOrWhiteSpace(field))
             {
-                throw new ArgumentNullException($"{ToUpper(name)} cannot be empty.");
+                throw new ArgumentNullException(null, $"{ToUpper(name)} cannot be empty.");
             }
         }
 
@@ -36,7 +36,7 @@ namespace API.Repositories
         {
             if (field == Guid.Empty)
             {
-                throw new ArgumentNullException($"{ToUpper(name)} cannot be empty.");
+                throw new ArgumentNullException(null, $"{ToUpper(name)} cannot be empty.");
             }
         }
 
