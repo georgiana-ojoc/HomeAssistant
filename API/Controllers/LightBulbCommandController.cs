@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 
 namespace API.Controllers
 {
@@ -24,11 +25,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LightBulbCommand>>> GetAsync(Guid schedule_id)
+        public async Task<ActionResult<IEnumerable<LightBulbCommandResponse>>> GetAsync(Guid schedule_id)
         {
             try
             {
-                IEnumerable<LightBulbCommand> lightBulbCommands =
+                IEnumerable<LightBulbCommandResponse> lightBulbCommands =
                     await Mediator.Send(new GetLightBulbCommandsQuery {ScheduleId = schedule_id});
                 if (lightBulbCommands == null)
                 {
@@ -48,11 +49,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<LightBulbCommand>> GetAsync(Guid schedule_id, Guid id)
+        public async Task<ActionResult<LightBulbCommandResponse>> GetAsync(Guid schedule_id, Guid id)
         {
             try
             {
-                LightBulbCommand lightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
+                LightBulbCommandResponse lightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
                 if (lightBulbCommand == null)
                 {
