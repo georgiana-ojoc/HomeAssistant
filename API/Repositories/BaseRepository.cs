@@ -41,6 +41,12 @@ namespace API.Repositories
                 .FirstOrDefaultAsync(h => h.Id == id);
         }
 
+        protected async Task<UserLimit> GetUserLimitInternalAsync(string email, Guid id)
+        {
+            return await Context.UserLimits.Where(h => h.Email == email)
+                .FirstOrDefaultAsync(h => h.Id == id);
+        }
+
         protected async Task<Room> GetRoomInternalAsync(string email, Guid houseId, Guid id)
         {
             House house = await GetHouseInternalAsync(email, houseId);

@@ -18,6 +18,7 @@ namespace Shared
         }
 
         public DbSet<House> Houses { get; set; }
+        public DbSet<UserLimit> UserLimits { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<LightBulb> LightBulbs { get; set; }
         public DbSet<Door> Doors { get; set; }
@@ -58,6 +59,40 @@ namespace Shared
                     .IsRequired()
                     .HasMaxLength(128)
                     .HasColumnName("name");
+            });
+
+            modelBuilder.Entity<UserLimit>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("user_limits_pk")
+                    .IsClustered(false);
+
+                entity.ToTable("user_limits");
+
+                entity.HasIndex(e => e.Id, "user_limits_id")
+                    .IsUnique();
+                
+                entity.HasIndex(e => e.Email, "user_limits_email_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(256)
+                    .HasColumnName("email");
+
+                entity.Property(e => e.HouseLimit).HasColumnName("house_limit");
+
+                entity.Property(e => e.RoomLimit).HasColumnName("room_limit");
+
+                entity.Property(e => e.DoorLimit).HasColumnName("door_limit");
+
+                entity.Property(e => e.LightBulbLimit).HasColumnName("light_bulb_limit");
+
+                entity.Property(e => e.ThermostatLimit).HasColumnName("thermostat_limit");
             });
 
             modelBuilder.Entity<Room>(entity =>
