@@ -46,14 +46,14 @@ namespace API.Repositories
             int housesByEmail = await Context.Houses.CountAsync(h => h.Email == email);
             if (housesByEmail >= limit)
             {
-                throw new ConstraintException(nameof(CreateHouseAsync));
+                throw new ConstraintException("You have no houses left. Upgrade your plan.");
             }
 
             int housesByEmailAndName = await Context.Houses.CountAsync(h => h.Email == email &&
                                                                             h.Name == house.Name);
             if (housesByEmailAndName > 0)
             {
-                throw new DuplicateNameException(nameof(CreateHouseAsync));
+                throw new DuplicateNameException("You already have a house with the specified name.");
             }
 
             house.Email = email;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Repositories;
@@ -54,7 +55,7 @@ namespace Tests.RepositoryTests
             Func<Task> function = async () => { await repository.GetSchedulesAsync(null); };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'email')");
+                .WithMessage("Email cannot be empty.");
         }
 
         #endregion
@@ -131,6 +132,28 @@ namespace Tests.RepositoryTests
 
             await function.Should().ThrowAsync<ArgumentException>()
                 .WithMessage("Days cannot be 0 or bigger than 127.");
+        }
+
+        [Fact]
+        public async void GivenNewSchedule_WhenNameExists_ThenCreateScheduleAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            Helper helper = new Helper(context);
+            ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateScheduleAsync("homeassistantgo@outlook.com", new Schedule()
+                {
+                    Name = "Night mode",
+                    Time = "08:00",
+                    Days = 1
+                });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a schedule with the specified name.");
         }
 
         #endregion

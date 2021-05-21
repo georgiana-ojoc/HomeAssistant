@@ -36,9 +36,9 @@ namespace API.Controllers
 
                 return Ok(rooms);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -59,9 +59,9 @@ namespace API.Controllers
 
                 return Ok(room);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -82,17 +82,17 @@ namespace API.Controllers
 
                 return Created($"houses/{house_id}/rooms/{newRoom.Id}", newRoom);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ConstraintException)
+            catch (ConstraintException exception)
             {
-                return Forbid("You do not have any rooms left in this house.");
+                return Forbid(exception.Message);
             }
-            catch (DuplicateNameException)
+            catch (DuplicateNameException exception)
             {
-                return Conflict("You already have a room with the specified name in this house.");
+                return Conflict(exception.Message);
             }
             catch (Exception)
             {
@@ -119,9 +119,9 @@ namespace API.Controllers
 
                 return Ok(room);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -142,9 +142,9 @@ namespace API.Controllers
 
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {

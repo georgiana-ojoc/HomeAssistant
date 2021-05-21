@@ -22,7 +22,7 @@ namespace API.Repositories
         public async Task<IEnumerable<Room>> GetRoomsAsync(string email, Guid houseId)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
+            CheckGuid(houseId, "house id");
 
             House house = await GetHouseInternalAsync(email, houseId);
             if (house == null)
@@ -36,7 +36,7 @@ namespace API.Repositories
         public async Task<Room> GetRoomByIdAsync(string email, Guid houseId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
+            CheckGuid(houseId, "house id");
             CheckGuid(id, "id");
 
             return await GetRoomInternalAsync(email, houseId, id);
@@ -45,7 +45,7 @@ namespace API.Repositories
         public async Task<Room> CreateRoomAsync(string email, Guid houseId, Room room)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
+            CheckGuid(houseId, "house id");
             CheckString(room.Name, "name");
 
             House house = await GetHouseInternalAsync(email, houseId);
@@ -61,14 +61,14 @@ namespace API.Repositories
             int roomsByHouseId = await Context.Rooms.CountAsync(r => r.HouseId == houseId);
             if (roomsByHouseId >= limit)
             {
-                throw new ConstraintException(nameof(CreateRoomAsync));
+                throw new ConstraintException("You have no rooms left in this house. Upgrade your plan.");
             }
 
             int roomsByHouseIdAndName = await Context.Rooms.CountAsync(r => r.HouseId == houseId &&
                                                                             r.Name == room.Name);
             if (roomsByHouseIdAndName > 0)
             {
-                throw new DuplicateNameException(nameof(CreateRoomAsync));
+                throw new DuplicateNameException("You already have a room with the specified name in this house.");
             }
 
             room.HouseId = house.Id;
@@ -81,7 +81,7 @@ namespace API.Repositories
             JsonPatchDocument<RoomRequest> roomPatch)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
+            CheckGuid(houseId, "house id");
             CheckGuid(id, "id");
 
             Room room = await GetRoomInternalAsync(email, houseId, id);
@@ -102,7 +102,7 @@ namespace API.Repositories
         public async Task<Room> DeleteRoomAsync(string email, Guid houseId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
+            CheckGuid(houseId, "house id");
             CheckGuid(id, "id");
 
             Room room = await GetRoomInternalAsync(email, houseId, id);

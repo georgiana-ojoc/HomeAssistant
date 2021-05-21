@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using API.Repositories;
 using AutoMapper;
@@ -59,7 +60,7 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'room_id')");
+                .WithMessage("Room id cannot be empty.");
         }
 
         #endregion
@@ -111,7 +112,7 @@ namespace Tests.RepositoryTests
                 Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
                 Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new Door()
                 {
-                    Name = "Balcony door"
+                    Name = "Door"
                 });
 
             result.Should().BeOfType<Door>();
@@ -133,7 +134,29 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'name')");
+                .WithMessage("Name cannot be empty.");
+        }
+
+        [Fact]
+        public async void
+            GivenNewDoor_WhenNameExists_ThenCreateDoorAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorRepository repository = new DoorRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateDoorAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                    Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new Door()
+                    {
+                        Name = "Balcony door"
+                    });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a door with the specified name in this room.");
         }
 
         #endregion

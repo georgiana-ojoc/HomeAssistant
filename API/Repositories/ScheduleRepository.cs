@@ -73,6 +73,13 @@ namespace API.Repositories
             {
                 throw new ConstraintException(nameof(CreateScheduleAsync));
             }
+            
+            int schedulesByEmailAndName = await Context.Schedules.CountAsync(s => s.Email == email &&
+                s.Name == schedule.Name);
+            if (schedulesByEmailAndName > 0)
+            {
+                throw new DuplicateNameException("You already have a schedule with the specified name.");
+            }
 
             schedule.Email = email;
             schedule.Time = TimeSpan.Parse(schedule.Time).ToString(@"hh\:mm");

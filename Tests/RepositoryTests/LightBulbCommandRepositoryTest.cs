@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using API.Repositories;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Shared;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 using Xunit;
 
 namespace Tests.RepositoryTests
@@ -27,7 +29,7 @@ namespace Tests.RepositoryTests
             var result = await repository.GetLightBulbCommandsAsync(
                 "homeassistantgo@outlook.com", Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"));
 
-            result.Should().BeOfType<List<LightBulbCommand>>();
+            result.Should().BeOfType<List<LightBulbCommandResponse>>();
         }
 
         [Fact]
@@ -58,7 +60,7 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'schedule_id')");
+                .WithMessage("Schedule id cannot be empty.");
         }
 
         #endregion
@@ -110,7 +112,7 @@ namespace Tests.RepositoryTests
             var result = await repository.CreateLightBulbCommandAsync("homeassistantgo@outlook.com",
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new LightBulbCommand()
                 {
-                    LightBulbId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a"),
+                    LightBulbId = Guid.Parse("0365f802-bb3a-487a-997b-0d34c270a385"),
                     Color = 6556210,
                     Intensity = 50
                 });
@@ -133,7 +135,29 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'light_bulb_id')");
+                .WithMessage("Light bulb id cannot be empty.");
+        }
+
+        [Fact]
+        public async void
+            GivenNewLightBulbCommand_WhenLightBulbExists_ThenCreateLightBulbCommandAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateLightBulbCommandAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new LightBulbCommand()
+                    {
+                        LightBulbId = Guid.Parse("cb57603b-5140-451b-9138-906355464d7a")
+                    });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a command for the specified light bulb in this " +
+                             "schedule.");
         }
 
         #endregion

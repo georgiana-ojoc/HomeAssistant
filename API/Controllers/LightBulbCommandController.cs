@@ -38,9 +38,9 @@ namespace API.Controllers
 
                 return Ok(lightBulbCommands);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -49,11 +49,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<LightBulbCommandResponse>> GetAsync(Guid schedule_id, Guid id)
+        public async Task<ActionResult<LightBulbCommand>> GetAsync(Guid schedule_id, Guid id)
         {
             try
             {
-                LightBulbCommandResponse lightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
+                LightBulbCommand lightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
                 if (lightBulbCommand == null)
                 {
@@ -62,9 +62,9 @@ namespace API.Controllers
 
                 return Ok(lightBulbCommand);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -88,13 +88,17 @@ namespace API.Controllers
                 return Created($"schedules/{schedule_id}/light_bulb_commands/{newLightBulbCommand.Id}",
                     newLightBulbCommand);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ConstraintException)
+            catch (ConstraintException exception)
             {
-                return Forbid();
+                return Forbid(exception.Message);
+            }
+            catch (DuplicateNameException exception)
+            {
+                return Conflict(exception.Message);
             }
             catch (Exception)
             {
@@ -121,9 +125,9 @@ namespace API.Controllers
 
                 return Ok(lightBulbCommand);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -145,9 +149,9 @@ namespace API.Controllers
 
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {

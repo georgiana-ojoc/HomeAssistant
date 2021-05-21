@@ -38,9 +38,9 @@ namespace API.Controllers
 
                 return Ok(thermostatCommands);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -62,9 +62,9 @@ namespace API.Controllers
 
                 return Ok(thermostatCommand);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -88,13 +88,21 @@ namespace API.Controllers
                 return Created($"schedules/{schedule_id}/thermostat_commands/{newThermostatCommand.Id}",
                     newThermostatCommand);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ConstraintException)
+            catch (ArgumentException exception)
             {
-                return Forbid();
+                return BadRequest(exception.Message);
+            }
+            catch (ConstraintException exception)
+            {
+                return Forbid(exception.Message);
+            }
+            catch (DuplicateNameException exception)
+            {
+                return Conflict(exception.Message);
             }
             catch (Exception)
             {
@@ -121,9 +129,13 @@ namespace API.Controllers
 
                 return Ok(thermostatCommand);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -145,9 +157,9 @@ namespace API.Controllers
 
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {

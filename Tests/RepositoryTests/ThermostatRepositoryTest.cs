@@ -59,7 +59,7 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'room_id')");
+                .WithMessage("Room id cannot be empty.");
         }
 
         #endregion
@@ -134,7 +134,30 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'name')");
+                .WithMessage("Name cannot be empty.");
+        }
+
+        [Fact]
+        public async void
+            GivenNewThermostat_WhenTemperatureIsIncorrect_ThenCreateThermostatAsyncShouldThrowArgumentException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            ThermostatRepository repository = new ThermostatRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateThermostatAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc"),
+                    Guid.Parse("f6ed4eb2-ac66-429b-8199-8757888bb0ad"), new Thermostat()
+                    {
+                        Name = "Wireless thermostat",
+                        Temperature = 6
+                    });
+            };
+
+            await function.Should().ThrowAsync<ArgumentException>()
+                .WithMessage("Temperature should be between 7.0 and 30.0.");
         }
 
         #endregion

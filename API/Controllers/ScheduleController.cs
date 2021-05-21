@@ -30,9 +30,9 @@ namespace API.Controllers
             {
                 return Ok(await Mediator.Send(new GetSchedulesQuery()));
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -53,9 +53,9 @@ namespace API.Controllers
 
                 return Ok(schedule);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -71,17 +71,21 @@ namespace API.Controllers
                 Schedule newSchedule = await Mediator.Send(new CreateScheduleCommand {Request = request});
                 return Created($"/schedules/{newSchedule.Id}", newSchedule);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ArgumentException)
+            catch (ArgumentException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ConstraintException)
+            catch (ConstraintException exception)
             {
-                return Forbid();
+                return Forbid(exception.Message);
+            }
+            catch (DuplicateNameException exception)
+            {
+                return Conflict(exception.Message);
             }
             catch (Exception)
             {
@@ -103,13 +107,13 @@ namespace API.Controllers
 
                 return Ok(schedule);
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
-            catch (ArgumentException)
+            catch (ArgumentException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {
@@ -130,9 +134,9 @@ namespace API.Controllers
 
                 return NoContent();
             }
-            catch (ArgumentNullException)
+            catch (ArgumentNullException exception)
             {
-                return BadRequest();
+                return BadRequest(exception.Message);
             }
             catch (Exception)
             {

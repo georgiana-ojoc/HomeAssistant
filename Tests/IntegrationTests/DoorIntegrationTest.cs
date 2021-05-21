@@ -86,7 +86,7 @@ namespace Tests.IntegrationTests
 
             HttpResponseMessage response = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
             {
-                Name = "Balcony door"
+                Name = "Door"
             });
 
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -94,7 +94,7 @@ namespace Tests.IntegrationTests
             Door door = await response.Content.ReadFromJsonAsync<Door>();
 
             door.Should().NotBeNull();
-            door?.Name.Should().Be("Balcony door");
+            door?.Name.Should().Be("Door");
         }
 
         [Fact]
@@ -107,29 +107,29 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        [Fact]
-        public async Task
-            GivenNewDoor_WhenDoorNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        {
-            using HttpClient client = GetClient(GetType().Name);
-
-            for (int index = 0; index < 9; index++)
-            {
-                HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
-                {
-                    Name = "Balcony door"
-                });
-
-                createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            }
-
-            HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
-            {
-                Name = "Balcony door"
-            });
-
-            forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        }
+        // [Fact]
+        // public async Task
+        //     GivenNewDoor_WhenDoorNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
+        // {
+        //     using HttpClient client = GetClient(GetType().Name);
+        //
+        //     for (int index = 0; index < 9; index++)
+        //     {
+        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
+        //         {
+        //             Name = "Balcony door"
+        //         });
+        //
+        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        //     }
+        //
+        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
+        //     {
+        //         Name = "Balcony door"
+        //     });
+        //
+        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        // }
 
         #endregion
 

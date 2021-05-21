@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using API.Repositories;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Shared;
 using Shared.Models;
 using Shared.Requests;
+using Shared.Responses;
 using Xunit;
 
 namespace Tests.RepositoryTests
@@ -27,7 +29,7 @@ namespace Tests.RepositoryTests
             var result = await repository.GetDoorCommandsAsync("homeassistantgo@outlook.com",
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"));
 
-            result.Should().BeOfType<List<DoorCommand>>();
+            result.Should().BeOfType<List<DoorCommandResponse>>();
         }
 
         [Fact]
@@ -58,7 +60,7 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'schedule_id')");
+                .WithMessage("Schedule id cannot be empty.");
         }
 
         #endregion
@@ -110,7 +112,7 @@ namespace Tests.RepositoryTests
             var result = await repository.CreateDoorCommandAsync("homeassistantgo@outlook.com",
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new DoorCommand()
                 {
-                    DoorId = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"),
+                    DoorId = Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"),
                     Locked = true
                 });
 
@@ -132,7 +134,28 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentNullException>()
-                .WithMessage("Value cannot be null. (Parameter 'door_id')");
+                .WithMessage("Door id cannot be empty.");
+        }
+
+        [Fact]
+        public async void
+            GivenNewDoorCommand_WhenDoorExists_ThenCreateDoorCommandAsyncShouldThrowDuplicateNameException()
+        {
+            await using HomeAssistantContext context = GetContextWithData();
+            IMapper mapper = GetMapper();
+            DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
+
+            Func<Task> function = async () =>
+            {
+                await repository.CreateDoorCommandAsync("homeassistantgo@outlook.com",
+                    Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"), new DoorCommand()
+                    {
+                        DoorId = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba")
+                    });
+            };
+
+            await function.Should().ThrowAsync<DuplicateNameException>()
+                .WithMessage("You already have a command for the specified door in this schedule.");
         }
 
         #endregion

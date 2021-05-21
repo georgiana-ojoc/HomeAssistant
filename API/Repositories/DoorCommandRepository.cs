@@ -35,7 +35,7 @@ namespace API.Repositories
         public async Task<IEnumerable<DoorCommandResponse>> GetDoorCommandsAsync(string email, Guid scheduleId)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -75,7 +75,7 @@ namespace API.Repositories
         public async Task<DoorCommand> GetDoorCommandByIdAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             return await GetDoorCommandInternalAsync(email, scheduleId, id);
@@ -85,8 +85,8 @@ namespace API.Repositories
             DoorCommand doorCommand)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
-            CheckGuid(doorCommand.DoorId, "door_id");
+            CheckGuid(scheduleId, "schedule id");
+            CheckGuid(doorCommand.DoorId, "door id");
 
             Schedule schedule = await GetScheduleInternalAsync(email, scheduleId);
             if (schedule == null)
@@ -107,7 +107,16 @@ namespace API.Repositories
             int doorCommands = await Context.DoorCommands.CountAsync(dc => dc.ScheduleId == scheduleId);
             if (doorCommands >= limit)
             {
-                throw new ConstraintException(nameof(CreateDoorCommandAsync));
+                throw new ConstraintException("You have no door commands left in this schedule. Upgrade your plan.");
+            }
+
+            int doorCommandsByScheduleIdAndDoorId = await Context.DoorCommands
+                .CountAsync(dc => dc.ScheduleId == scheduleId &&
+                                  dc.DoorId == doorCommand.DoorId);
+            if (doorCommandsByScheduleIdAndDoorId > 0)
+            {
+                throw new DuplicateNameException(
+                    "You already have a command for the specified door in this schedule.");
             }
 
             doorCommand.ScheduleId = schedule.Id;
@@ -120,7 +129,7 @@ namespace API.Repositories
             JsonPatchDocument<DoorCommandRequest> doorCommandPatch)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             DoorCommand doorCommand = await GetDoorCommandInternalAsync(email, scheduleId, id);
@@ -131,8 +140,8 @@ namespace API.Repositories
 
             DoorCommandRequest doorCommandToPatch = Mapper.Map<DoorCommandRequest>(doorCommand);
             doorCommandPatch.ApplyTo(doorCommandToPatch);
-            CheckGuid(doorCommandToPatch.DoorId, "door_id");
-            Door door = await Context.Doors.FirstOrDefaultAsync(d => d.Id == doorCommand.DoorId);
+            CheckGuid(doorCommandToPatch.DoorId, "door id");
+            Door door = await Context.Doors.FirstOrDefaultAsync(d => d.Id == doorCommandToPatch.DoorId);
             if (door == null)
             {
                 return null;
@@ -146,7 +155,7 @@ namespace API.Repositories
         public async Task<DoorCommand> DeleteDoorCommandAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(scheduleId, "schedule_id");
+            CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
             DoorCommand doorCommand = await GetDoorCommandInternalAsync(email, scheduleId, id);

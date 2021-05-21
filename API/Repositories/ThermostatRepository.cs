@@ -19,6 +19,19 @@ namespace API.Repositories
         {
         }
 
+        private void CheckTemperature(decimal? temperature)
+        {
+            if (temperature == null)
+            {
+                return;
+            }
+
+            if (temperature is not (>= (decimal) 7.0 and <= (decimal) 30.0))
+            {
+                throw new ArgumentException("Temperature should be between 7.0 and 30.0.");
+            }
+        }
+
         private async Task<Thermostat> GetThermostatInternalAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             House house = await Context.Houses.Where(h => h.Email == email)
@@ -42,8 +55,8 @@ namespace API.Repositories
         public async Task<IEnumerable<Thermostat>> GetThermostatsAsync(string email, Guid houseId, Guid roomId)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
 
             Room room = await GetRoomInternalAsync(email, houseId, roomId);
             if (room == null)
@@ -57,8 +70,8 @@ namespace API.Repositories
         public async Task<Thermostat> GetThermostatByIdAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             return await GetThermostatInternalAsync(email, houseId, roomId, id);
@@ -68,9 +81,10 @@ namespace API.Repositories
             Thermostat thermostat)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckString(thermostat.Name, "name");
+            CheckTemperature(thermostat.Temperature);
 
             Room room = await GetRoomInternalAsync(email, houseId, roomId);
             if (room == null)
@@ -85,14 +99,15 @@ namespace API.Repositories
             int thermostatsByRoomId = await Context.Thermostats.CountAsync(t => t.RoomId == roomId);
             if (thermostatsByRoomId >= limit)
             {
-                throw new ConstraintException(nameof(CreateThermostatAsync));
+                throw new ConstraintException("You have no thermostats left in this room. Upgrade your plan.");
             }
 
             int thermostatsByRoomIdAndName = await Context.Thermostats.CountAsync(t => t.RoomId == roomId &&
                 t.Name == thermostat.Name);
             if (thermostatsByRoomIdAndName > 0)
             {
-                throw new DuplicateNameException(nameof(CreateThermostatAsync));
+                throw new DuplicateNameException("You already have a thermostat with the specified name in this " +
+                                                 "room.");
             }
 
             thermostat.RoomId = room.Id;
@@ -105,8 +120,8 @@ namespace API.Repositories
             JsonPatchDocument<ThermostatRequest> thermostatPatch)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             Thermostat thermostat = await GetThermostatInternalAsync(email, houseId, roomId, id);
@@ -118,6 +133,7 @@ namespace API.Repositories
             ThermostatRequest thermostatToPatch = Mapper.Map<ThermostatRequest>(thermostat);
             thermostatPatch.ApplyTo(thermostatToPatch);
             CheckString(thermostatToPatch.Name, "name");
+            CheckTemperature(thermostatToPatch.Temperature);
 
             Mapper.Map(thermostatToPatch, thermostat);
             await Context.SaveChangesAsync();
@@ -127,8 +143,8 @@ namespace API.Repositories
         public async Task<Thermostat> DeleteThermostatAsync(string email, Guid houseId, Guid roomId, Guid id)
         {
             CheckString(email, "email");
-            CheckGuid(houseId, "house_id");
-            CheckGuid(roomId, "room_id");
+            CheckGuid(houseId, "house id");
+            CheckGuid(roomId, "room id");
             CheckGuid(id, "id");
 
             Thermostat thermostat = await GetThermostatInternalAsync(email, houseId, roomId, id);
