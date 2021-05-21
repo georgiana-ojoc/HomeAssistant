@@ -77,8 +77,12 @@ namespace API.Repositories
                 return null;
             }
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 10;
+            if (userLimit != null)
+                limit = userLimit.LightBulbLimit;
             int lightBulbsByRoomId = await Context.LightBulbs.CountAsync(lb => lb.RoomId == roomId);
-            if (lightBulbsByRoomId >= 10)
+            if (lightBulbsByRoomId >= limit)
             {
                 throw new ConstraintException("You have no light bulbs left in this room. Upgrade your plan.");
             }

@@ -39,8 +39,12 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckString(house.Name, "name");
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 5;
+            if (userLimit != null)
+                limit = userLimit.HouseLimit;
             int housesByEmail = await Context.Houses.CountAsync(h => h.Email == email);
-            if (housesByEmail >= 5)
+            if (housesByEmail >= limit)
             {
                 throw new ConstraintException("You have no houses left. Upgrade your plan.");
             }

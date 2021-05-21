@@ -54,8 +54,12 @@ namespace API.Repositories
                 return null;
             }
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 20;
+            if (userLimit != null)
+                limit = userLimit.RoomLimit;
             int roomsByHouseId = await Context.Rooms.CountAsync(r => r.HouseId == houseId);
-            if (roomsByHouseId >= 20)
+            if (roomsByHouseId >= limit)
             {
                 throw new ConstraintException("You have no rooms left in this house. Upgrade your plan.");
             }

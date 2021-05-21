@@ -92,8 +92,12 @@ namespace API.Repositories
                 return null;
             }
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 10;
+            if (userLimit != null)
+                limit = userLimit.ThermostatLimit;
             int thermostatsByRoomId = await Context.Thermostats.CountAsync(t => t.RoomId == roomId);
-            if (thermostatsByRoomId >= 10)
+            if (thermostatsByRoomId >= limit)
             {
                 throw new ConstraintException("You have no thermostats left in this room. Upgrade your plan.");
             }
