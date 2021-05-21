@@ -77,8 +77,12 @@ namespace API.Repositories
                 return null;
             }
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 10;
+            if (userLimit != null)
+                limit = userLimit.DoorLimit;
             int doorsByRoomId = await Context.Doors.CountAsync(d => d.RoomId == roomId);
-            if (doorsByRoomId >= 10)
+            if (doorsByRoomId >= limit)
             {
                 throw new ConstraintException(nameof(CreateDoorAsync));
             }
