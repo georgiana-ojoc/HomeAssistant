@@ -13,5 +13,9 @@ namespace Shared.Requests
         [Required] public int DoorLimit { get; set; }
         
         [Required] public int ThermostatLimit { get; set; }
+        
+        [Required] public int ScheduleLimit { get; set; }
+        
+        [Required] public int CommandLimit { get; set; }
     }
 }

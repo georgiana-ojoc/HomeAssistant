@@ -103,9 +103,13 @@ namespace API.Repositories
                 return null;
             }
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 10;
+            if (userLimit != null)
+                limit = userLimit.CommandLimit;
             int thermostatCommands = await Context.ThermostatCommands.CountAsync(tc => tc.ScheduleId ==
                 scheduleId);
-            if (thermostatCommands >= 10)
+            if (thermostatCommands >= limit)
             {
                 throw new ConstraintException(nameof(CreateThermostatCommandAsync));
             }

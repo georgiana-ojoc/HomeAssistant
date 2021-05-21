@@ -11,5 +11,7 @@ namespace Shared.Models
         [Required] public int LightBulbLimit { get; set; }
         [Required] public int DoorLimit { get; set; }
         [Required] public int ThermostatLimit { get; set; }
+        [Required] public int ScheduleLimit { get; set; }
+        [Required] public int CommandLimit { get; set; }
     }
 }

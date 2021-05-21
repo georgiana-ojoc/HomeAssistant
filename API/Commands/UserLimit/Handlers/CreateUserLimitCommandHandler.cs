@@ -24,6 +24,8 @@ namespace API.Commands.UserLimitCommand.Handlers
                 LightBulbLimit = request.Request.LightBulbLimit,
                 DoorLimit = request.Request.DoorLimit,
                 ThermostatLimit = request.Request.ThermostatLimit,
+                CommandLimit = request.Request.CommandLimit,
+                ScheduleLimit = request.Request.ScheduleLimit,
             });
         }
     }

@@ -93,6 +93,10 @@ namespace Shared
                 entity.Property(e => e.LightBulbLimit).HasColumnName("light_bulb_limit");
 
                 entity.Property(e => e.ThermostatLimit).HasColumnName("thermostat_limit");
+                
+                entity.Property(e => e.ScheduleLimit).HasColumnName("schedule_limit");
+                
+                entity.Property(e => e.CommandLimit).HasColumnName("command_limit");
             });
 
             modelBuilder.Entity<Room>(entity =>

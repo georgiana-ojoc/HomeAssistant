@@ -131,9 +131,13 @@ namespace API.Repositories
                 return null;
             }
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 10;
+            if (userLimit != null)
+                limit = userLimit.CommandLimit;
             int lightBulbCommands = await Context.LightBulbCommands.CountAsync(lbc => lbc.ScheduleId ==
                 scheduleId);
-            if (lightBulbCommands >= 10)
+            if (lightBulbCommands >= limit)
             {
                 throw new ConstraintException(nameof(CreateLightBulbCommandAsync));
             }

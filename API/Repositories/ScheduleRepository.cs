@@ -64,8 +64,12 @@ namespace API.Repositories
             CheckTime(schedule.Time);
             CheckDays(schedule.Days);
 
+            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            int limit = 20;
+            if (userLimit != null)
+                limit = userLimit.ScheduleLimit;
             int schedules = await Context.Schedules.CountAsync(s => s.Email == email);
-            if (schedules >= 20)
+            if (schedules >= limit)
             {
                 throw new ConstraintException(nameof(CreateScheduleAsync));
             }
