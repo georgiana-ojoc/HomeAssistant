@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Shared;
+using Stripe;
 
 namespace API
 {
@@ -32,7 +33,6 @@ namespace API
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAdB2C"));
-
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -73,6 +73,7 @@ namespace API
             services.AddSingleton(mapperConfiguration.CreateMapper());
 
             services.AddScoped<IHouseRepository, HouseRepository>();
+            services.AddScoped<IUserLimitRepository, UserLimitRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<ILightBulbRepository, LightBulbRepository>();
             services.AddScoped<IDoorRepository, DoorRepository>();
@@ -134,7 +135,7 @@ namespace API
                     "Home Assistant API v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -146,6 +147,7 @@ namespace API
             app.UseHangfireDashboard();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers().RequireAuthorization(); });
+            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["ApiKey"];
         }
     }
 }

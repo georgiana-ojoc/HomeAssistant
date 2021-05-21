@@ -5,32 +5,34 @@
 @inject IJSRuntime jsRuntime
 <h3>Checkout</h3>
 <div class="card" style="width: 18rem;display: inline-block">
-  <div class="card-body" style="display: flex;
+    <div class="card-body" style="display: flex;
                                      flex-direction: column;
                                      justify-content: center;
-                                     align-items: center;">        <h5 class="card-title">Basic</h5>
+                                     align-items: center;">
+        <h5 class="card-title">Basic</h5>
         <p class="card-text">5 of everything.</p>
         <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler("Basic"))">Buy Here</button>
     </div>
 </div>
 <div class="card" style="width: 18rem;display: inline-block">
-  <div class="card-body" style="display: flex;
+    <div class="card-body" style="display: flex;
                                      flex-direction: column;
                                      justify-content: center;
-                                     align-items: center;">        <h5 class="card-title">Premium</h5>
+                                     align-items: center;">
+        <h5 class="card-title">Premium</h5>
         <p class="card-text">20 of everything.</p>
         <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler("Premium"))">Buy Here</button>
     </div>
 </div>
 <div class="card" style="width: 18rem;display: inline-block">
-  <div class="card-body" style="display: flex;
+    <div class="card-body" style="display: flex;
                                      flex-direction: column;
                                      justify-content: center;
                                      align-items: center;">
-    <h5 class="card-title">Business</h5>
+        <h5 class="card-title">Business</h5>
         <p class="card-text">100 of everything.</p>
-    <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler("Business"))">Buy Here</button>
-  </div>
+        <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler("Business"))">Buy Here</button>
+    </div>
 </div>
 
 @code {
@@ -43,18 +45,28 @@
 
     public static async Task<string> CreateCheckoutSessionAsync(string priceId, string customerId = null)
     {
+        Dictionary<string, string> metadata = new Dictionary<string, string>();
+        String email = "silviuilas@gmail.com";
+        metadata["email"] = email;
+        var paymentIntentData = new SessionPaymentIntentDataOptions();
+        paymentIntentData.Metadata = new Dictionary<string, string>
+        {
+            {"email", email},
+        };
         var options = new SessionCreateOptions
         {
+            PaymentIntentData = paymentIntentData,
             Customer = customerId,
+            CustomerEmail = email,
             PaymentMethodTypes = new List<string>
             {
                 "card",
             },
             Mode = "payment",
-            SuccessUrl = $"https://localhost:5001/success?session_id={{CHECKOUT_SESSION_ID}}",
-            CancelUrl = $"https://localhost:5001/checkout",
+            SuccessUrl = $"https://localhost:6001/success?session_id={{CHECKOUT_SESSION_ID}}",
+            CancelUrl = $"https://localhost:6001/checkout",
         };
-        
+
         switch (priceId)
         {
             case "Basic":
@@ -97,7 +109,6 @@
                 };
                 break;
         }
-        
 
         return (await new SessionService().CreateAsync(options)).Id;
     }
