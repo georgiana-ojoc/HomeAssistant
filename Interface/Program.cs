@@ -27,7 +27,7 @@ namespace Interface
                     client =>
                     {
                         client.BaseAddress =
-                            new Uri(builder.Configuration["ApiUrl"]);
+                            new Uri(builder.Configuration["ApiUrl"] ?? string.Empty);
                     })
                 .AddHttpMessageHandler(sp => sp.GetRequiredService<AuthorizationMessageHandler>()
                     .ConfigureHandler(new[]

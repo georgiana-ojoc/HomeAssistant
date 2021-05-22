@@ -1,6 +1,5 @@
 using System;
 using MediatR;
-using Shared.Responses;
 
 namespace API.Queries.LightBulbCommand
 {

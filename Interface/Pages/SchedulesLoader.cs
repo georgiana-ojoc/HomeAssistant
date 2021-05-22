@@ -54,13 +54,16 @@ namespace Interface.Pages
                 {
                     await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
                 }
+
                 if (response.StatusCode == HttpStatusCode.Conflict)
                 {
                     await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
                 }
+
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    await _jsRuntime.InvokeVoidAsync("alert", "Check your input and try again!\nMake sure you have selected at least 1 day to repeat on!");
+                    await _jsRuntime.InvokeVoidAsync("alert",
+                        "Check your input and try again!\nMake sure you have selected at least 1 day to repeat on!");
                 }
             }
         }

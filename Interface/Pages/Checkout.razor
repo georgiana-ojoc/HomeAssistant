@@ -1,10 +1,10 @@
 @page "/checkout"
-@using Stripe.Checkout
-@using Stripe
-@using System.Configuration
+@inject AuthenticationStateProvider _authenticationStateProvider
 @inject HttpClient _http
+@inject IJSRuntime _jsRuntime
+@using Stripe.Checkout
+@using System.Security.Claims
 @using global::Shared.Models
-@inject IJSRuntime jsRuntime
 <h3>Checkout</h3>
 <div style="display: flex;flex-wrap: wrap;justify-content: space-evenly;">
     @if (_checkoutOffers != null)
@@ -40,17 +40,22 @@
     private async Task CheckoutHandler(Guid id, string name, string description, long amount)
     {
         string sessionId = await CreateCheckoutSessionAsync(id, name, description, amount);
-        await jsRuntime.InvokeVoidAsync("redirectToCheckout", sessionId);
+        await _jsRuntime.InvokeVoidAsync("redirectToCheckout", sessionId);
     }
 
-    public static async Task<string> CreateCheckoutSessionAsync(Guid id, string name, string description, long amount, string customerId = null)
+    private async Task<string> CreateCheckoutSessionAsync(Guid id, string name, string description, long amount, string customerId = null)
     {
-        String email = "silviuilas@gmail.com";
-        var paymentIntentData = new SessionPaymentIntentDataOptions();
-        paymentIntentData.Metadata = new Dictionary<string, string>
+        AuthenticationState authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authenticationState.User;
+        string email = user.FindFirst("emails")?.Value;
+        email = email?.Substring(2, email.Length - 4);
+        var paymentIntentData = new SessionPaymentIntentDataOptions
         {
-            {"email", email},
-            {"id", id.ToString()}
+            Metadata = new Dictionary<string, string>
+            {
+                {"email", email},
+                {"id", id.ToString()}
+            }
         };
         var options = new SessionCreateOptions
         {
@@ -64,17 +69,16 @@
             Mode = "payment",
             SuccessUrl = $"https://localhost:6001/success?session_id={{CHECKOUT_SESSION_ID}}",
             CancelUrl = $"https://localhost:6001/checkout",
-        };
-
-        options.LineItems = new List<SessionLineItemOptions>
-        {
-            new SessionLineItemOptions
+            LineItems = new List<SessionLineItemOptions>
             {
-                Name = name,
-                Description = description,
-                Amount = amount,
-                Currency = "usd",
-                Quantity = 1,
+                new()
+                {
+                    Name = name,
+                    Description = description,
+                    Amount = amount,
+                    Currency = "usd",
+                    Quantity = 1,
+                },
             },
         };
 

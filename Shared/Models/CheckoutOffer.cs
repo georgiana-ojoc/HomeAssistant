@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,7 +8,7 @@ namespace Shared.Models
     {
         [Required] public String OfferName { get; set; }
         [Required] public String OfferDescription { get; set; }
-        
+
         internal ICollection<UserCheckoutOffer> UserCheckoutOffers { get; set; }
         [Required] public int OfferValue { get; set; }
         [Required] public int HouseLimit { get; set; }

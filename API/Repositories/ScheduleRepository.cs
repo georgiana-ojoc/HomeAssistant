@@ -75,7 +75,7 @@ namespace API.Repositories
             {
                 throw new ConstraintException(nameof(CreateScheduleAsync));
             }
-            
+
             int schedulesByEmailAndName = await Context.Schedules.CountAsync(s => s.Email == email &&
                 s.Name == schedule.Name);
             if (schedulesByEmailAndName > 0)

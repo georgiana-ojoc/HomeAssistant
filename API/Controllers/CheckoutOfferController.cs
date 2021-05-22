@@ -7,7 +7,7 @@ using Shared;
 using Shared.Models;
 
 namespace API.Controllers
-{    
+{
     [Route("CheckoutOffer")]
     [ApiController]
     [AllowAnonymous]
@@ -25,6 +25,5 @@ namespace API.Controllers
         {
             return await _context.CheckoutOffer.ToListAsync();
         }
-        
     }
 }

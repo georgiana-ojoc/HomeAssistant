@@ -22,9 +22,9 @@ namespace Interface.Pages
         {
             _roomId = roomId;
             _doors = await _http.GetFromJsonAsync<IList<Door>>(
-            $"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}");
+                $"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}");
         }
-        
+
         private void SetNewCommandDoorId(Guid doorId)
         {
             _newCommandDoorId = doorId;
@@ -33,9 +33,8 @@ namespace Interface.Pages
         private async Task GetDoorCommands()
         {
             var responseDoorCommands = await _http.GetFromJsonAsync<IList<DoorCommandResponse>>(
-            $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}");
+                $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}");
             if (responseDoorCommands != null) _doorCommands = new List<DoorCommandResponse>(responseDoorCommands);
-
         }
 
         private async Task AddDoorCommand()
@@ -63,6 +62,7 @@ namespace Interface.Pages
                 {
                     await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
                 }
+
                 if (response.StatusCode == HttpStatusCode.Conflict)
                 {
                     await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());

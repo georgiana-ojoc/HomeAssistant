@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Shared;
 using Shared.Models;
 using Stripe;
@@ -46,7 +45,7 @@ namespace API.Controllers
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
                     Console.WriteLine("A payment intent was created from id: {0}.", paymentIntent.Id);
                     // Uncomment this for testing
-                    // return await handlePaymentIntentSucceeded(paymentIntent);
+                    return await handlePaymentIntentSucceeded(paymentIntent);
                     return Ok();
                 }
                 else
@@ -55,6 +54,7 @@ namespace API.Controllers
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
                     Console.WriteLine("Something was made from {0}.", paymentIntent.Id);
                 }
+
                 return Ok();
             }
             catch (Exception)
@@ -84,6 +84,7 @@ namespace API.Controllers
                             userCheckoutOffer = new UserCheckoutOffer();
                             userCheckoutOffer.Email = email;
                         }
+
                         userCheckoutOffer.CheckoutOffersId = id;
                         _context.UserCheckoutOffer.Update(userCheckoutOffer);
                         await _context.SaveChangesAsync();

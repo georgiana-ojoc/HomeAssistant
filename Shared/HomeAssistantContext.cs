@@ -61,8 +61,8 @@ namespace Shared
                     .HasMaxLength(128)
                     .HasColumnName("name");
             });
-            
-            
+
+
             modelBuilder.Entity<UserCheckoutOffer>(entity =>
             {
                 entity.HasKey(e => e.Id)
@@ -85,7 +85,7 @@ namespace Shared
                     .IsRequired()
                     .HasMaxLength(256)
                     .HasColumnName("email");
-                
+
                 entity.Property(e => e.CheckoutOffersId).HasColumnName("checkout_offers_id");
 
                 entity.HasOne(e => e.CheckoutOffer)
