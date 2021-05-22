@@ -8,9 +8,6 @@ namespace Shared
     {
         public MappingProfile()
         {
-            CreateMap<UserLimit, UserLimitRequest>();
-            CreateMap<UserLimitRequest, UserLimit>();
-            
             CreateMap<House, HouseRequest>();
             CreateMap<HouseRequest, House>();
 

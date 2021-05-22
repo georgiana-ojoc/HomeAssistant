@@ -92,10 +92,12 @@ namespace API.Repositories
                 return null;
             }
 
-            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email == email);
+            CheckoutOffer checkoutOffer =
+                Context.CheckoutOffer.FirstOrDefault(u => u.Id == userCheckoutOffer.CheckoutOffersId);
             int limit = 10;
-            if (userLimit != null)
-                limit = userLimit.ThermostatLimit;
+            if (checkoutOffer != null)
+                limit = checkoutOffer.ThermostatLimit;
             int thermostatsByRoomId = await Context.Thermostats.CountAsync(t => t.RoomId == roomId);
             if (thermostatsByRoomId >= limit)
             {

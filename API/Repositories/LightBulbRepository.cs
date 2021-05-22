@@ -77,10 +77,12 @@ namespace API.Repositories
                 return null;
             }
 
-            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email == email);
+            CheckoutOffer checkoutOffer =
+                Context.CheckoutOffer.FirstOrDefault(u => u.Id == userCheckoutOffer.CheckoutOffersId);
             int limit = 10;
-            if (userLimit != null)
-                limit = userLimit.LightBulbLimit;
+            if (checkoutOffer != null)
+                limit = checkoutOffer.LightBulbLimit;
             int lightBulbsByRoomId = await Context.LightBulbs.CountAsync(lb => lb.RoomId == roomId);
             if (lightBulbsByRoomId >= limit)
             {

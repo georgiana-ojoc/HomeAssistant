@@ -73,7 +73,6 @@ namespace API
             services.AddSingleton(mapperConfiguration.CreateMapper());
 
             services.AddScoped<IHouseRepository, HouseRepository>();
-            services.AddScoped<IUserLimitRepository, UserLimitRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<ILightBulbRepository, LightBulbRepository>();
             services.AddScoped<IDoorRepository, DoorRepository>();

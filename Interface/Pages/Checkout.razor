@@ -2,56 +2,55 @@
 @using Stripe.Checkout
 @using Stripe
 @using System.Configuration
+@inject HttpClient _http
+@using global::Shared.Models
 @inject IJSRuntime jsRuntime
 <h3>Checkout</h3>
-<div class="card" style="width: 18rem;display: inline-block">
-    <div class="card-body" style="display: flex;
-                                     flex-direction: column;
-                                     justify-content: center;
-                                     align-items: center;">
-        <h5 class="card-title">Basic</h5>
-        <p class="card-text">5 of everything.</p>
-        <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler("Basic"))">Buy Here</button>
-    </div>
-</div>
-<div class="card" style="width: 18rem;display: inline-block">
-    <div class="card-body" style="display: flex;
-                                     flex-direction: column;
-                                     justify-content: center;
-                                     align-items: center;">
-        <h5 class="card-title">Premium</h5>
-        <p class="card-text">20 of everything.</p>
-        <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler("Premium"))">Buy Here</button>
-    </div>
-</div>
-<div class="card" style="width: 18rem;display: inline-block">
-    <div class="card-body" style="display: flex;
-                                     flex-direction: column;
-                                     justify-content: center;
-                                     align-items: center;">
-        <h5 class="card-title">Business</h5>
-        <p class="card-text">100 of everything.</p>
-        <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler("Business"))">Buy Here</button>
-    </div>
+<div style="display: flex;flex-wrap: wrap;justify-content: space-evenly;">
+    @if (_checkoutOffers != null)
+    {
+        @foreach (var checkoutPriceKey in _checkoutOffers)
+        {
+            <div class="card" style="width: 18rem;display: inline-block; margin: 10px">
+                <div class="card-body" style="display: flex;
+                                         flex-direction: column;
+                                         justify-content: center;
+                                         align-items: center;">
+                    <h5 class="card-title">@checkoutPriceKey.OfferName</h5>
+                    <p class="card-text">@checkoutPriceKey.OfferDescription</p>
+                    @foreach (KeyValuePair<string, string> checkoutDetailsPair in checkoutPriceKey.GetCustomEnumerator())
+                    {
+                        <p class="card-text" style="margin:5px">
+                            @checkoutDetailsPair.Key <b>@checkoutDetailsPair.Value</b>
+                        </p>
+                    }
+                    <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler(@checkoutPriceKey.Id, @checkoutPriceKey.OfferName, @checkoutPriceKey.OfferDescription, @checkoutPriceKey.OfferValue))">Buy Here for @(checkoutPriceKey.OfferValue / 100)$</button>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div style="text-align: center; size: 50px;">Loading...</div>
+    }
 </div>
 
 @code {
 
-    private async Task CheckoutHandler(string priceId)
+    private async Task CheckoutHandler(Guid id, string name, string description, long amount)
     {
-        string sessionId = await CreateCheckoutSessionAsync(priceId);
+        string sessionId = await CreateCheckoutSessionAsync(id, name, description, amount);
         await jsRuntime.InvokeVoidAsync("redirectToCheckout", sessionId);
     }
 
-    public static async Task<string> CreateCheckoutSessionAsync(string priceId, string customerId = null)
+    public static async Task<string> CreateCheckoutSessionAsync(Guid id, string name, string description, long amount, string customerId = null)
     {
-        Dictionary<string, string> metadata = new Dictionary<string, string>();
         String email = "silviuilas@gmail.com";
-        metadata["email"] = email;
         var paymentIntentData = new SessionPaymentIntentDataOptions();
         paymentIntentData.Metadata = new Dictionary<string, string>
         {
             {"email", email},
+            {"id", id.ToString()}
         };
         var options = new SessionCreateOptions
         {
@@ -67,50 +66,29 @@
             CancelUrl = $"https://localhost:6001/checkout",
         };
 
-        switch (priceId)
+        options.LineItems = new List<SessionLineItemOptions>
         {
-            case "Basic":
-                options.LineItems = new List<SessionLineItemOptions>
-                {
-                    new SessionLineItemOptions
-                    {
-                        Name = "Basic",
-                        Description = "5 of everything",
-                        Amount = 500,
-                        Currency = "ron",
-                        Quantity = 1,
-                    },
-                };
-                break;
-            case "Premium":
-                options.LineItems = new List<SessionLineItemOptions>
-                {
-                    new SessionLineItemOptions
-                    {
-                        Name = "Premium",
-                        Description = "20 of everything",
-                        Amount = 2000,
-                        Currency = "ron",
-                        Quantity = 1,
-                    },
-                };
-                break;
-            case "Business":
-                options.LineItems = new List<SessionLineItemOptions>
-                {
-                    new SessionLineItemOptions
-                    {
-                        Name = "Premium",
-                        Description = "100 of everything",
-                        Amount = 10000,
-                        Currency = "ron",
-                        Quantity = 1,
-                    },
-                };
-                break;
-        }
+            new SessionLineItemOptions
+            {
+                Name = name,
+                Description = description,
+                Amount = amount,
+                Currency = "usd",
+                Quantity = 1,
+            },
+        };
 
         return (await new SessionService().CreateAsync(options)).Id;
+    }
+
+}
+
+@code {
+    IList<CheckoutOffer> _checkoutOffers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _checkoutOffers = await _http.GetFromJsonAsync<IList<CheckoutOffer>>("CheckoutOffer");
     }
 
 }

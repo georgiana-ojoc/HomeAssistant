@@ -45,12 +45,7 @@ namespace API.Repositories
             return await Context.Houses.Where(h => h.Email == email)
                 .FirstOrDefaultAsync(h => h.Id == id);
         }
-
-        protected async Task<UserLimit> GetUserLimitInternalAsync(string email, Guid id)
-        {
-            return await Context.UserLimits.Where(h => h.Email == email)
-                .FirstOrDefaultAsync(h => h.Id == id);
-        }
+        
 
         protected async Task<Room> GetRoomInternalAsync(string email, Guid houseId, Guid id)
         {

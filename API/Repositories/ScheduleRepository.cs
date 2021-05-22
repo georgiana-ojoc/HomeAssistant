@@ -64,10 +64,12 @@ namespace API.Repositories
             CheckTime(schedule.Time);
             CheckDays(schedule.Days);
 
-            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email == email);
+            CheckoutOffer checkoutOffer =
+                Context.CheckoutOffer.FirstOrDefault(u => u.Id == userCheckoutOffer.CheckoutOffersId);
             int limit = 20;
-            if (userLimit != null)
-                limit = userLimit.ScheduleLimit;
+            if (checkoutOffer != null)
+                limit = checkoutOffer.ScheduleLimit;
             int schedules = await Context.Schedules.CountAsync(s => s.Email == email);
             if (schedules >= limit)
             {

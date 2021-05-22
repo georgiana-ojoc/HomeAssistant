@@ -71,24 +71,23 @@ namespace API.Controllers
                 if (email != null)
                 {
                     Console.WriteLine("The email is {0}.", paymentIntent.Metadata["email"]);
-                    UserLimit offer = CheckoutPrices.getInstance().givenUserLimits[paymentIntent.Amount];
-                    if (offer != null)
+                    Guid id = new Guid(paymentIntent.Metadata["id"]);
+                    CheckoutOffer checkoutOffer = _context.CheckoutOffer.Find(id);
+                    if (checkoutOffer != null)
                     {
-                        UserLimit userLimit = _context.UserLimits
+                        if (checkoutOffer.OfferValue != paymentIntent.Amount)
+                            return BadRequest();
+                        UserCheckoutOffer userCheckoutOffer = _context.UserCheckoutOffer
                             .FirstOrDefault(u => u.Email.Equals(email));
-                        if (userLimit != null)
+                        if (userCheckoutOffer == null)
                         {
-                            userLimit.HouseLimit = offer.HouseLimit;
-                            userLimit.RoomLimit = offer.RoomLimit;
-                            userLimit.DoorLimit = offer.DoorLimit;
-                            userLimit.LightBulbLimit = offer.LightBulbLimit;
-                            userLimit.ThermostatLimit = offer.ThermostatLimit;
-                            userLimit.ScheduleLimit = offer.ScheduleLimit;
-                            userLimit.CommandLimit = offer.CommandLimit;
-                            _context.UserLimits.Update(userLimit);
-                            await _context.SaveChangesAsync();
-                            return Ok();
+                            userCheckoutOffer = new UserCheckoutOffer();
+                            userCheckoutOffer.Email = email;
                         }
+                        userCheckoutOffer.CheckoutOffersId = id;
+                        _context.UserCheckoutOffer.Update(userCheckoutOffer);
+                        await _context.SaveChangesAsync();
+                        return Ok();
                     }
                 }
             }

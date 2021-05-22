@@ -54,10 +54,12 @@ namespace API.Repositories
                 return null;
             }
 
-            UserLimit userLimit = Context.UserLimits.Where(u => u.Email == email).FirstOrDefault();
+            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email == email);
+            CheckoutOffer checkoutOffer =
+                Context.CheckoutOffer.FirstOrDefault(u => u.Id == userCheckoutOffer.CheckoutOffersId);
             int limit = 20;
-            if (userLimit != null)
-                limit = userLimit.RoomLimit;
+            if (checkoutOffer != null)
+                limit = checkoutOffer.RoomLimit;
             int roomsByHouseId = await Context.Rooms.CountAsync(r => r.HouseId == houseId);
             if (roomsByHouseId >= limit)
             {

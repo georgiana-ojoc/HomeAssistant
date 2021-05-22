@@ -18,7 +18,8 @@ namespace Shared
         }
 
         public DbSet<House> Houses { get; set; }
-        public DbSet<UserLimit> UserLimits { get; set; }
+        public DbSet<CheckoutOffer> CheckoutOffer { get; set; }
+        public DbSet<UserCheckoutOffer> UserCheckoutOffer { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<LightBulb> LightBulbs { get; set; }
         public DbSet<Door> Doors { get; set; }
@@ -60,19 +61,20 @@ namespace Shared
                     .HasMaxLength(128)
                     .HasColumnName("name");
             });
-
-            modelBuilder.Entity<UserLimit>(entity =>
+            
+            
+            modelBuilder.Entity<UserCheckoutOffer>(entity =>
             {
                 entity.HasKey(e => e.Id)
-                    .HasName("user_limits_pk")
+                    .HasName("user_checkout_offers_pk")
                     .IsClustered(false);
 
-                entity.ToTable("user_limits");
+                entity.ToTable("user_checkout_offers");
 
-                entity.HasIndex(e => e.Id, "user_limits_id")
+                entity.HasIndex(e => e.Id, "user_checkout_offers_id")
                     .IsUnique();
-                
-                entity.HasIndex(e => e.Email, "user_limits_email_uindex")
+
+                entity.HasIndex(e => e.Email, "user_checkout_offers_email_uindex")
                     .IsUnique();
 
                 entity.Property(e => e.Id)
@@ -83,6 +85,37 @@ namespace Shared
                     .IsRequired()
                     .HasMaxLength(256)
                     .HasColumnName("email");
+                
+                entity.Property(e => e.CheckoutOffersId).HasColumnName("checkout_offers_id");
+
+                entity.HasOne(e => e.CheckoutOffer)
+                    .WithMany(e => e.UserCheckoutOffers)
+                    .HasForeignKey(d => d.CheckoutOffersId)
+                    .HasConstraintName("users_checkout_offers_checkout_offers_id_fk");
+            });
+
+            modelBuilder.Entity<CheckoutOffer>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("user_checkout_offers_pk")
+                    .IsClustered(false);
+
+                entity.ToTable("checkout_offers");
+
+                entity.HasIndex(e => e.Id, "user_checkout_offers_id")
+                    .IsUnique();
+
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("(newid())");
+
+
+                entity.Property(e => e.OfferName).HasColumnName("offer_name");
+
+                entity.Property(e => e.OfferDescription).HasColumnName("offer_description");
+
+                entity.Property(e => e.OfferValue).HasColumnName("offer_value");
 
                 entity.Property(e => e.HouseLimit).HasColumnName("house_limit");
 
@@ -93,9 +126,9 @@ namespace Shared
                 entity.Property(e => e.LightBulbLimit).HasColumnName("light_bulb_limit");
 
                 entity.Property(e => e.ThermostatLimit).HasColumnName("thermostat_limit");
-                
+
                 entity.Property(e => e.ScheduleLimit).HasColumnName("schedule_limit");
-                
+
                 entity.Property(e => e.CommandLimit).HasColumnName("command_limit");
             });
 
