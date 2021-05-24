@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Blazored.LocalStorage" Version="3.0.0" />
         <PackageReference Include="bootstrap" Version="5.0.0-beta3" />
         <PackageReference Include="bootstrap.sass" Version="5.0.0-beta3" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.0-preview.3.21201.13" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.0-preview.3.21201.13" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.0-preview.3.21201.13" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0-preview.3.21201.4" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.6" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.6" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="5.0.6" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Radzen.Blazor" Version="3.2.8" />
         <PackageReference Include="Stripe.net" Version="39.49.0" />
-        <PackageReference Include="System.Net.Http.Json" Version="6.0.0-preview.3.21201.4" />
+        <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>

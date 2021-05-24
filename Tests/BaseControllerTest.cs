@@ -15,7 +15,8 @@ namespace Tests
     {
         protected string GetApiUrl()
         {
-            IConfigurationRoot configuration = new ConfigurationBuilder().AddUserSecrets<BaseControllerTest>().Build();
+            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", false, true).Build();
             return configuration.GetValue<string>("ApiUrl");
         }
 
@@ -39,7 +40,8 @@ namespace Tests
             }
 
             HttpClient client = applicationFactory.CreateClient();
-            IConfigurationRoot configuration = new ConfigurationBuilder().AddUserSecrets<BaseControllerTest>().Build();
+            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", false, true).Build();
             string token = configuration.GetValue<string>("Token");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return client;
