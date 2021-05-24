@@ -57,7 +57,7 @@
                             </p>
                             <p>Please use the following check-box system until a fix will be found.</p>
                             <RadzenCheckBoxList @bind-Value=@_selectedDays TValue="int"
-                                                Change=@(args => OnChangeSelectedDays(args))>
+                                                Change=@(args => OnChangeSelectedDays(args)) Name="DaysSelector">
                                 <Items>
                                     <RadzenCheckBoxListItem Text="Monday" Value="1"/>
                                     <RadzenCheckBoxListItem Text="Tuesday" Value="2"/>
@@ -68,6 +68,9 @@
                                     <RadzenCheckBoxListItem Text="Sunday" Value="64"/>
                                 </Items>
                             </RadzenCheckBoxList>
+                            <RadzenLengthValidator Component="DaysSelector"
+                                                   Text="Please select at least a day to repeat on!"
+                                                   Style="position: absolute"/>
                         </div>
                     </div>
                     <RadzenButton ButtonType="ButtonType.Submit" Text="Add Schedule"></RadzenButton>
