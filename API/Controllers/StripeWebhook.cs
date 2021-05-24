@@ -9,7 +9,6 @@ using Shared.Models;
 using Stripe;
 
 
-//To run on backend install stripe cli and run 'stripe listen --forward-to localhost:5000/webhook'
 namespace API.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -34,25 +33,28 @@ namespace API.Controllers
                 var stripeEvent = EventUtility.ParseEvent(json);
                 if (stripeEvent.Type == Events.PaymentIntentSucceeded)
                 {
-                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                    Console.WriteLine("A successful payment for {0} was made from {1} with the amount {2}.",
-                        paymentIntent.Amount,
-                        paymentIntent.Id, paymentIntent.Amount);
-                    return await handlePaymentIntentSucceeded(paymentIntent);
+                    if (stripeEvent.Data.Object is PaymentIntent paymentIntent)
+                    {
+                        Console.WriteLine("A successful payment for {0} was made from {1} with the amount {2}.",
+                            paymentIntent.Amount,
+                            paymentIntent.Id, paymentIntent.Amount);
+                        return await HandlePaymentIntentSucceeded(paymentIntent);
+                    }
                 }
-                else if (stripeEvent.Type == Events.PaymentIntentCreated)
+
+                if (stripeEvent.Type == Events.PaymentIntentCreated)
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                    Console.WriteLine("A payment intent was created from id: {0}.", paymentIntent.Id);
-                    // Uncomment this for testing
-                    return await handlePaymentIntentSucceeded(paymentIntent);
-                    return Ok();
+                    Console.WriteLine("A payment intent was created from id: {0}.", paymentIntent?.Id);
+                    return await HandlePaymentIntentSucceeded(paymentIntent);
                 }
                 else
                 {
                     Console.WriteLine("An event of type {0} has been created.", stripeEvent.Type);
-                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-                    Console.WriteLine("Something was made from {0}.", paymentIntent.Id);
+                    if (stripeEvent.Data.Object is PaymentIntent paymentIntent)
+                    {
+                        Console.WriteLine("Something was made from {0}.", paymentIntent.Id);
+                    }
                 }
 
                 return Ok();
@@ -63,7 +65,7 @@ namespace API.Controllers
             }
         }
 
-        public async Task<IActionResult> handlePaymentIntentSucceeded(PaymentIntent paymentIntent)
+        public async Task<IActionResult> HandlePaymentIntentSucceeded(PaymentIntent paymentIntent)
         {
             if (paymentIntent.Metadata.Count != 0)
             {
@@ -72,18 +74,16 @@ namespace API.Controllers
                 {
                     Console.WriteLine("The email is {0}.", paymentIntent.Metadata["email"]);
                     Guid id = new Guid(paymentIntent.Metadata["id"]);
-                    CheckoutOffer checkoutOffer = _context.CheckoutOffer.Find(id);
+                    CheckoutOffer checkoutOffer = await _context.CheckoutOffer.FindAsync(id);
                     if (checkoutOffer != null)
                     {
                         if (checkoutOffer.OfferValue != paymentIntent.Amount)
                             return BadRequest();
                         UserCheckoutOffer userCheckoutOffer = _context.UserCheckoutOffer
-                            .FirstOrDefault(u => u.Email.Equals(email));
-                        if (userCheckoutOffer == null)
+                            .FirstOrDefault(u => u.Email.Equals(email)) ?? new UserCheckoutOffer
                         {
-                            userCheckoutOffer = new UserCheckoutOffer();
-                            userCheckoutOffer.Email = email;
-                        }
+                            Email = email
+                        };
 
                         userCheckoutOffer.CheckoutOffersId = id;
                         _context.UserCheckoutOffer.Update(userCheckoutOffer);
