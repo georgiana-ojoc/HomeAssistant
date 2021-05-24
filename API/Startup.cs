@@ -133,9 +133,7 @@ namespace API
                 app.UseSwaggerUI(swagger => swagger.SwaggerEndpoint("/swagger/v1/swagger.json",
                     "Home Assistant API v1"));
             }
-
-            //app.UseHttpsRedirection();
-
+            
             app.UseRouting();
 
             app.UseAuthentication();

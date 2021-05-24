@@ -58,7 +58,7 @@ namespace Interface.Pages
             }
             else
             {
-                if (response.StatusCode == HttpStatusCode.Forbidden)
+                if (response.StatusCode == HttpStatusCode.PaymentRequired)
                 {
                     await _jsRuntime.InvokeVoidAsync("alert", await response.Content.ReadAsStringAsync());
                 }

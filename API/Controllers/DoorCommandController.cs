@@ -92,7 +92,7 @@ namespace API.Controllers
             }
             catch (ConstraintException exception)
             {
-                return Forbid(exception.Message);
+                return StatusCode(StatusCodes.Status402PaymentRequired, exception.Message);
             }
             catch (DuplicateNameException exception)
             {
