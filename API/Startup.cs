@@ -93,7 +93,7 @@ namespace API
                 {
                     Version = "v1",
                     Title = "Home Assistant API",
-                    Description = "ASP.NET Core 6.0 Web API"
+                    Description = "ASP.NET Core 5.0 Web API"
                 });
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
