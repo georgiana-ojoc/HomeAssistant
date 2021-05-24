@@ -112,12 +112,19 @@ namespace API.Repositories
                 return null;
             }
 
-            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email == email);
-            CheckoutOffer checkoutOffer =
-                Context.CheckoutOffer.FirstOrDefault(u => u.Id == userCheckoutOffer.CheckoutOffersId);
             int limit = 10;
-            if (checkoutOffer != null)
-                limit = checkoutOffer.CommandLimit;
+            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email
+                == email);
+            if (userCheckoutOffer != null)
+            {
+                CheckoutOffer checkoutOffer = Context.CheckoutOffer.FirstOrDefault(u => u.Id ==
+                    userCheckoutOffer.CheckoutOffersId);
+                if (checkoutOffer != null)
+                {
+                    limit = checkoutOffer.CommandLimit;
+                }
+            }
+
             int thermostatCommands = await Context.ThermostatCommands.CountAsync(tc => tc.ScheduleId ==
                 scheduleId);
             if (thermostatCommands >= limit)

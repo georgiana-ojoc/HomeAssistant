@@ -39,12 +39,19 @@ namespace API.Repositories
             CheckString(email, "email");
             CheckString(house.Name, "name");
 
-            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email == email);
-            CheckoutOffer checkoutOffer =
-                Context.CheckoutOffer.FirstOrDefault(u => u.Id == userCheckoutOffer.CheckoutOffersId);
-            int limit = 5;
-            if (checkoutOffer != null)
-                limit = checkoutOffer.HouseLimit;
+            int limit = 2;
+            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email
+                == email);
+            if (userCheckoutOffer != null)
+            {
+                CheckoutOffer checkoutOffer = Context.CheckoutOffer.FirstOrDefault(u => u.Id ==
+                    userCheckoutOffer.CheckoutOffersId);
+                if (checkoutOffer != null)
+                {
+                    limit = checkoutOffer.HouseLimit;
+                }
+            }
+
             int housesByEmail = await Context.Houses.CountAsync(h => h.Email == email);
             if (housesByEmail >= limit)
             {
