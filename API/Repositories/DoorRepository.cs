@@ -77,12 +77,19 @@ namespace API.Repositories
                 return null;
             }
 
-            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email == email);
-            CheckoutOffer checkoutOffer =
-                Context.CheckoutOffer.FirstOrDefault(u => u.Id == userCheckoutOffer.CheckoutOffersId);
-            int limit = 10;
-            if (checkoutOffer != null)
-                limit = checkoutOffer.DoorLimit;
+            int limit = 2;
+            UserCheckoutOffer userCheckoutOffer = Context.UserCheckoutOffer.FirstOrDefault(u => u.Email
+                == email);
+            if (userCheckoutOffer != null)
+            {
+                CheckoutOffer checkoutOffer = Context.CheckoutOffer.FirstOrDefault(u => u.Id ==
+                    userCheckoutOffer.CheckoutOffersId);
+                if (checkoutOffer != null)
+                {
+                    limit = checkoutOffer.DoorLimit;
+                }
+            }
+
             int doorsByRoomId = await Context.Doors.CountAsync(d => d.RoomId == roomId);
             if (doorsByRoomId >= limit)
             {
