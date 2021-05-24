@@ -13,7 +13,8 @@ namespace Interface.Pages
     public partial class Devices
     {
         private IList<Door> _doors;
-        private string _newDoorName;
+        private Door _newDoor = new();
+        private bool _addDoorCollapsed = true;
 
         private async Task GetDoors()
         {
@@ -33,19 +34,13 @@ namespace Interface.Pages
 
         private async Task AddDoor()
         {
-            if (string.IsNullOrWhiteSpace(_newDoorName)) return;
-
-            var response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}",
-                new Door
-                {
-                    Name = _newDoorName
-                });
+            var response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms/{_roomId}/{Paths.DoorsPath}",_newDoor);
             if (response.IsSuccessStatusCode)
             {
                 var newDoor = await response.Content.ReadFromJsonAsync<Door>();
                 _doors.Add(newDoor);
 
-                _newDoorName = string.Empty;
+                _newDoor = new Door();
                 StateHasChanged();
             }
             else

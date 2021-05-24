@@ -16,8 +16,9 @@ namespace Interface.Pages
 {
     public partial class Devices
     {
-        private string _newThermostatName;
+        private Thermostat _newThermostat = new();
         private IList<Thermostat> _thermostats;
+        private bool _addThermostatCollapsed = true;
 
         private async Task GetThermostats()
         {
@@ -42,20 +43,15 @@ namespace Interface.Pages
 
         private async Task AddThermostat()
         {
-            if (string.IsNullOrWhiteSpace(_newThermostatName)) return;
-
             var response = await _http.PostAsJsonAsync(
-                $"houses/{_houseId}/rooms/{_roomId}/{Paths.ThermostatsPath}",
-                new Thermostat
-                {
-                    Name = _newThermostatName
-                });
+                $"houses/{_houseId}/rooms/{_roomId}/{Paths.ThermostatsPath}",_newThermostat);
             if (response.IsSuccessStatusCode)
             {
                 var newThermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
                 _thermostats.Add(newThermostat);
 
-                _newThermostatName = string.Empty;
+                _newThermostat = new Thermostat();
+                _addThermostatCollapsed = !_addThermostatCollapsed;
                 StateHasChanged();
             }
             else

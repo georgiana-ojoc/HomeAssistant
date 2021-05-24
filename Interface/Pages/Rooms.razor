@@ -7,19 +7,35 @@
 @inject NavigationManager _navManager
 @attribute [Authorize]
 
-<div class="input-group">
-    <input class="form-control" placeholder="Room name" @bind="_newRoomName" aria-describedby="add-room-addon"
-           style="margin: 1rem"/>
-    <div class="input-group-append">
-        <span class="btn btn-info" id="add-room-addon" @onclick="AddRoom" style="margin: 1rem"> Add room </span>
-    </div>
+<div>
+    <h1>
+        Manage rooms in house: @_currentHouse.Name
+    </h1>
 </div>
-<div class="list-group list-group-horizontal flex-wrap">
-    @if (_rooms is not null)
-    {
-        @foreach (var room in _rooms)
+<RadzenPanel Text="Register a new room" AllowCollapse="true" Collapsed=@(_addRoomCollapsed) Style="margin: 0.5rem"
+             Expand="@(() => _addRoomCollapsed = false)" Collapse="@(() => _addRoomCollapsed = true)">
+    <RadzenTemplateForm TItem="Room" Data="_newRoom" Submit=@AddRoom>
+        <RadzenFieldset Text="New room">
+            <div class="row" style="margin-bottom: 48px">
+                <div class="col-md-4 align-right">
+                    <RadzenLabel Text="Room Name:"/>
+                </div>
+                <div class="col">
+                    <RadzenTextBox style="display: block" Name="RoomName" @bind-Value=@_newRoom.Name />
+                    <RadzenRequiredValidator Component="RoomName" Text="Please name the room"
+                                             Style="position: absolute"/>
+                </div>
+            </div>
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Add Room"></RadzenButton>
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+</RadzenPanel>
+<RadzenPanel Text="Your rooms:" Style="margin: 0.5rem">
+    <div class="list-group list-group-horizontal flex-wrap">
+        @if (_rooms is not null)
         {
-            <li class="list-group-item" style="margin: 0.5rem">
+            @foreach (var room in _rooms)
+            {
                 <div class="card" style="width: 16rem">
                     <h3 class="card-header" style="text-align: center"> @room.Name </h3>
                     <div class="card-body" style="margin: auto">
@@ -29,16 +45,21 @@
                         </div>
                     </div>
                 </div>
-            </li>
+            }
         }
-    }
-</div>
+        else
+        {
+            <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px" />
+        }
+    </div>
+</RadzenPanel>
 
 @code {
 
     protected override async Task OnInitializedAsync()
     {
         _houseId = await _idService.GetHouseId();
+        _currentHouse = await _http.GetFromJsonAsync<House>($"houses/{_houseId}");
         _rooms = await _http.GetFromJsonAsync<IList<Room>>($"houses/{_houseId}/rooms");
     }
 

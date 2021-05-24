@@ -5,8 +5,16 @@
 @inject IJSRuntime _jsRuntime
 @attribute [Authorize]
 
+<div>
+    <h1>
+        Manage commands in schedule: @_currentSchedule.Name
+    </h1>
+</div>
 <div class="row">
 <div class="col" id="light-bulbs-col">
+    <h2 style="text-align: center">
+        Light Bulb Commands
+    </h2>
     <RadzenPanel Text="Create light bulb command" AllowCollapse="true" Collapsed=@(_addLightBulbCollapsed)
                  Expand="@(() => {_addLightBulbCollapsed = false; _addDoorCollapsed = true; _addThermostatCollapsed = true;})" Collapse="@(() => _addLightBulbCollapsed = true)"
                  Style="margin: 0.5rem">
@@ -26,81 +34,84 @@
             <RadzenButton Text="Add command" Style="margin: 0.5rem" id="add-light-bulb-addon" Click="AddLightBulbCommand"/>
         </div>
     </RadzenPanel>
-    <ul class="list-group list-group-vertical">
-        @if (_lightBulbCommands is not null)
-        {
-            @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbCommands.Count))
-            {
-                <li class="list-group-item" style="margin: 0.25rem">
-                    <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @_lightBulbCommands[lightBulbIndex].LightBulbName </h3>
-                        <div class="card-body" style="margin: auto; text-align: center">
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-dark"
-                                        @onclick="@(() => SetOffColorAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
-                                    Off
-                                </button>
-                                <div class="col" style="text-align: center">
-                                    <div class="row">
-                                        <RadzenColorPicker @bind-Value="_lightColors[lightBulbIndex].RadzenColor"
-                                                           ShowHSV="true" ShowRGBA="true" ShowColors="true"
-                                                           Change=@(() => PatchLightBulbCommandColor(_lightBulbCommands[lightBulbIndex].Id)) />
+    <RadzenPanel Text="Your light bulb commands:" Style="margin: 0.5rem">
+        <ul class="list-group list-group-vertical">
+                @if (_lightBulbCommands is not null)
+                {
+                    @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbCommands.Count))
+                    {
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @_lightBulbCommands[lightBulbIndex].LightBulbName </h3>
+                            <div class="card-body" style="margin: auto; text-align: center">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetOffColorAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
+                                        Off
+                                    </button>
+                                    <div class="col" style="text-align: center">
+                                        <div class="row">
+                                            <RadzenColorPicker @bind-Value="_lightColors[lightBulbIndex].RadzenColor"
+                                                               ShowHSV="true" ShowRGBA="true" ShowColors="true"
+                                                               Change=@(() => PatchLightBulbCommandColor(_lightBulbCommands[lightBulbIndex].Id)) />
+                                        </div>
                                     </div>
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetWhiteColorAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
+                                        On
+                                    </button>
                                 </div>
-                                <button type="button" class="btn btn-light"
-                                        @onclick="@(() => SetWhiteColorAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
-                                    On
-                                </button>
+                                <p/>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetOffIntensityAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
+                                        Min
+                                    </button>
+        
+                                    <div class="col" style="text-align: center">
+                                        <div class="row">
+                                            <label>
+                                                Intensity: @(Math.Round((double) _lightBulbCommands[lightBulbIndex].
+                                                               Intensity / byte.MaxValue * 100)) %
+                                            </label>
+                                        </div>
+                                        <div class="row" style="margin: 0.5rem">
+                                            <RadzenSlider @bind-Value="_lightBulbCommands[lightBulbIndex].Intensity" TValue="byte"
+                                                          Min="byte.MinValue" Max="byte.MaxValue"/>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-info"
+                                                    style="margin: 0.25rem; height: 2.5rem; width: 100%"
+                                                    @onclick="@(() => PatchLightBulbCommandIntensity(_lightBulbCommands[lightBulbIndex].Id))">
+                                                Press to set
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetMaxIntensityAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
+                                        Max
+                                    </button>
+                                </div>
                             </div>
-                            <p/>
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
-                                <button type="button" class="btn btn-dark"
-                                        @onclick="@(() => SetOffIntensityAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
-                                    Min
-                                </button>
-
-                                <div class="col" style="text-align: center">
-                                    <div class="row">
-                                        <label>
-                                            Intensity: @(Math.Round((double) _lightBulbCommands[lightBulbIndex].
-                                                           Intensity / byte.MaxValue * 100)) %
-                                        </label>
-                                    </div>
-                                    <div class="row" style="margin: 0.5rem">
-                                        <RadzenSlider @bind-Value="_lightBulbCommands[lightBulbIndex].Intensity" TValue="byte"
-                                                      Min="byte.MinValue" Max="byte.MaxValue"/>
-                                    </div>
-                                    <div class="row">
-                                        <button type="button" class="btn btn-info"
-                                                style="margin: 0.25rem; height: 2.5rem; width: 100%"
-                                                @onclick="@(() => PatchLightBulbCommandIntensity(_lightBulbCommands[lightBulbIndex].Id))">
-                                            Press to set
-                                        </button>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-light"
-                                        @onclick="@(() => SetMaxIntensityAndPatchLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
-                                    Max
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
+                                    Delete
                                 </button>
                             </div>
                         </div>
-                        <div class="card-footer" style="text-align: center">
-                            <button class="btn btn-danger" @onclick="@(() => DeleteLightBulbCommand(_lightBulbCommands[lightBulbIndex].Id))">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                </li>
-            }
-        }
-        else
-        {
-            <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px" />
-        }
-    </ul>
+                    }
+                }
+                else
+                {
+                    <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px" />
+                }
+            </ul>
+    </RadzenPanel>
 </div>
 
 <div class="col" id="doors-col">
+    <h2 style="text-align: center">
+        Door Commands
+    </h2>
     <RadzenPanel Text="Create door command" AllowCollapse="true" Collapsed=@(_addDoorCollapsed)
                  Expand="@(() => {_addLightBulbCollapsed = true; _addDoorCollapsed = false; _addThermostatCollapsed = true;})" Collapse="@(() => _addDoorCollapsed = true)"
                  Style="margin: 0.5rem">
@@ -120,48 +131,55 @@
             <RadzenButton Text="Add command" Style="margin: 0.5rem" id="add-door-addon" Click="AddDoorCommand"/>
         </div>
     </RadzenPanel>
-    <ul class="list-group list-group-vertical">
-        @if (_doorCommands is not null)
-        {
-            @foreach (var doorCommand in _doorCommands)
-            {
-                <li class="list-group-item" style="margin: 0.25rem">
-                    <div class="card">
-                        <h3 class="card-header" style="text-align: center"> @doorCommand.DoorName </h3>
-                        <div class="card-body" style="margin: auto">
-                            <div style="text-align: center; margin: 0.25rem">
-                                <label>Status: </label>
-                                @if (doorCommand.Locked)
-                                {
-                                    <span class="oi oi-lock-locked" aria-hidden="true" style="margin: 0.25rem"></span>
-                                }
-                                else
-                                {
-                                    <span class="oi oi-lock-unlocked" aria-hidden="true" style="margin: 0.25rem"></span>
-                                }
+    <RadzenPanel Text="Your door commands:" Style="margin: 0.5rem">
+        <ul class="list-group list-group-vertical">
+                @if (_doorCommands is not null)
+                {
+                    @foreach (var doorCommand in _doorCommands)
+                    {
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @doorCommand.DoorName </h3>
+                            <div class="card-body" style="margin: auto">
+                                <div style="text-align: center; margin: 0.25rem">
+                                    <label>Status: </label>
+                                    @if (doorCommand.Locked)
+                                    {
+                                        <span class="oi oi-lock-locked" aria-hidden="true" style="margin: 0.25rem"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="oi oi-lock-unlocked" aria-hidden="true" style="margin: 0.25rem"></span>
+                                    }
+                                </div>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-danger"
+                                            @onclick="@(() => SetTrueLockedAndPatchDoorCommand(doorCommand.Id))">
+                                        Lock
+                                    </button>
+                                    <button type="button" class="btn btn-success"
+                                            @onclick="@(() => SetFalseLockedAndPatchDoorCommand(doorCommand.Id))">
+                                        Unlock
+                                    </button>
+                                </div>
                             </div>
-                            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" class="btn btn-danger"
-                                        @onclick="@(() => SetTrueLockedAndPatchDoorCommand(doorCommand.Id))">
-                                    Lock
-                                </button>
-                                <button type="button" class="btn btn-success"
-                                        @onclick="@(() => SetFalseLockedAndPatchDoorCommand(doorCommand.Id))">
-                                    Unlock
-                                </button>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteDoorCommand(doorCommand.Id))"> Delete </button>
                             </div>
                         </div>
-                        <div class="card-footer" style="text-align: center">
-                            <button class="btn btn-danger" @onclick="@(() => DeleteDoorCommand(doorCommand.Id))"> Delete </button>
-                        </div>
-                    </div>
-                </li>
-            }
-        }
-    </ul>
+                    }
+                }
+                else
+                {
+                    <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px" />
+                }
+            </ul>
+    </RadzenPanel>
 </div>
 
 <div class="col" id="thermostats-col">
+    <h2 style="text-align: center">
+        Thermostat Commands
+    </h2>
     <RadzenPanel Text="Create thermostat command" AllowCollapse="true" Collapsed=@(_addThermostatCollapsed)
                  Expand="@(() => {_addLightBulbCollapsed = true; _addDoorCollapsed = true; _addThermostatCollapsed = false;})" Collapse="@(() => _addThermostatCollapsed = true)"
                  Style="margin: 0.5rem">
@@ -181,12 +199,12 @@
             <RadzenButton Text="Add command" Style="margin: 0.5rem" id="add-thermostat-addon" Click="AddThermostatCommand"/>
         </div>
     </RadzenPanel>
-    <ul class="list-group list-group-vertical">
-        @if (_thermostatCommands is not null)
-        {
-            @foreach (var thermostatCommand in _thermostatCommands)
+    <RadzenPanel Text="Your thermostat commands:" Style="margin: 0.5rem">
+        <ul class="list-group list-group-vertical">
+            @if (_thermostatCommands is not null)
             {
-                <li class="list-group-item" style="margin: 0.25rem">
+                @foreach (var thermostatCommand in _thermostatCommands)
+                {
                     <div class="card">
                         <h3 class="card-header" style="text-align: center"> @thermostatCommand.ThermostatName </h3>
                         <div class="card-body" style="text-align: center; margin: auto">
@@ -225,10 +243,14 @@
                             </button>
                         </div>
                     </div>
-                </li>
+                }
             }
-        }
-    </ul>
+            else
+            {
+                <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px" />
+            }
+        </ul>
+    </RadzenPanel>
 </div>
 </div>
 
@@ -237,6 +259,7 @@
     protected override async Task OnInitializedAsync()
     {
         _scheduleId = await _idService.GetScheduleId();
+        await GetCurrentSchedule();
         await GetHouses();
         await GetCommands();
     }

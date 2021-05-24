@@ -12,24 +12,21 @@ namespace Interface.Pages
     public partial class Rooms
     {
         private Guid _houseId;
-        private string _newRoomName;
+        private Room _newRoom = new();
         private IList<Room> _rooms;
+        private bool _addRoomCollapsed = true;
+        private House _currentHouse = new();
 
         private async Task AddRoom()
         {
-            if (string.IsNullOrWhiteSpace(_newRoomName)) return;
-
-            var response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms",
-                new Room
-                {
-                    Name = _newRoomName
-                });
+            var response = await _http.PostAsJsonAsync($"houses/{_houseId}/rooms", _newRoom);
             if (response.IsSuccessStatusCode)
             {
                 var newRoom = await response.Content.ReadFromJsonAsync<Room>();
                 _rooms.Add(newRoom);
 
-                _newRoomName = string.Empty;
+                _newRoom = new Room();
+                _addRoomCollapsed = !_addRoomCollapsed;
                 StateHasChanged();
             }
             else

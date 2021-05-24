@@ -15,6 +15,8 @@ namespace Interface.Pages
         private Guid _houseId = Guid.Empty;
         private Guid _roomId = Guid.Empty;
 
+        private Schedule _currentSchedule = new();
+
         private IList<House> _houses = new List<House>();
         private IList<Room> _rooms = new List<Room>();
 
@@ -36,6 +38,11 @@ namespace Interface.Pages
             await GetLightBulbCommands();
             await GetDoorCommands();
             await GetThermostatCommands();
+        }
+
+        private async Task GetCurrentSchedule()
+        {
+            _currentSchedule = await _http.GetFromJsonAsync<Schedule>($"schedules/{_scheduleId}");
         }
 
         private async Task PatchCommand(IList<Dictionary<string, string>> patchList,

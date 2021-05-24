@@ -14,7 +14,8 @@ namespace Interface.Pages
     {
         private readonly IList<LightColor> _lightColors = new List<LightColor>();
         private IList<LightBulb> _lightBulbs;
-        private string _newLightBulbName;
+        private LightBulb _newLightBulb = new();
+        private bool _addLightBulbCollapsed = true;
 
         private async Task GetLightBulbs()
         {
@@ -49,21 +50,16 @@ namespace Interface.Pages
 
         private async Task AddLightBulb()
         {
-            if (string.IsNullOrWhiteSpace(_newLightBulbName)) return;
-
             var response = await _http.PostAsJsonAsync(
-                $"houses/{_houseId}/rooms/{_roomId}/{Paths.LightBulbsPath}",
-                new LightBulb
-                {
-                    Name = _newLightBulbName
-                });
+                $"houses/{_houseId}/rooms/{_roomId}/{Paths.LightBulbsPath}", _newLightBulb);
             if (response.IsSuccessStatusCode)
             {
                 var newLightBulb = await response.Content.ReadFromJsonAsync<LightBulb>();
                 _lightBulbs.Add(newLightBulb);
                 _lightColors.Add(new LightColor());
 
-                _newLightBulbName = string.Empty;
+                _newLightBulb = new LightBulb();
+                _addLightBulbCollapsed = !_addLightBulbCollapsed;
                 StateHasChanged();
             }
             else
