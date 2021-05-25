@@ -19,7 +19,7 @@ namespace API.Repositories
         {
         }
 
-        private void CheckTemperature(decimal? temperature)
+        private static void CheckTemperature(decimal? temperature)
         {
             if (temperature == null)
             {

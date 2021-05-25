@@ -16,15 +16,15 @@
                                          flex-direction: column;
                                          justify-content: center;
                                          align-items: center;">
-                    <h5 class="card-title">@checkoutPriceKey.OfferName</h5>
-                    <p class="card-text">@checkoutPriceKey.OfferDescription</p>
-                    @foreach (KeyValuePair<string, string> checkoutDetailsPair in checkoutPriceKey.GetCustomEnumerator())
+                    <h5 class="card-title">@checkoutPriceKey.Name</h5>
+                    <p class="card-text">@checkoutPriceKey.Description</p>
+                    @foreach (KeyValuePair<string, string> checkoutDetailsPair in checkoutPriceKey.GetFields())
                     {
                         <p class="card-text" style="margin:5px">
                             @checkoutDetailsPair.Key <b>@checkoutDetailsPair.Value</b>
                         </p>
                     }
-                    <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler(@checkoutPriceKey.Id, @checkoutPriceKey.OfferName, @checkoutPriceKey.OfferDescription, @checkoutPriceKey.OfferValue))">Buy Here for @(checkoutPriceKey.OfferValue / 100)$</button>
+                    <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler(@checkoutPriceKey.Id, @checkoutPriceKey.Name, @checkoutPriceKey.Description, @checkoutPriceKey.Price))">Buy Here for @(checkoutPriceKey.Price / 100)$</button>
                 </div>
             </div>
         }
@@ -88,11 +88,11 @@
 }
 
 @code {
-    IList<CheckoutOffer> _checkoutOffers;
+    IList<Subscription> _checkoutOffers;
 
     protected override async Task OnInitializedAsync()
     {
-        _checkoutOffers = await _http.GetFromJsonAsync<IList<CheckoutOffer>>("CheckoutOffer");
+        _checkoutOffers = await _http.GetFromJsonAsync<IList<Subscription>>("subscriptions");
     }
 
 }

@@ -31,9 +31,9 @@ namespace API.Controllers
             try
             {
                 var stripeEvent = EventUtility.ParseEvent(json);
-                if (stripeEvent.Type == Events.PaymentIntentSucceeded)
                 {
-                    if (stripeEvent.Data.Object is PaymentIntent paymentIntent)
+                    if (stripeEvent.Type == Events.PaymentIntentSucceeded &&
+                        stripeEvent.Data.Object is PaymentIntent paymentIntent)
                     {
                         Console.WriteLine("A successful payment for {0} was made from {1} with the amount {2}.",
                             paymentIntent.Amount,
@@ -41,7 +41,6 @@ namespace API.Controllers
                         return await HandlePaymentIntentSucceeded(paymentIntent);
                     }
                 }
-
                 if (stripeEvent.Type == Events.PaymentIntentCreated)
                 {
                     var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
@@ -78,7 +77,9 @@ namespace API.Controllers
                     if (checkoutOffer != null)
                     {
                         if (checkoutOffer.OfferValue != paymentIntent.Amount)
+                        {
                             return BadRequest();
+                        }
                         UserCheckoutOffer userCheckoutOffer = _context.UserCheckoutOffer
                             .FirstOrDefault(u => u.Email.Equals(email)) ?? new UserCheckoutOffer
                         {

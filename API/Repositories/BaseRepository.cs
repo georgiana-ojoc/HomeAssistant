@@ -19,24 +19,24 @@ namespace API.Repositories
             Mapper = mapper;
         }
 
-        private string ToUpper(string input)
+        private static string ToUpper(string input)
         {
             return input.First().ToString().ToUpper() + input.Substring(1);
         }
 
-        protected void CheckString(string field, string name)
+        protected static void CheckString(string field, string name)
         {
             if (string.IsNullOrWhiteSpace(field))
             {
-                throw new ArgumentNullException(null, $"{ToUpper(name)} cannot be empty.");
+                throw new ArgumentNullException(name, $"{ToUpper(name)} cannot be empty.");
             }
         }
 
-        protected void CheckGuid(Guid field, string name)
+        protected static void CheckGuid(Guid field, string name)
         {
             if (field == Guid.Empty)
             {
-                throw new ArgumentNullException(null, $"{ToUpper(name)} cannot be empty.");
+                throw new ArgumentNullException(name, $"{ToUpper(name)} cannot be empty.");
             }
         }
 
