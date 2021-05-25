@@ -220,7 +220,7 @@
                                     <div style="text-align: center; margin: 0.25rem">
                                         @if (thermostat.Temperature != null)
                                         {
-                                            <label>Temperature: @thermostat.Temperature.Value &#8451;</label>
+                                            <label>Temperature: @(thermostat.Temperature.Value + 7) &#8451;</label>
                                         }
                                     </div>
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example" style="text-align: center">
@@ -232,7 +232,7 @@
                                         <div class="col" style="text-align: center">
                                             <div class="row" style="margin: 0.5rem">
                                                 <RadzenSlider @bind-Value="thermostat.Temperature" TValue="decimal?"
-                                                              Min="7" Max="30" Step="0.5"/>
+                                                              Min="0" Max="23" Step="0.5"/>
                                             </div>
                                             <div class="row">
                                                 <button type="button" class="btn btn-info"
