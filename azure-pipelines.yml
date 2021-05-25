@@ -22,8 +22,6 @@ steps:
       zipAfterPublish: True
     displayName: 'dotnet publish'
 
-  - task: PublishBuildArtifacts@1
-
   - task: DotNetCoreCLI@2
     inputs:
       command: test
@@ -35,3 +33,5 @@ steps:
     inputs:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
+
+  - task: PublishBuildArtifacts@1
