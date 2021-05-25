@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeAssistantAPI", "HomeAssistantAPI.csproj", "{5604F6BF-1A8A-4533-B015-14EEB7135E1F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{44BD088F-FECD-449D-9BC9-A5677F264E3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5604F6BF-1A8A-4533-B015-14EEB7135E1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5604F6BF-1A8A-4533-B015-14EEB7135E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5604F6BF-1A8A-4533-B015-14EEB7135E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5604F6BF-1A8A-4533-B015-14EEB7135E1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44BD088F-FECD-449D-9BC9-A5677F264E3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44BD088F-FECD-449D-9BC9-A5677F264E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44BD088F-FECD-449D-9BC9-A5677F264E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44BD088F-FECD-449D-9BC9-A5677F264E3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
