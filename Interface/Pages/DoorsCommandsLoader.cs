@@ -50,7 +50,12 @@ namespace Interface.Pages
             if (response.IsSuccessStatusCode)
             {
                 var newDoorCommand = await response.Content.ReadFromJsonAsync<DoorCommandResponse>();
-                _doorCommands.Add(newDoorCommand);
+                if (newDoorCommand != null)
+                {
+                    newDoorCommand = await _http.GetFromJsonAsync<DoorCommandResponse>(
+                    $"schedules/{_scheduleId}/{Paths.DoorCommandsPath}/{newDoorCommand.Id}");
+                    _doorCommands.Add(newDoorCommand);
+                }
 
                 _newCommandDoorId = Guid.Empty;
                 _addDoorCollapsed = !_addDoorCollapsed;

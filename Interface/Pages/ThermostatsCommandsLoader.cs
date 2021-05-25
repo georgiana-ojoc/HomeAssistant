@@ -61,8 +61,13 @@ namespace Interface.Pages
                 var newThermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommandResponse>();
                 if (newThermostatCommand != null)
                 {
-                    newThermostatCommand.Temperature -= (decimal) 7.0;
-                    _thermostatCommands.Add(newThermostatCommand);
+                    newThermostatCommand = await _http.GetFromJsonAsync<ThermostatCommandResponse>(
+                    $"schedules/{_scheduleId}/{Paths.ThermostatCommandsPath}/{newThermostatCommand.Id}");
+                    if (newThermostatCommand != null)
+                    {
+                        newThermostatCommand.Temperature -= (decimal) 7.0;
+                        _thermostatCommands.Add(newThermostatCommand);
+                    }
                 }
 
                 _newCommandThermostatId = Guid.Empty;

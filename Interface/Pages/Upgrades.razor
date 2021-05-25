@@ -1,10 +1,10 @@
 @page "/checkout"
+@using global::Shared.Models
+@using System.Security.Claims
+@using Stripe.Checkout
 @inject AuthenticationStateProvider _authenticationStateProvider
 @inject HttpClient _http
 @inject IJSRuntime _jsRuntime
-@using Stripe.Checkout
-@using System.Security.Claims
-@using global::Shared.Models
 <h3>Checkout</h3>
 <div style="display: flex;flex-wrap: wrap;justify-content: space-evenly;">
     @if (_checkoutOffers != null)
@@ -24,14 +24,14 @@
                             @checkoutDetailsPair.Key <b>@checkoutDetailsPair.Value</b>
                         </p>
                     }
-                    <button class="btn btn-primary mx-3" @onclick="@(e => CheckoutHandler(@checkoutPriceKey.Id, @checkoutPriceKey.Name, @checkoutPriceKey.Description, @checkoutPriceKey.Price))">Buy Here for @(checkoutPriceKey.Price / 100)$</button>
+                    <button class="btn btn-primary mx-3" @onclick="@(_ => CheckoutHandler(checkoutPriceKey.Id, checkoutPriceKey.Name, checkoutPriceKey.Description, checkoutPriceKey.Price))">Buy Here for @(checkoutPriceKey.Price / 100)$</button>
                 </div>
             </div>
         }
     }
     else
     {
-        <div style="text-align: center; size: 50px;">Loading...</div>
+        <RadzenProgressBar  Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px" />
     }
 </div>
 
@@ -67,8 +67,8 @@
                 "card",
             },
             Mode = "payment",
-            SuccessUrl = $"https://localhost:6001/success?session_id={{CHECKOUT_SESSION_ID}}",
-            CancelUrl = $"https://localhost:6001/checkout",
+            SuccessUrl = "https://localhost:6001/success?session_id={CHECKOUT_SESSION_ID}",
+            CancelUrl = "https://localhost:6001/checkout",
             LineItems = new List<SessionLineItemOptions>
             {
                 new()

@@ -59,7 +59,12 @@ namespace Interface.Pages
             if (response.IsSuccessStatusCode)
             {
                 var newLightBulbCommand = await response.Content.ReadFromJsonAsync<LightBulbCommandResponse>();
-                _lightBulbCommands.Add(newLightBulbCommand);
+                if (newLightBulbCommand != null)
+                {
+                    newLightBulbCommand = await _http.GetFromJsonAsync<LightBulbCommandResponse>(
+                    $"schedules/{_scheduleId}/{Paths.LightBulbCommandsPath}/{newLightBulbCommand.Id}");
+                    _lightBulbCommands.Add(newLightBulbCommand);
+                }
                 _lightColors.Add(new LightColor());
 
                 _houseId = Guid.Empty;
