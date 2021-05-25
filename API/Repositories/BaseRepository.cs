@@ -18,9 +18,9 @@ namespace API.Repositories
             {"doors", 1},
             {"thermostats", 1},
             {"schedules", 1},
-            {"lightBulbsCommands", 1},
-            {"doorsCommands", 1},
-            {"thermostatsCommands", 1}
+            {"lightBulbCommands", 1},
+            {"doorCommands", 1},
+            {"thermostatCommands", 1}
         };
 
         protected readonly HomeAssistantContext Context;
