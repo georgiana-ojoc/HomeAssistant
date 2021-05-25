@@ -43,7 +43,7 @@
                 </div>
                 <div class="col">
                     <RadzenSelectBar @bind-Value=@_selectedDays TValue="IEnumerable<int>" Multiple="true"
-                                     Disabled="false" Change=@OnChangeSelectedDays Visible="true">
+                                     Name="DaysSelector" Change=@OnChangeSelectedDays>
                         <Items>
                             <RadzenSelectBarItem Text="Monday" Value="1"/>
                             <RadzenSelectBarItem Text="Tuesday" Value="2"/>
