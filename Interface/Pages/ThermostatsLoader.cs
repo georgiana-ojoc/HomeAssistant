@@ -29,7 +29,7 @@ namespace Interface.Pages
             foreach (var thermostat in _thermostats)
                 if (thermostat.Temperature == null)
                 {
-                    thermostat.Temperature = 7;
+                    thermostat.Temperature = 0;
                     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
                     patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature.Value));
                     var serializedContent = JsonConvert.SerializeObject(patchList);
@@ -38,6 +38,10 @@ namespace Interface.Pages
                         "application/json");
                     await _http.PatchAsync($"houses/{_houseId}/rooms/{_roomId}/{Paths.ThermostatsPath}/{thermostat.Id}",
                         patchBody);
+                }
+                else
+                {
+                    thermostat.Temperature -= 7;
                 }
         }
 
@@ -48,7 +52,11 @@ namespace Interface.Pages
             if (response.IsSuccessStatusCode)
             {
                 var newThermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
-                _thermostats.Add(newThermostat);
+                if (newThermostat != null)
+                {
+                    newThermostat.Temperature -= 7;
+                    _thermostats.Add(newThermostat);
+                }
 
                 _newThermostat = new Thermostat();
                 _addThermostatCollapsed = !_addThermostatCollapsed;
@@ -86,7 +94,7 @@ namespace Interface.Pages
         private async Task SetMinTemperatureAndPatchThermostat(Guid id)
         {
             var thermostat = _thermostats.First(l => l.Id == id);
-            thermostat.Temperature = 7;
+            thermostat.Temperature = 0;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
             await PatchDevice(patchList, Paths.ThermostatsPath, thermostat.Id);
@@ -95,7 +103,7 @@ namespace Interface.Pages
         private async Task SetMaxTemperatureAndPatchThermostat(Guid id)
         {
             var thermostat = _thermostats.First(l => l.Id == id);
-            thermostat.Temperature = 30;
+            thermostat.Temperature = 23;
             IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
             patchList.Add(GenerateThermostatTemperaturePatch(thermostat.Temperature ?? 0));
             await PatchDevice(patchList, Paths.ThermostatsPath, thermostat.Id);
@@ -112,7 +120,7 @@ namespace Interface.Pages
                     "path", "temperature"
                 },
                 {
-                    "value", temperature.ToString(CultureInfo.InvariantCulture)
+                    "value", (temperature + 7).ToString(CultureInfo.InvariantCulture)
                 }
             };
         }
