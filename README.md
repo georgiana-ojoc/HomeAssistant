@@ -1,11 +1,11 @@
 # HomeAssistant
 ## Functional requirements
  - manage (add, view, modify and remove) smart devices, grouped by houses and rooms  
- - remotely control smart devices over the same Wi-Fi network using HangFire  
+ - remotely control smart devices using HangFire  
 	- adjust lights color and intensity  
 	- lock and unlock doors  
 	- set thermostats temperature  
- - obtain information from smart devices over the same Wi-Fi network (lights color, lights intensity, doors status, thermostats temperature)  
+ - obtain information from smart devices (lights color, lights intensity, doors status, thermostats temperature)  
  - schedule custom actions involving different smart devices  
 	 - sleep mode example: turn off the lights, lock the doors  
 ## Nonfunctional requirements
