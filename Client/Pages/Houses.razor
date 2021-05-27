@@ -1,0 +1,59 @@
+﻿@page "/houses"
+
+@using Client.Utility
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+
+@inject HttpClient _http
+@inject IdService _idService
+@inject IJSRuntime _jsRuntime
+@inject NavigationManager _navManager
+
+@attribute [Authorize]
+
+<h1>House Manager</h1>
+<RadzenPanel Text="Register a new house" AllowCollapse="true" Collapsed="@(_addHouseCollapsed)" Style="margin: 0.5rem"
+             Expand="@(() => _addHouseCollapsed = false)" Collapse="@(() => _addHouseCollapsed = true)">
+    <RadzenTemplateForm TItem="House" Data="_newHouse" Submit="@AddHouse">
+        <RadzenFieldset Text="New house">
+            <div class="row" style="margin-bottom: 48px">
+                <div class="col-md-4 align-right">
+                    <RadzenLabel Text="House name"/>
+                </div>
+                <div class="col">
+                    <RadzenTextBox style="display: block" Name="HouseName" @bind-Value=@_newHouse.Name/>
+                    <RadzenRequiredValidator Component="HouseName" Text="House name cannot be empty"
+                                             Style="position: absolute"/>
+                </div>
+            </div>
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Add house"></RadzenButton>
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+</RadzenPanel>
+<RadzenPanel Text="Your houses" Style="margin: 0.5rem">
+    <div class="list-group list-group-horizontal flex-wrap">
+        @if (_houses is not null)
+        {
+            foreach (var house in _houses)
+            {
+                <div class="card" style="width: 16rem; margin: 1rem">
+                    <h3 class="card-header" style="text-align: center"> @house.Name </h3>
+                    <div class="card-body" style="margin: auto">
+                        <div class="btn-group">
+                            <button class="btn btn-dark" @onclick="@(() => SetHouseId(house.Id))">
+                                Manage house
+                            </button>
+                            <button class="btn btn-danger" @onclick="@(() => DeleteHouse(house.Id))">
+                                Delete house
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px"/>
+        }
+    </div>
+</RadzenPanel>

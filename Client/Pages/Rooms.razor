@@ -1,0 +1,55 @@
+﻿@page "/rooms"
+
+@using Client.Utility
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+
+@inject HttpClient _http
+@inject IdService _idService
+@inject IJSRuntime _jsRuntime;
+@inject NavigationManager _navManager
+
+@attribute [Authorize]
+
+<h1>Manage rooms in house: @_currentHouse.Name</h1>
+<RadzenPanel Text="Register a new room" AllowCollapse="true" Collapsed=@(_addRoomCollapsed) Style="margin: 0.5rem"
+             Expand="@(() => _addRoomCollapsed = false)" Collapse="@(() => _addRoomCollapsed = true)">
+    <RadzenTemplateForm TItem="Room" Data="_newRoom" Submit=@AddRoom>
+        <RadzenFieldset Text="New room">
+            <div class="row" style="margin-bottom: 48px">
+                <div class="col-md-4 align-right">
+                    <RadzenLabel Text="Room name"/>
+                </div>
+                <div class="col">
+                    <RadzenTextBox style="display: block" Name="RoomName" @bind-Value=@_newRoom.Name/>
+                    <RadzenRequiredValidator Component="RoomName" Text="Room name cannot be empty"
+                                             Style="position: absolute"/>
+                </div>
+            </div>
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Add Room"></RadzenButton>
+        </RadzenFieldset>
+    </RadzenTemplateForm>
+</RadzenPanel>
+<RadzenPanel Text="Your rooms" Style="margin: 0.5rem">
+    <div class="list-group list-group-horizontal flex-wrap">
+        @if (_rooms is not null)
+        {
+            @foreach (var room in _rooms)
+            {
+                <div class="card" style="width: 16rem; margin: 1rem">
+                    <h3 class="card-header" style="text-align: center"> @room.Name </h3>
+                    <div class="card-body" style="margin: auto">
+                        <div class="btn-group">
+                            <button class="btn btn-dark" @onclick="@(() => SetRoomId(room.Id))"> Manage room </button>
+                            <button class="btn btn-danger" @onclick="@(() => DeleteRoom(room.Id))"> Delete room </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px"/>
+        }
+    </div>
+</RadzenPanel>

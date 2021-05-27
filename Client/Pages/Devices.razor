@@ -1,0 +1,273 @@
+﻿@page "/devices"
+
+@using Client.Utility
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components
+
+@inject HttpClient _http
+@inject IdService _idService
+@inject IJSRuntime _jsRuntime
+
+@attribute [Authorize]
+
+<h1>Manage commands in room: @_currentRoom.Name</h1>
+<div class="row">
+<div class="col" id="light-bulbs-col">
+    <h2 style="text-align: center">Light bulbs</h2>
+    <RadzenPanel Text="Register a new light bulb" AllowCollapse="true"
+                 Collapsed=@(_addLightBulbCollapsed) Style="margin: 0.5rem"
+                 Expand="@(() => {_addLightBulbCollapsed = false; _addDoorCollapsed = true; _addThermostatCollapsed = true;})"
+                 Collapse="@(() => _addLightBulbCollapsed = true)">
+        <RadzenTemplateForm TItem="LightBulb" Data="_newLightBulb" Submit=@AddLightBulb>
+            <RadzenFieldset Text="New light bulb">
+                <div class="row" style="margin-bottom: 48px">
+                    <div class="col-md-4 align-right">
+                        <RadzenLabel Text="Light bulb name"/>
+                    </div>
+                    <div class="col">
+                        <RadzenTextBox style="display: block" Name="LightBulbName" @bind-Value=@_newLightBulb.Name/>
+                        <RadzenRequiredValidator Component="LightBulbName" Text="Light bulb name cannot be empty"
+                                                 Style="position: absolute"/>
+                    </div>
+                </div>
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Add light bulb"></RadzenButton>
+            </RadzenFieldset>
+        </RadzenTemplateForm>
+    </RadzenPanel>
+    <RadzenPanel Text="Your light bulbs" Style="margin: 0.5rem">
+        <ul class="list-group list-group-vertical">
+            @if (_lightBulbs is not null)
+            {
+                @foreach (var lightBulbIndex in Enumerable.Range(0, _lightBulbs.Count))
+                {
+                    <li class="list-group-item" style="margin: 0.25rem">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @_lightBulbs[lightBulbIndex].Name </h3>
+                            <div class="card-body" style="margin: auto; text-align: center">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetOffColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        Off
+                                    </button>
+                                    <div class="col" style="text-align: center">
+                                        <div class="row" style="margin: 0.25rem">
+                                            <RadzenColorPicker @bind-Value="_lightColors[lightBulbIndex].RadzenColor"
+                                                               ShowHSV="true" ShowRGBA="true" ShowColors="true"
+                                                               Change=@(() => PatchLightBulbColor(_lightBulbs[lightBulbIndex].Id))/>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetOnColorAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        On
+                                    </button>
+                                </div>
+                                <p/>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example"
+                                     style="text-align: center">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetMinIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        Min
+                                    </button>
+                                    <div class="col">
+                                        <div class="row">
+                                            @if (_lightBulbs[lightBulbIndex].Intensity is not null)
+                                            {
+                                                <div style="margin: auto">
+                                                    Intensity: @(Math.Round((double) _lightBulbs[lightBulbIndex]
+                                                                   .Intensity.Value / byte.MaxValue * 100))%
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="row" style="margin: 0.5rem">
+                                            <RadzenSlider @bind-Value="_lightBulbs[lightBulbIndex].Intensity"
+                                                          TValue="byte?" Min="byte.MinValue" Max="byte.MaxValue"/>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-info"
+                                                    style="margin: 0.25rem; height: 2.5rem; width: 95%"
+                                                    @onclick="@(() => PatchLightBulbIntensity(_lightBulbs[lightBulbIndex].Id))">
+                                                Press to set
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetMaxIntensityAndPatchLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                        Max
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteLightBulb(_lightBulbs[lightBulbIndex].Id))">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            else
+            {
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                                   Style="margin-bottom: 20px"/>
+            }
+        </ul>
+    </RadzenPanel>
+</div>
+<div class="col" id="doors-col">
+    <h2 style="text-align: center">
+        Doors
+    </h2>
+    <RadzenPanel Text="Register a new door" AllowCollapse="true" Collapsed=@(_addDoorCollapsed) Style="margin: 0.5rem"
+                 Expand="@(() => {_addLightBulbCollapsed = true; _addDoorCollapsed = false; _addThermostatCollapsed = true;})"
+                 Collapse="@(() => _addDoorCollapsed = true)">
+        <RadzenTemplateForm TItem="Door" Data="_newDoor" Submit=@AddDoor>
+            <RadzenFieldset Text="New door">
+                <div class="row" style="margin-bottom: 48px">
+                    <div class="col-md-4 align-right">
+                        <RadzenLabel Text="Door name"/>
+                    </div>
+                    <div class="col">
+                        <RadzenTextBox style="display: block" Name="DoorName" @bind-Value=@_newDoor.Name/>
+                        <RadzenRequiredValidator Component="DoorName" Text="Door name cannot be empty"
+                                                 Style="position: absolute"/>
+                    </div>
+                </div>
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Add door"></RadzenButton>
+            </RadzenFieldset>
+        </RadzenTemplateForm>
+    </RadzenPanel>
+    <RadzenPanel Text="Your doors" Style="margin: 0.5rem">
+        <ul class="list-group list-group-vertical">
+            @if (_doors is not null)
+            {
+                @foreach (var door in _doors)
+                {
+                    <li class="list-group-item" style="margin: 0.25rem">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @door.Name </h3>
+                            <div class="card-body" style="margin: auto">
+                                <div style="text-align: center; margin: 0.25rem">
+                                    @if (door.Locked != null)
+                                    {
+                                        <label>Status: </label>
+                                        if (door.Locked.Value)
+                                        {
+                                            <span class="oi oi-lock-locked" aria-hidden="true" style="margin: 0.25rem">
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="oi oi-lock-unlocked" aria-hidden="true" style="margin: 0.25rem">
+                                            </span>
+                                        }
+                                    }
+                                </div>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" class="btn btn-danger"
+                                            @onclick="@(() => SetTrueLockedAndPatchDoor(door.Id))">
+                                        Lock
+                                    </button>
+                                    <button type="button" class="btn btn-success"
+                                            @onclick="@(() => SetFalseLockedAndPatchDoor(door.Id))">
+                                        Unlock
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteDoor(door.Id))"> Delete </button>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            else
+            {
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                                   Style="margin-bottom: 20px"/>
+            }
+        </ul>
+    </RadzenPanel>
+</div>
+<div class="col" id="thermostats-col">
+    <h2 style="text-align: center">
+        Thermostats
+    </h2>
+    <RadzenPanel Text="Register a new thermostat" AllowCollapse="true" Collapsed=@(_addThermostatCollapsed)
+                 Style="margin: 0.5rem"
+                 Expand="@(() => {_addLightBulbCollapsed = true; _addDoorCollapsed = true; _addThermostatCollapsed = false;})"
+                 Collapse="@(() => _addThermostatCollapsed = true)">
+        <RadzenTemplateForm TItem="Thermostat" Data="_newThermostat" Submit=@AddThermostat>
+            <RadzenFieldset Text="New thermostat">
+                <div class="row" style="margin-bottom: 48px">
+                    <div class="col-md-4 align-right">
+                        <RadzenLabel Text="Thermostat name"/>
+                    </div>
+                    <div class="col">
+                        <RadzenTextBox style="display: block" Name="ThermostatName" @bind-Value=@_newThermostat.Name/>
+                        <RadzenRequiredValidator Component="ThermostatName" Text="Thermostat name cannot be empty"
+                                                 Style="position: absolute"/>
+                    </div>
+                </div>
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Add thermostat"></RadzenButton>
+            </RadzenFieldset>
+        </RadzenTemplateForm>
+    </RadzenPanel>
+    <RadzenPanel Text="Your thermostats" Style="margin: 0.5rem">
+        <ul class="list-group list-group-vertical">
+            @if (_thermostats is not null)
+            {
+                @foreach (var thermostat in _thermostats)
+                {
+                    <li class="list-group-item" style="margin: 0.25rem">
+                        <div class="card">
+                            <h3 class="card-header" style="text-align: center"> @thermostat.Name </h3>
+                            <div class="card-body" style="text-align: center; margin: auto">
+                                <div style="text-align: center; margin: 0.25rem">
+                                    @if (thermostat.Temperature != null)
+                                    {
+                                        <label>Temperature: @(thermostat.Temperature.Value + 7)&#8451;</label>
+                                    }
+                                </div>
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example"
+                                     style="text-align: center">
+                                    <button type="button" class="btn btn-dark"
+                                            @onclick="@(() => SetMinTemperatureAndPatchThermostat(thermostat.Id))">
+                                        Min
+                                    </button>
+                                    <div class="col" style="text-align: center">
+                                        <div class="row" style="margin: 0.5rem">
+                                            <RadzenSlider @bind-Value="thermostat.Temperature" TValue="decimal?"
+                                                          Min="0" Max="23" Step="0.5"/>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-info"
+                                                    style="margin: 0.25rem; height: 2.5rem; width: 95%"
+                                                    @onclick="@(() => PatchThermostatTemperature(thermostat.Id))">
+                                                Press to set
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-light"
+                                            @onclick="@(() => SetMaxTemperatureAndPatchThermostat(thermostat.Id))">
+                                        Max
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-footer" style="text-align: center">
+                                <button class="btn btn-danger" @onclick="@(() => DeleteThermostat(thermostat.Id))">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            else
+            {
+                <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate"
+                                   Style="margin-bottom: 20px"/>
+            }
+        </ul>
+    </RadzenPanel>
+</div>
+</div>

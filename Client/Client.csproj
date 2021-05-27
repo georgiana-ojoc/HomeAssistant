@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blazored.LocalStorage" Version="4.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.3" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="5.0.3" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+        <PackageReference Include="Radzen.Blazor" Version="3.3.1" />
+        <PackageReference Include="Stripe.net" Version="39.49.0" />
+        <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\sample-data\weather.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Pages\Houses.cs">
+        <DependentUpon>Houses.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Rooms.cs">
+        <DependentUpon>Rooms.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Devices.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Doors.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\LightBulbs.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Thermostats.cs">
+        <DependentUpon>Devices.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Commands.cs">
+        <DependentUpon>Commands.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\DoorsCommands.cs">
+        <DependentUpon>Commands.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\LightBulbsCommands.cs">
+        <DependentUpon>Commands.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\ThermostatsCommands.cs">
+        <DependentUpon>Commands.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\Schedules.cs">
+        <DependentUpon>Schedules.razor</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

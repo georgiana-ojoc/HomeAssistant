@@ -1,0 +1,89 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Configuration
+@using System.Net
+@using Client.Utility
+
+@inject HttpClient _http
+@inject IAccessTokenProvider _accessTokenProvider
+@inject IConfiguration _configuration
+@inject IJSRuntime _jsRuntime
+@attribute [Authorize]
+
+<h1>Home Assistant</h1>
+<p></p>
+<h3>Probably the best Home Assistant you will ever find.</h3>
+<hr>
+<h2>Your current subscription</h2>
+<p></p>
+@if (_response != null)
+{
+    if (_response.StatusCode == HttpStatusCode.NotFound)
+    {
+        <h3>You currently have no subscription active. Consider an upgrade!</h3>
+    }
+    else
+    {
+        if (_subscription != null)
+        {
+            <div class="card" style="display: inline-block; margin: 10px; width: 18rem">
+                <div class="card-body" style="align-items: center; display: flex; flex-direction: column">
+                    <h5 class="card-title">@_subscription.Name</h5>
+                    <p class="card-text">@_subscription.Description</p>
+                    @foreach (KeyValuePair<string, string> limit in _subscription.GetFields())
+                    {
+                        <p class="card-text" style="margin:5px">
+                            @limit.Key<b>@limit.Value</b>
+                        </p>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px"/>
+        }
+    }
+}
+else
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px"/>
+}
+
+@code
+{
+
+    private HttpResponseMessage _response;
+    private UserSubscription _userSubscription;
+    private Subscription _subscription;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await GetAccessTokenAsync();
+        Console.WriteLine(token);
+
+        _response = await _http.GetAsync("user_subscription");
+        if (_response.IsSuccessStatusCode)
+        {
+            _userSubscription = await _http.GetFromJsonAsync<UserSubscription>($"{Path.UserSubscription}");
+            if (_userSubscription != null)
+            {
+                _subscription = await _http.GetFromJsonAsync<Subscription>($"{Path.Subscriptions}/" +
+                                                                           $"{_userSubscription.SubscriptionId}");
+            }
+        }
+    }
+
+    async Task<string> GetAccessTokenAsync()
+    {
+        var request = await _accessTokenProvider.RequestAccessToken(new AccessTokenRequestOptions
+        {
+            Scopes = new[]
+            {
+                _configuration["AzureAdB2C:Scope"]
+            }
+        });
+        var result = request.TryGetToken(out var accessToken);
+        return result ? accessToken.Value : null;
+    }
+}

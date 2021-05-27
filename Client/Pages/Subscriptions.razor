@@ -1,0 +1,98 @@
+﻿@page "/subscriptions"
+
+@using Stripe.Checkout
+@using System.Security.Claims
+@using Client.Utility
+
+@inject AuthenticationStateProvider _authenticationStateProvider
+@inject HttpClient _http
+@inject IJSRuntime _jsRuntime
+
+<h1>Subscriptions</h1>
+<hr/>
+<div style="display: flex;flex-wrap: wrap;justify-content: space-evenly;">
+    @if (_subscriptions != null)
+    {
+        @foreach (var subscription in _subscriptions)
+        {
+            <div class="card" style="display: inline-block; margin: 10px; width: 18rem">
+                <div class="card-body" style="align-items: center; display: flex; flex-direction: column">
+                    <h5 class="card-title">@subscription.Name</h5>
+                    <p class="card-text">@subscription.Description</p>
+                    @foreach (KeyValuePair<string, string> limit in subscription.GetFields())
+                    {
+                        <p class="card-text" style="margin:5px">
+                            @limit.Key<b>@limit.Value</b>
+                        </p>
+                    }
+                    <button class="btn btn-primary mx-3" @onclick="@(_ => CheckoutHandler(subscription.Id, subscription.Name, subscription.Description, subscription.Price))">Buy Here for @(subscription.Price / 100)$</button>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Style="margin-bottom: 20px"/>
+    }
+</div>
+
+@code {
+
+    IList<Subscription> _subscriptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _subscriptions = await _http.GetFromJsonAsync<IList<Subscription>>($"{Path.Subscriptions}");
+    }
+
+    private async Task<string> CreateCheckoutSessionAsync(Guid id, string name, string description, long amount,
+        string customerId = null)
+    {
+        AuthenticationState authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        ClaimsPrincipal user = authenticationState.User;
+        string email = user.FindFirst("emails")?.Value;
+        email = email?.Substring(2, email.Length - 4);
+
+        var paymentIntentData = new SessionPaymentIntentDataOptions
+        {
+            Metadata = new Dictionary<string, string>
+            {
+                {"email", email},
+                {"id", id.ToString()}
+            }
+        };
+        var options = new SessionCreateOptions
+        {
+            PaymentIntentData = paymentIntentData,
+            Customer = customerId,
+            CustomerEmail = email,
+            PaymentMethodTypes = new List<string>
+            {
+                "card"
+            },
+            Mode = "payment",
+            SuccessUrl = "https://localhost:6001/success?session_id={CHECKOUT_SESSION_ID}",
+            CancelUrl = "https://localhost:6001/subscriptions",
+            LineItems = new List<SessionLineItemOptions>
+            {
+                new()
+                {
+                    Name = name,
+                    Description = description,
+                    Amount = amount,
+                    Currency = "usd",
+                    Quantity = 1
+                }
+            }
+        };
+
+        return (await new SessionService().CreateAsync(options)).Id;
+    }
+
+    private async Task CheckoutHandler(Guid id, string name, string description, long amount)
+    {
+        var sessionId = await CreateCheckoutSessionAsync(id, name, description, amount);
+        await _jsRuntime.InvokeVoidAsync("redirectToCheckout", sessionId);
+    }
+
+}
