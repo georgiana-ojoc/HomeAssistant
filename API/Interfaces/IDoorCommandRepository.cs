@@ -11,7 +11,7 @@ namespace API.Interfaces
     public interface IDoorCommandRepository
     {
         Task<IEnumerable<DoorCommandResponse>> GetDoorCommandsAsync(string email, Guid scheduleId);
-        Task<DoorCommand> GetDoorCommandByIdAsync(string email, Guid scheduleId, Guid id);
+        Task<DoorCommandResponse> GetDoorCommandByIdAsync(string email, Guid scheduleId, Guid id);
 
         Task<DoorCommand> CreateDoorCommandAsync(string email, Guid scheduleId, DoorCommand doorCommand);
 

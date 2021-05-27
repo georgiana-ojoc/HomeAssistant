@@ -49,11 +49,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<DoorCommand>> GetAsync(Guid schedule_id, Guid id)
+        public async Task<ActionResult<DoorCommandResponse>> GetAsync(Guid schedule_id, Guid id)
         {
             try
             {
-                DoorCommand doorCommand = await Mediator.Send(new GetDoorCommandByIdQuery
+                DoorCommandResponse doorCommand = await Mediator.Send(new GetDoorCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
                 if (doorCommand == null)
                 {

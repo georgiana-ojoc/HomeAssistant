@@ -34,35 +34,35 @@ namespace Tests.IntegrationTests
 
         #region GET_DOOR_COMMANDS
 
-        // [Fact]
-        // public async Task GivenDoorCommands_WhenScheduleExists_ThenGetAsyncShouldReturnOkStatusCode()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.GetAsync(_doorCommandsApiUrl);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // }
+        [Fact]
+        public async Task GivenDoorCommands_WhenScheduleExists_ThenGetAsyncShouldReturnOkStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.GetAsync(_doorCommandsApiUrl);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
 
         #endregion
 
         #region GET_DOOR_COMMAND
 
-        // [Fact]
-        // public async Task GivenDoorCommand_WhenDoorCommandExists_ThenGetAsyncShouldReturnDoorCommand()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("9deee913-0e03-4f5d-a2d3-b459457a570b");
-        //
-        //     HttpResponseMessage response = await client.GetAsync($"{_doorCommandsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     DoorCommand doorCommand = await response.Content.ReadFromJsonAsync<DoorCommand>();
-        //
-        //     doorCommand.Should().NotBeNull();
-        //     doorCommand?.DoorId.Should().Be(Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"));
-        // }
+        [Fact]
+        public async Task GivenDoorCommand_WhenDoorCommandExists_ThenGetAsyncShouldReturnDoorCommand()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("9deee913-0e03-4f5d-a2d3-b459457a570b");
+
+            HttpResponseMessage response = await client.GetAsync($"{_doorCommandsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            DoorCommand doorCommand = await response.Content.ReadFromJsonAsync<DoorCommand>();
+
+            doorCommand.Should().NotBeNull();
+            doorCommand?.DoorId.Should().Be(Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"));
+        }
 
         [Fact]
         public async Task
@@ -80,26 +80,26 @@ namespace Tests.IntegrationTests
 
         #region POST_DOOR_COMMAND
 
-        // [Fact]
-        // public async Task
-        //     GivenNewDoorCommand_WhenDoorCommandIsNotEmpty_ThenPostAsyncShouldReturnDoorCommand()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.PostAsJsonAsync(_doorCommandsApiUrl,
-        //         new DoorCommand()
-        //         {
-        //             DoorId = Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"),
-        //             Locked = true
-        //         });
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.Created);
-        //
-        //     DoorCommand doorCommand = await response.Content.ReadFromJsonAsync<DoorCommand>();
-        //
-        //     doorCommand.Should().NotBeNull();
-        //     doorCommand?.DoorId.Should().Be(Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"));
-        // }
+        [Fact]
+        public async Task
+            GivenNewDoorCommand_WhenDoorCommandIsNotEmpty_ThenPostAsyncShouldReturnDoorCommand()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_doorCommandsApiUrl,
+                new DoorCommand()
+                {
+                    DoorId = Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"),
+                    Locked = true
+                });
+
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            DoorCommand doorCommand = await response.Content.ReadFromJsonAsync<DoorCommand>();
+
+            doorCommand.Should().NotBeNull();
+            doorCommand?.DoorId.Should().Be(Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"));
+        }
 
         [Fact]
         public async Task
@@ -113,59 +113,54 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        // [Fact]
-        // public async Task
-        //     GivenNewDoorCommand_WhenDoorCommandNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        // {
-        //     using HttpClient client = await GetClient(GetType().Name);
-        //
-        //     for (int index = 0; index < 9; index++)
-        //     {
-        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_doorCommandsApiUrl,
-        //             new DoorCommand()
-        //             {
-        //                 DoorId = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"),
-        //                 Locked = true
-        //             });
-        //
-        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        //     }
-        //
-        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_doorCommandsApiUrl,
-        //         new DoorCommand()
-        //         {
-        //             DoorId = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba"),
-        //             Locked = true
-        //         });
-        //
-        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        // }
+        [Fact]
+        public async Task
+            GivenNewDoorCommand_WhenDoorCommandNumberHasBeenReached_ThenPostAsyncShouldReturnPaymentRequiredStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            await client.PostAsJsonAsync(_doorCommandsApiUrl,
+                new DoorCommand()
+                {
+                    DoorId = Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"),
+                    Locked = true
+                });
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_doorCommandsApiUrl,
+                new DoorCommand()
+                {
+                    DoorId = Guid.Parse("3968c3e5-daee-4096-a6d4-11b640216591"),
+                    Locked = true
+                });
+
+            response.StatusCode.Should().Be(HttpStatusCode.PaymentRequired);
+        }
 
         #endregion
 
         #region PATCH_DOOR_COMMAND
 
-        // [Fact]
-        // public async Task
-        //     GivenPatchedDoorCommand_WhenDoorCommandExists_ThenPatchAsyncShouldReturnPatchedDoorCommand()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("9deee913-0e03-4f5d-a2d3-b459457a570b");
-        //     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        //     patchList.Add(GenerateLockedPatch(false));
-        //     string serializedObject = JsonConvert.SerializeObject(patchList);
-        //     HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
-        //
-        //     HttpResponseMessage response = await client.PatchAsync($"{_doorCommandsApiUrl}/{id}",
-        //         patchBody);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     DoorCommand doorCommand = await response.Content.ReadFromJsonAsync<DoorCommand>();
-        //
-        //     doorCommand.Should().NotBeNull();
-        //     doorCommand?.Locked.Should().Be(false);
-        // }
+        [Fact]
+        public async Task
+            GivenPatchedDoorCommand_WhenDoorCommandExists_ThenPatchAsyncShouldReturnPatchedDoorCommand()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("9deee913-0e03-4f5d-a2d3-b459457a570b");
+            IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+            patchList.Add(GenerateLockedPatch(false));
+            string serializedObject = JsonConvert.SerializeObject(patchList);
+            HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PatchAsync($"{_doorCommandsApiUrl}/{id}",
+                patchBody);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            DoorCommand doorCommand = await response.Content.ReadFromJsonAsync<DoorCommand>();
+
+            doorCommand.Should().NotBeNull();
+            doorCommand?.Locked.Should().Be(false);
+        }
 
         [Fact]
         public async Task
@@ -188,16 +183,16 @@ namespace Tests.IntegrationTests
 
         #region DELETE_DOOR_COMMAND
 
-        // [Fact]
-        // public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("9deee913-0e03-4f5d-a2d3-b459457a570b");
-        //
-        //     HttpResponseMessage response = await client.DeleteAsync($"{_doorCommandsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        // }
+        [Fact]
+        public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("9deee913-0e03-4f5d-a2d3-b459457a570b");
+
+            HttpResponseMessage response = await client.DeleteAsync($"{_doorCommandsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
 
         [Fact]
         public async Task GivenId_WhenIdDoesNotExist_ThenDeleteAsyncShouldReturnNotFound()

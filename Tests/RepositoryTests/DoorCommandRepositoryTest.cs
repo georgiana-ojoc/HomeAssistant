@@ -16,13 +16,13 @@ namespace Tests.RepositoryTests
 {
     public class DoorCommandRepositoryTest : BaseRepositoryTest
     {
-        #region GET_DOOR_COMMAND_ASYNC
+        #region GET_DOOR_COMMANDS_ASYNC
 
         [Fact]
         public async void
             GivenScheduleId_WhenScheduleIdExists_ThenGetDoorCommandsAsyncShouldReturnListOfDoorCommands()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -35,7 +35,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenScheduleId_WhenScheduleIdDoesNotExist_ThenGetDoorCommandsAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -49,7 +49,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenScheduleId_WhenScheduleIdIsEmpty_ThenGetDoorCommandsAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -71,7 +71,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenDoorCommand_WhenDoorCommandExists_ThenGetDoorCommandByIdAsyncShouldReturnDoorCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -79,14 +79,14 @@ namespace Tests.RepositoryTests
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"),
                 Guid.Parse("9deee913-0e03-4f5d-a2d3-b459457a570b"));
 
-            result.Should().BeOfType<DoorCommand>();
+            result.Should().BeOfType<DoorCommandResponse>();
         }
 
         [Fact]
         public async void
             GivenDoorCommand_WhenDoorCommandDoesNotExist_ThenGetDoorCommandByIdAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -105,7 +105,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewDoorCommand_WhenDoorCommandIsNotEmpty_ThenCreateDoorCommandAsyncShouldReturnNewDoorCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -123,7 +123,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewDoorCommand_WhenDoorCommandIsEmpty_ThenCreateDoorCommandAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -141,7 +141,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewDoorCommand_WhenDoorExists_ThenCreateDoorCommandAsyncShouldThrowDuplicateNameException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -166,7 +166,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedDoorCommand_WhenDoorCommandExists_ThenPartialUpdatedDoorCommandAsyncShouldReturnPartialUpdatedDoorCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -186,7 +186,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedDoorCommand_WhenDoorCommandDoesNotExist_ThenPartialUpdatedDoorCommandAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -209,7 +209,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenDoorCommand_WhenDoorCommandExists_ThenDeleteDoorCommandAsyncShouldReturnDoorCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 
@@ -224,7 +224,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenDoorCommand_WhenDoorCommandDoesNotExist_ThenDeleteDoorCommandAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorCommandRepository repository = new DoorCommandRepository(context, mapper);
 

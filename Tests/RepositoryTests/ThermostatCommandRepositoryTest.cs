@@ -16,13 +16,13 @@ namespace Tests.RepositoryTests
 {
     public class ThermostatCommandRepositoryTest : BaseRepositoryTest
     {
-        #region GET_THERMOSTAT_COMMAND_ASYNC
+        #region GET_THERMOSTAT_COMMANDS_ASYNC
 
         [Fact]
         public async void
             GivenScheduleId_WhenScheduleIdExists_ThenGetThermostatCommandsAsyncShouldReturnListOfThermostatCommands()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -35,7 +35,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenScheduleId_WhenScheduleIdDoesNotExist_ThenGetThermostatCommandsAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -49,7 +49,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenScheduleId_WhenScheduleIdIsEmpty_ThenGetThermostatCommandsAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -71,7 +71,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenThermostatCommand_WhenThermostatCommandExists_ThenGetThermostatCommandByIdAsyncShouldReturnThermostatCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -79,14 +79,14 @@ namespace Tests.RepositoryTests
                 "homeassistantgo@outlook.com", Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"),
                 Guid.Parse("e0e835fc-bd16-4698-b2af-00b960df7e04"));
 
-            result.Should().BeOfType<ThermostatCommand>();
+            result.Should().BeOfType<ThermostatCommandResponse>();
         }
 
         [Fact]
         public async void
             GivenThermostatCommand_WhenThermostatCommandDoesNotExist_ThenGetThermostatCommandByIdAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -105,7 +105,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewThermostatCommand_WhenThermostatCommandIsNotEmpty_ThenCreateThermostatCommandAsyncShouldReturnNewThermostatCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -123,7 +123,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewThermostatCommand_WhenThermostatCommandIsEmpty_ThenCreateThermostatCommandAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -141,7 +141,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewThermostatCommand_WhenThermostatExists_ThenCreateThermostatCommandAsyncShouldThrowDuplicateNameException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -168,7 +168,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedThermostatCommand_WhenThermostatCommandExists_ThenPartialUpdatedThermostatCommandAsyncShouldReturnPartialUpdatedThermostatCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -188,7 +188,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedThermostatCommand_WhenThermostatCommandDoesNotExist_ThenPartialUpdatedThermostatCommandAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -211,7 +211,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenThermostatCommand_WhenThermostatCommandExists_ThenDeleteThermostatCommandAsyncShouldReturnThermostatCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 
@@ -226,7 +226,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenThermostatCommand_WhenThermostatCommandDoesNotExist_ThenDeleteThermostatCommandAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             ThermostatCommandRepository repository = new ThermostatCommandRepository(context, mapper);
 

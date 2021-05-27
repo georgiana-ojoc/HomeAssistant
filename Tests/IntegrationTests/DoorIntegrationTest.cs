@@ -34,35 +34,35 @@ namespace Tests.IntegrationTests
 
         #region GET_DOORS
 
-        // [Fact]
-        // public async Task GivenDoors_WhenRoomExists_ThenGetAsyncShouldReturnOkStatusCode()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.GetAsync(_doorsApiUrl);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // }
+        [Fact]
+        public async Task GivenDoors_WhenRoomExists_ThenGetAsyncShouldReturnOkStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.GetAsync(_doorsApiUrl);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
 
         #endregion
 
         #region GET_DOOR
 
-        // [Fact]
-        // public async Task GivenDoor_WhenDoorExists_ThenGetAsyncShouldReturnDoor()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba");
-        //
-        //     HttpResponseMessage response = await client.GetAsync($"{_doorsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     Door door = await response.Content.ReadFromJsonAsync<Door>();
-        //
-        //     door.Should().NotBeNull();
-        //     door?.Name.Should().Be("Balcony door");
-        // }
+        [Fact]
+        public async Task GivenDoor_WhenDoorExists_ThenGetAsyncShouldReturnDoor()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba");
+
+            HttpResponseMessage response = await client.GetAsync($"{_doorsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            Door door = await response.Content.ReadFromJsonAsync<Door>();
+
+            door.Should().NotBeNull();
+            door?.Name.Should().Be("Balcony door");
+        }
 
         [Fact]
         public async Task GivenDoor_WhenDoorDoesNotExist_ThenGetAsyncShouldReturnNotFoundStatusCode()
@@ -79,23 +79,23 @@ namespace Tests.IntegrationTests
 
         #region POST_DOOR
 
-        // [Fact]
-        // public async Task GivenNewDoor_WhenDoorIsNotEmpty_ThenPostAsyncShouldReturnDoor()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
-        //     {
-        //         Name = "Door"
-        //     });
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.Created);
-        //
-        //     Door door = await response.Content.ReadFromJsonAsync<Door>();
-        //
-        //     door.Should().NotBeNull();
-        //     door?.Name.Should().Be("Door");
-        // }
+        [Fact]
+        public async Task GivenNewDoor_WhenDoorIsNotEmpty_ThenPostAsyncShouldReturnDoor()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
+            {
+                Name = "Sliding door"
+            });
+
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            Door door = await response.Content.ReadFromJsonAsync<Door>();
+
+            door.Should().NotBeNull();
+            door?.Name.Should().Be("Sliding door");
+        }
 
         [Fact]
         public async Task GivenNewDoor_WhenDoorIsEmpty_ThenPostAsyncShouldReturnBadRequestStatusCode()
@@ -107,53 +107,48 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        // [Fact]
-        // public async Task
-        //     GivenNewDoor_WhenDoorNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        // {
-        //     using HttpClient client = await GetClient(GetType().Name);
-        //
-        //     for (int index = 0; index < 9; index++)
-        //     {
-        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
-        //         {
-        //             Name = "Balcony door"
-        //         });
-        //
-        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        //     }
-        //
-        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
-        //     {
-        //         Name = "Balcony door"
-        //     });
-        //
-        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        // }
+        [Fact]
+        public async Task
+            GivenNewDoor_WhenDoorNumberHasBeenReached_ThenPostAsyncShouldReturnPaymentRequiredStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            await client.PostAsJsonAsync(_doorsApiUrl, new Door()
+            {
+                Name = "Sliding door"
+            });
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_doorsApiUrl, new Door()
+            {
+                Name = "Door"
+            });
+
+            response.StatusCode.Should().Be(HttpStatusCode.PaymentRequired);
+        }
 
         #endregion
 
         #region PATCH_DOOR
 
-        // [Fact]
-        // public async Task GivenPatchedDoor_WhenDoorExists_ThenPatchAsyncShouldReturnPatchedDoor()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba");
-        //     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        //     patchList.Add(GenerateLockedPatch(true));
-        //     string serializedObject = JsonConvert.SerializeObject(patchList);
-        //     HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
-        //
-        //     HttpResponseMessage response = await client.PatchAsync($"{_doorsApiUrl}/{id}", patchBody);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     Door door = await response.Content.ReadFromJsonAsync<Door>();
-        //
-        //     door.Should().NotBeNull();
-        //     door?.Locked.Should().Be(true);
-        // }
+        [Fact]
+        public async Task GivenPatchedDoor_WhenDoorExists_ThenPatchAsyncShouldReturnPatchedDoor()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba");
+            IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+            patchList.Add(GenerateLockedPatch(true));
+            string serializedObject = JsonConvert.SerializeObject(patchList);
+            HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PatchAsync($"{_doorsApiUrl}/{id}", patchBody);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            Door door = await response.Content.ReadFromJsonAsync<Door>();
+
+            door.Should().NotBeNull();
+            door?.Locked.Should().Be(true);
+        }
 
         [Fact]
         public async Task GivenPatchedDoor_WhenDoorDoesNotExist_ThenPatchAsyncShouldReturnNotFoundStatusCode()
@@ -174,16 +169,16 @@ namespace Tests.IntegrationTests
 
         #region DELETE_DOOR
 
-        // [Fact]
-        // public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba");
-        //
-        //     HttpResponseMessage response = await client.DeleteAsync($"{_doorsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        // }
+        [Fact]
+        public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("c4d7c02a-45ef-44ba-96ab-90c731db18ba");
+
+            HttpResponseMessage response = await client.DeleteAsync($"{_doorsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
 
         [Fact]
         public async Task GivenId_WhenIdDoesNotExist_ThenDeleteAsyncShouldReturnNotFound()

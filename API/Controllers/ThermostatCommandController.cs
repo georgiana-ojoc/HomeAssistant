@@ -49,11 +49,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ThermostatCommand>> GetAsync(Guid schedule_id, Guid id)
+        public async Task<ActionResult<ThermostatCommandResponse>> GetAsync(Guid schedule_id, Guid id)
         {
             try
             {
-                ThermostatCommand thermostatCommand = await Mediator.Send(new GetThermostatCommandByIdQuery
+                ThermostatCommandResponse thermostatCommand = await Mediator.Send(new GetThermostatCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
                 if (thermostatCommand == null)
                 {

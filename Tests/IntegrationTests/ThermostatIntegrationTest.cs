@@ -35,35 +35,35 @@ namespace Tests.IntegrationTests
 
         #region GET_THERMOSTATS
 
-        // [Fact]
-        // public async Task GivenThermostats_WhenRoomExists_ThenGetAsyncShouldReturnOkStatusCode()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.GetAsync(_thermostatsApiUrl);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // }
+        [Fact]
+        public async Task GivenThermostats_WhenRoomExists_ThenGetAsyncShouldReturnOkStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.GetAsync(_thermostatsApiUrl);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
 
         #endregion
 
         #region GET_THERMOSTAT
 
-        // [Fact]
-        // public async Task GivenThermostat_WhenThermostatExists_ThenGetAsyncShouldReturnThermostat()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e");
-        //
-        //     HttpResponseMessage response = await client.GetAsync($"{_thermostatsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     Thermostat thermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
-        //
-        //     thermostat.Should().NotBeNull();
-        //     thermostat?.Name.Should().Be("Wall thermostat");
-        // }
+        [Fact]
+        public async Task GivenThermostat_WhenThermostatExists_ThenGetAsyncShouldReturnThermostat()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e");
+
+            HttpResponseMessage response = await client.GetAsync($"{_thermostatsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            Thermostat thermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
+
+            thermostat.Should().NotBeNull();
+            thermostat?.Name.Should().Be("Wall thermostat");
+        }
 
         [Fact]
         public async Task GivenThermostat_WhenThermostatDoesNotExist_ThenGetAsyncShouldReturnNotFoundStatusCode()
@@ -80,23 +80,23 @@ namespace Tests.IntegrationTests
 
         #region POST_THERMOSTAT
 
-        // [Fact]
-        // public async Task GivenNewThermostat_WhenThermostatIsNotEmpty_ThenPostAsyncShouldReturnThermostat()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
-        //     {
-        //         Name = "Wireless thermostat"
-        //     });
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.Created);
-        //
-        //     Thermostat thermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
-        //
-        //     thermostat.Should().NotBeNull();
-        //     thermostat?.Name.Should().Be("Wireless thermostat");
-        // }
+        [Fact]
+        public async Task GivenNewThermostat_WhenThermostatIsNotEmpty_ThenPostAsyncShouldReturnThermostat()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
+            {
+                Name = "Wireless thermostat"
+            });
+
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            Thermostat thermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
+
+            thermostat.Should().NotBeNull();
+            thermostat?.Name.Should().Be("Wireless thermostat");
+        }
 
         [Fact]
         public async Task GivenNewThermostat_WhenThermostatIsEmpty_ThenPostAsyncShouldReturnBadRequestStatusCode()
@@ -108,53 +108,48 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        // [Fact]
-        // public async Task
-        //     GivenNewThermostat_WhenThermostatNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        // {
-        //     using HttpClient client = await GetClient(GetType().Name);
-        //
-        //     for (int index = 0; index < 9; index++)
-        //     {
-        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
-        //         {
-        //             Name = "Wall thermostat"
-        //         });
-        //
-        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        //     }
-        //
-        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
-        //     {
-        //         Name = "Wall thermostat"
-        //     });
-        //
-        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        // }
+        [Fact]
+        public async Task
+            GivenNewThermostat_WhenThermostatNumberHasBeenReached_ThenPostAsyncShouldReturnPaymentRequiredStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
+            {
+                Name = "Wireless thermostat"
+            });
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_thermostatsApiUrl, new Thermostat()
+            {
+                Name = "Thermostat"
+            });
+
+            response.StatusCode.Should().Be(HttpStatusCode.PaymentRequired);
+        }
 
         #endregion
 
         #region PATCH_THERMOSTAT
 
-        // [Fact]
-        // public async Task GivenPatchedThermostat_WhenThermostatExists_ThenPatchAsyncShouldReturnNotFoundStatusCode()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e");
-        //     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        //     patchList.Add(GenerateTemperaturePatch((decimal) 12.5));
-        //     string serializedObject = JsonConvert.SerializeObject(patchList);
-        //     HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
-        //
-        //     HttpResponseMessage response = await client.PatchAsync($"{_thermostatsApiUrl}/{id}", patchBody);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     Thermostat thermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
-        //
-        //     thermostat.Should().NotBeNull();
-        //     thermostat?.Temperature.Should().Be((decimal) 12.5);
-        // }
+        [Fact]
+        public async Task GivenPatchedThermostat_WhenThermostatExists_ThenPatchAsyncShouldReturnNotFoundStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e");
+            IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+            patchList.Add(GenerateTemperaturePatch((decimal) 12.5));
+            string serializedObject = JsonConvert.SerializeObject(patchList);
+            HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PatchAsync($"{_thermostatsApiUrl}/{id}", patchBody);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            Thermostat thermostat = await response.Content.ReadFromJsonAsync<Thermostat>();
+
+            thermostat.Should().NotBeNull();
+            thermostat?.Temperature.Should().Be((decimal) 12.5);
+        }
 
         [Fact]
         public async Task
@@ -176,16 +171,16 @@ namespace Tests.IntegrationTests
 
         #region DELETE_THERMOSTAT
 
-        // [Fact]
-        // public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e");
-        //
-        //     HttpResponseMessage response = await client.DeleteAsync($"{_thermostatsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        // }
+        [Fact]
+        public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e");
+
+            HttpResponseMessage response = await client.DeleteAsync($"{_thermostatsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
 
         [Fact]
         public async Task GivenId_WhenIdDoesNotExist_ThenDeleteAsyncShouldReturnNotFound()

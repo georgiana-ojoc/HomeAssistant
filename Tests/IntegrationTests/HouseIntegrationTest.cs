@@ -47,21 +47,21 @@ namespace Tests.IntegrationTests
 
         #region GET_HOUSE
 
-        // [Fact]
-        // public async Task GivenHouse_WhenHouseExists_ThenGetAsyncShouldReturnHouse()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc");
-        //
-        //     HttpResponseMessage response = await client.GetAsync($"{_housesApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     House house = await response.Content.ReadFromJsonAsync<House>();
-        //
-        //     house.Should().NotBeNull();
-        //     house?.Name.Should().Be("Apartment");
-        // }
+        [Fact]
+        public async Task GivenHouse_WhenHouseExists_ThenGetAsyncShouldReturnHouse()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc");
+
+            HttpResponseMessage response = await client.GetAsync($"{_housesApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            House house = await response.Content.ReadFromJsonAsync<House>();
+
+            house.Should().NotBeNull();
+            house?.Name.Should().Be("Apartment");
+        }
 
         [Fact]
         public async Task GivenHouse_WhenHouseDoesNotExist_ThenGetAsyncShouldReturnNotFoundStatusCode()
@@ -106,52 +106,48 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        // [Fact]
-        // public async Task GivenNewHouse_WhenHouseNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        // {
-        //     using HttpClient client = await GetClient(GetType().Name);
-        //
-        //     for (int index = 0; index < 4; index++)
-        //     {
-        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_housesApiUrl, new House()
-        //         {
-        //             Name = "Apartment"
-        //         });
-        //
-        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        //     }
-        //
-        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_housesApiUrl, new House()
-        //     {
-        //         Name = "Apartment"
-        //     });
-        //
-        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        // }
+        [Fact]
+        public async Task
+            GivenNewHouse_WhenHouseNumberHasBeenReached_ThenPostAsyncShouldReturnPaymentRequiredStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            await client.PostAsJsonAsync(_housesApiUrl, new House()
+            {
+                Name = "Lake house"
+            });
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_housesApiUrl, new House()
+            {
+                Name = "Home"
+            });
+
+            response.StatusCode.Should().Be(HttpStatusCode.PaymentRequired);
+        }
 
         #endregion
 
         #region PATCH_HOUSE
 
-        // [Fact]
-        // public async Task GivenPatchedHouse_WhenHouseExists_ThenPatchAsyncShouldReturnPatchedHouse()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc");
-        //     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        //     patchList.Add(GenerateNamePatch("Lake house"));
-        //     string serializedObject = JsonConvert.SerializeObject(patchList);
-        //     HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
-        //
-        //     HttpResponseMessage response = await client.PatchAsync($"{_housesApiUrl}/{id}", patchBody);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     House house = await response.Content.ReadFromJsonAsync<House>();
-        //
-        //     house.Should().NotBeNull();
-        //     house?.Name.Should().Be("Lake house");
-        // }
+        [Fact]
+        public async Task GivenPatchedHouse_WhenHouseExists_ThenPatchAsyncShouldReturnPatchedHouse()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc");
+            IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+            patchList.Add(GenerateNamePatch("Lake house"));
+            string serializedObject = JsonConvert.SerializeObject(patchList);
+            HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PatchAsync($"{_housesApiUrl}/{id}", patchBody);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            House house = await response.Content.ReadFromJsonAsync<House>();
+
+            house.Should().NotBeNull();
+            house?.Name.Should().Be("Lake house");
+        }
 
         [Fact]
         public async Task GivenPatchedHouse_WhenHouseDoesNotExist_ThenPatchAsyncShouldReturnNotFoundStatusCode()
@@ -172,16 +168,16 @@ namespace Tests.IntegrationTests
 
         #region DELETE_HOUSE
 
-        // [Fact]
-        // public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc");
-        //
-        //     HttpResponseMessage response = await client.DeleteAsync($"{_housesApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        // }
+        [Fact]
+        public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("cae88006-a2d7-4dcd-93fc-0b561e1f1acc");
+
+            HttpResponseMessage response = await client.DeleteAsync($"{_housesApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
 
         [Fact]
         public async Task GivenId_WhenIdDoesNotExist_ThenDeleteAsyncShouldReturnNotFound()

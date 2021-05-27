@@ -30,7 +30,7 @@ namespace API.Repositories
         {
             if (days is 0 or > 127)
             {
-                throw new ArgumentException("Days cannot be 0 or bigger than 127.");
+                throw new ArgumentException("You should select at least a day.");
             }
         }
 

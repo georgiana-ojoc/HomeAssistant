@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using API;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -7,12 +8,12 @@ namespace Tests.RepositoryTests
 {
     public abstract class BaseRepositoryTest
     {
-        protected HomeAssistantContext GetContextWithData()
+        protected async Task<HomeAssistantContext> GetContextWithData()
         {
             DbContextOptions<HomeAssistantContext> options = new DbContextOptionsBuilder<HomeAssistantContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
             HomeAssistantContext context = new HomeAssistantContext(options);
-            DatabaseInitializer.InitializeAsync(context);
+            await DatabaseInitializer.InitializeAsync(context);
             return context;
         }
 

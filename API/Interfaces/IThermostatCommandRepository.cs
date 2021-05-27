@@ -11,7 +11,7 @@ namespace API.Interfaces
     public interface IThermostatCommandRepository
     {
         Task<IEnumerable<ThermostatCommandResponse>> GetThermostatCommandsAsync(string email, Guid scheduleId);
-        Task<ThermostatCommand> GetThermostatCommandByIdAsync(string email, Guid scheduleId, Guid id);
+        Task<ThermostatCommandResponse> GetThermostatCommandByIdAsync(string email, Guid scheduleId, Guid id);
 
         Task<ThermostatCommand> CreateThermostatCommandAsync(string email, Guid scheduleId, ThermostatCommand
             thermostatCommand);

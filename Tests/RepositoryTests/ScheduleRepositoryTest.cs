@@ -16,12 +16,12 @@ namespace Tests.RepositoryTests
 {
     public class ScheduleRepositoryTest : BaseRepositoryTest
     {
-        #region GET_SCHEDULE_ASYNC
+        #region GET_SCHEDULES_ASYNC
 
         [Fact]
         public async void GivenEmail_WhenEmailExists_ThenGetSchedulesAsyncShouldReturnListOfSchedules()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -34,7 +34,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenEmail_WhenEmailDoesNotExist_ThenGetSchedulesAsyncShouldReturnEmptyListOfSchedules()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -47,7 +47,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenEmail_WhenEmailIsEmpty_ThenGetSchedulesAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -65,7 +65,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenSchedule_WhenScheduleExists_ThenGetScheduleByIdAsyncShouldReturnSchedule()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -79,7 +79,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenSchedule_WhenScheduleDoesNotExist_ThenGetScheduleByIdAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -94,28 +94,28 @@ namespace Tests.RepositoryTests
 
         #region CREATE_SCHEDULE_ASYNC
 
-        // [Fact]
-        // public async void GivenNewSchedule_WhenScheduleIsNotEmpty_ThenCreateScheduleAsyncShouldReturnNewSchedule()
-        // {
-        //     await using HomeAssistantContext context = GetContextWithData();
-        //     IMapper mapper = GetMapper();
-        //     Helper helper = new Helper(context);
-        //     ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
-        //
-        //     var result = await repository.CreateScheduleAsync("homeassistantgo@outlook.com", new Schedule()
-        //     {
-        //         Name = "Day mode",
-        //         Time = "08:00",
-        //         Days = 127
-        //     });
-        //
-        //     result.Should().BeOfType<Schedule>();
-        // }
+        [Fact]
+        public async void GivenNewSchedule_WhenScheduleIsNotEmpty_ThenCreateScheduleAsyncShouldReturnNewSchedule()
+        {
+            await using HomeAssistantContext context = await GetContextWithData();
+            IMapper mapper = GetMapper();
+            Helper helper = new Helper(context);
+            ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
+        
+            var result = await repository.CreateScheduleAsync("homeassistantgo@outlook.com", new Schedule()
+            {
+                Name = "Day mode",
+                Time = "08:00",
+                Days = 127
+            });
+        
+            result.Should().BeOfType<Schedule>();
+        }
 
         [Fact]
         public async void GivenNewSchedule_WhenDaysIsZero_ThenCreateScheduleAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -131,13 +131,12 @@ namespace Tests.RepositoryTests
             };
 
             await function.Should().ThrowAsync<ArgumentException>()
-                .WithMessage("Days cannot be 0 or bigger than 127.");
+                .WithMessage("You should select at least a day.");
         }
 
-        [Fact]
-        public async void GivenNewSchedule_WhenNameExists_ThenCreateScheduleAsyncShouldThrowDuplicateNameException()
+        [Fact] public async void GivenNewSchedule_WhenNameExists_ThenCreateScheduleAsyncShouldThrowDuplicateNameException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -164,7 +163,7 @@ namespace Tests.RepositoryTests
         // public async void
         //     GivenPartialUpdatedSchedule_WhenScheduleExists_ThenPartialUpdatedScheduleAsyncShouldReturnPartialUpdatedSchedule()
         // {
-        //     await using HomeAssistantContext context = GetContextWithData();
+        //     await using HomeAssistantContext context = await GetContextWithData();
         //     IMapper mapper = GetMapper();
         //     Helper helper = new Helper(context);
         //     ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -183,7 +182,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedSchedule_WhenScheduleDoesNotExist_ThenPartialUpdatedScheduleAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -204,7 +203,7 @@ namespace Tests.RepositoryTests
         // [Fact]
         // public async void GivenSchedule_WhenScheduleExists_ThenDeleteScheduleAsyncShouldReturnSchedule()
         // {
-        //     await using HomeAssistantContext context = GetContextWithData();
+        //     await using HomeAssistantContext context = await GetContextWithData();
         //     IMapper mapper = GetMapper();
         //     Helper helper = new Helper(context);
         //     ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);
@@ -218,7 +217,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenSchedule_WhenScheduleDoesNotExist_ThenDeleteScheduleAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             Helper helper = new Helper(context);
             ScheduleRepository repository = new ScheduleRepository(context, mapper, helper);

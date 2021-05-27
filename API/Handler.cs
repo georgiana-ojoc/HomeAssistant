@@ -10,7 +10,7 @@ namespace API
         {
             Identity = identity;
         }
-        
+
         protected void CheckEmail()
         {
             if (!Identity.Email.Equals("homeassistantgo@outlook.com"))

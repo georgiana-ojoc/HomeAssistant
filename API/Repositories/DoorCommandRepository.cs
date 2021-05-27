@@ -71,13 +71,39 @@ namespace API.Repositories
             return doorCommandResponses;
         }
 
-        public async Task<DoorCommand> GetDoorCommandByIdAsync(string email, Guid scheduleId, Guid id)
+        public async Task<DoorCommandResponse> GetDoorCommandByIdAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
-            return await GetDoorCommandInternalAsync(email, scheduleId, id);
+            var result = await Context.DoorCommands
+                .Join(Context.Doors,
+                    dc => dc.DoorId,
+                    d => d.Id,
+                    (dc, d) => new
+                    {
+                        dc.Id,
+                        dc.ScheduleId,
+                        dc.DoorId,
+                        DoorName = d.Name,
+                        dc.Locked
+                    }).Where(dc => dc.ScheduleId == scheduleId).FirstOrDefaultAsync(dc =>
+                    dc.Id == id);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            return new DoorCommandResponse()
+            {
+                Id = result.Id,
+                ScheduleId = result.ScheduleId,
+                DoorId = result.DoorId,
+                DoorName = result.DoorName,
+                Locked = result.Locked
+            };
         }
 
         public async Task<DoorCommand> CreateDoorCommandAsync(string email, Guid scheduleId,

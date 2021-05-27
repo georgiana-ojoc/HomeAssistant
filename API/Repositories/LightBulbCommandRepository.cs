@@ -74,13 +74,41 @@ namespace API.Repositories
             return lightBulbCommandResponses;
         }
 
-        public async Task<LightBulbCommand> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id)
+        public async Task<LightBulbCommandResponse> GetLightBulbCommandByIdAsync(string email, Guid scheduleId, Guid id)
         {
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
-            return await GetLightBulbCommandInternalAsync(email, scheduleId, id);
+            var result = await Context.LightBulbCommands
+                .Join(Context.LightBulbs,
+                    lbc => lbc.LightBulbId,
+                    lb => lb.Id,
+                    (lbc, lb) => new
+                    {
+                        lbc.Id,
+                        lbc.ScheduleId,
+                        lbc.LightBulbId,
+                        LightBulbName = lb.Name,
+                        lbc.Color,
+                        lbc.Intensity
+                    }).Where(lbc => lbc.ScheduleId == scheduleId).FirstOrDefaultAsync(lbc =>
+                    lbc.Id == id);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            return new LightBulbCommandResponse()
+            {
+                Id = result.Id,
+                ScheduleId = result.ScheduleId,
+                LightBulbId = result.LightBulbId,
+                LightBulbName = result.LightBulbName,
+                Color = result.Color,
+                Intensity = result.Intensity
+            };
         }
 
         public async Task<LightBulbCommand> CreateLightBulbCommandAsync(string email, Guid scheduleId,

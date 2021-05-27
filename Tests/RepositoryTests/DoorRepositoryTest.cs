@@ -15,12 +15,12 @@ namespace Tests.RepositoryTests
 {
     public class DoorRepositoryTest : BaseRepositoryTest
     {
-        #region GET_DOOR_ASYNC
+        #region GET_DOORS_ASYNC
 
         [Fact]
         public async void GivenRoomId_WhenRoomIdExists_ThenGetDoorsAsyncShouldReturnListOfDoors()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -34,7 +34,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenRoomId_WhenRoomIdDoesNotExist_ThenGetDoorsAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -48,7 +48,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenRoomId_WhenRoomIdIsEmpty_ThenGetDoorsAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -70,7 +70,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenDoor_WhenDoorExists_ThenGetDoorByIdAsyncShouldReturnDoor()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -85,7 +85,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenDoor_WhenDoorDoesNotExist_ThenGetDoorByIdAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -104,7 +104,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewDoor_WhenDoorIsNotEmpty_ThenCreateDoorAsyncShouldReturnNewDoor()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -122,7 +122,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewDoor_WhenDoorIsEmpty_ThenCreateDoorAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -141,7 +141,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewDoor_WhenNameExists_ThenCreateDoorAsyncShouldThrowDuplicateNameException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -167,7 +167,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedDoor_WhenDoorExists_ThenPartialUpdatedDoorAsyncShouldReturnPartialUpdatedDoor()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -187,7 +187,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedDoor_WhenDoorDoesNotExist_ThenPartialUpdatedDoorAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -209,7 +209,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenDoor_WhenDoorExists_ThenDeleteDoorAsyncShouldReturnDoor()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 
@@ -224,7 +224,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenDoor_WhenDoorDoesNotExist_ThenDeleteDoorAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             DoorRepository repository = new DoorRepository(context, mapper);
 

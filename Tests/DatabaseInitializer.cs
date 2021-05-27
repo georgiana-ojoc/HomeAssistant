@@ -10,12 +10,16 @@ namespace Tests
     {
         public static async Task InitializeAsync(HomeAssistantContext context)
         {
-            if (!context.Subscriptions.Any()) {
+            if (!context.Subscriptions.Any())
+            {
                 await SeedSubscriptionsAsync(context);
             }
-            if (!context.UserSubscriptions.Any()) {
+
+            if (!context.UserSubscriptions.Any())
+            {
                 await SeedUserSubscriptionsAsync(context);
             }
+
             if (!context.Houses.Any())
             {
                 await SeedHousesAsync(context);
@@ -61,7 +65,7 @@ namespace Tests
                 await SeedThermostatCommandsAsync(context);
             }
         }
-        
+
         private static async Task SeedSubscriptionsAsync(HomeAssistantContext context)
         {
             Subscription[] subscriptions =
@@ -86,7 +90,7 @@ namespace Tests
             await context.Subscriptions.AddRangeAsync(subscriptions);
             await context.SaveChangesAsync();
         }
-        
+
         private static async Task SeedUserSubscriptionsAsync(HomeAssistantContext context)
         {
             UserSubscription[] userSubscription =

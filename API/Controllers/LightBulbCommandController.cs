@@ -49,11 +49,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<LightBulbCommand>> GetAsync(Guid schedule_id, Guid id)
+        public async Task<ActionResult<LightBulbCommandResponse>> GetAsync(Guid schedule_id, Guid id)
         {
             try
             {
-                LightBulbCommand lightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
+                LightBulbCommandResponse lightBulbCommand = await Mediator.Send(new GetLightBulbCommandByIdQuery
                     {ScheduleId = schedule_id, Id = id});
                 if (lightBulbCommand == null)
                 {

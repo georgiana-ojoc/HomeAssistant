@@ -16,13 +16,13 @@ namespace Tests.RepositoryTests
 {
     public class LightBulbCommandRepositoryTest : BaseRepositoryTest
     {
-        #region GET_LIGHT_BULB_COMMAND_ASYNC
+        #region GET_LIGHT_BULB_COMMANDS_ASYNC
 
         [Fact]
         public async void
             GivenScheduleId_WhenScheduleIdExists_ThenGetLightBulbCommandsAsyncShouldReturnListOfLightBulbCommands()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -35,7 +35,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenScheduleId_WhenScheduleIdDoesNotExist_ThenGetLightBulbCommandsAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -49,7 +49,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenScheduleId_WhenScheduleIdIsEmpty_ThenGetLightBulbCommandsAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -71,7 +71,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenLightBulbCommand_WhenLightBulbCommandExists_ThenGetLightBulbCommandByIdAsyncShouldReturnLightBulbCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -79,14 +79,14 @@ namespace Tests.RepositoryTests
                 Guid.Parse("377a7b7b-2b63-4317-bff6-e52ef5eb51da"),
                 Guid.Parse("31048472-de9f-427e-b7af-7a3416928652"));
 
-            result.Should().BeOfType<LightBulbCommand>();
+            result.Should().BeOfType<LightBulbCommandResponse>();
         }
 
         [Fact]
         public async void
             GivenLightBulbCommand_WhenLightBulbCommandDoesNotExist_ThenGetLightBulbCommandByIdAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -105,7 +105,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewLightBulbCommand_WhenLightBulbCommandIsNotEmpty_ThenCreateLightBulbCommandAsyncShouldReturnNewLightBulbCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -124,7 +124,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewLightBulbCommand_WhenLightBulbCommandIsEmpty_ThenCreateLightBulbCommandAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -142,7 +142,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenNewLightBulbCommand_WhenLightBulbExists_ThenCreateLightBulbCommandAsyncShouldThrowDuplicateNameException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -168,7 +168,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedLightBulbCommand_WhenLightBulbCommandExists_ThenPartialUpdatedLightBulbCommandAsyncShouldReturnPartialUpdatedLightBulbCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -188,7 +188,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedLightBulbCommand_WhenLightBulbCommandDoesNotExist_ThenPartialUpdatedLightBulbCommandAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -211,7 +211,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenLightBulbCommand_WhenLightBulbCommandExists_ThenDeleteLightBulbCommandAsyncShouldReturnLightBulbCommand()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 
@@ -226,7 +226,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenLightBulbCommand_WhenLightBulbCommandDoesNotExist_ThenDeleteLightBulbCommandAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             LightBulbCommandRepository repository = new LightBulbCommandRepository(context, mapper);
 

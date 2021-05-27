@@ -1,0 +1,320 @@
+create table houses
+(
+	id uniqueidentifier default newid() not null
+		constraint houses_pk
+			primary key nonclustered,
+	email nvarchar(256) not null,
+	name nvarchar(128) not null
+)
+go
+
+create unique index houses_id_uindex
+	on houses (id)
+go
+
+create unique index houses_email_name_uindex
+	on houses (email, name)
+go
+
+create trigger limitHousesByEmail on houses after insert as
+    if exists (select email from houses group by email having count(email)>5)
+        begin
+            rollback
+        end
+go
+
+create table rooms
+(
+	id uniqueidentifier default newid() not null
+		constraint rooms_pk
+			primary key nonclustered,
+	house_id uniqueidentifier not null
+		constraint rooms_houses_id_fk
+			references houses
+				on update cascade on delete cascade,
+	name nvarchar(128) not null
+)
+go
+
+create table doors
+(
+	id uniqueidentifier default newid() not null
+		constraint doors_pk
+			primary key nonclustered,
+	room_id uniqueidentifier not null
+		constraint doors_rooms_id_fk
+			references rooms
+				on update cascade on delete cascade,
+	name nvarchar(128) not null,
+	status bit default 0,
+	locked bit
+)
+go
+
+create unique index doors_id_uindex
+	on doors (id)
+go
+
+create unique index doors_room_id_name_uindex
+	on doors (room_id, name)
+go
+
+create trigger limitDoorsByRoomId on doors after insert as
+    if exists (select room_id from doors group by room_id having count(room_id)>10)
+        begin
+            rollback
+        end
+go
+
+create table light_bulbs
+(
+	id uniqueidentifier default newid() not null
+		constraint light_bulb_pk
+			primary key nonclustered,
+	room_id uniqueidentifier not null
+		constraint light_bulb_rooms_id_fk
+			references rooms
+				on update cascade on delete cascade,
+	name nvarchar(128) not null,
+	status bit default 0,
+	color int,
+	intensity tinyint
+)
+go
+
+create unique index light_bulb_id_uindex
+	on light_bulbs (id)
+go
+
+create unique index light_bulbs_room_id_name_uindex
+	on light_bulbs (room_id, name)
+go
+
+create trigger limitLightBulbsByRoomId on light_bulbs after insert as
+    if exists (select room_id from light_bulbs group by room_id having count(room_id)>10)
+        begin
+            rollback
+        end
+go
+
+create unique index rooms_id_uindex
+	on rooms (id)
+go
+
+create unique index rooms_house_id_name_uindex
+	on rooms (house_id, name)
+go
+
+create trigger limitRoomsByHouseId on rooms after insert as
+    if exists (select house_id from rooms group by house_id having count(house_id)>20)
+        begin
+            rollback
+        end
+go
+
+create table schedules
+(
+	id uniqueidentifier default newid() not null
+		constraint schedules_pk
+			primary key nonclustered,
+	email nvarchar(256) not null,
+	name nvarchar(128) not null,
+	time time not null,
+	days tinyint not null
+		constraint schedules_days_ck
+			check ([days]>0 AND [days]<=127)
+)
+go
+
+create table door_commands
+(
+	id uniqueidentifier default newid() not null
+		constraint door_commands_pk
+			primary key nonclustered,
+	door_id uniqueidentifier not null
+		constraint door_commands_doors_id_fk
+			references doors
+				on update cascade on delete cascade,
+	schedule_id uniqueidentifier not null
+		constraint door_commands_schedules_id_fk
+			references schedules
+				on update cascade on delete cascade,
+	locked bit not null
+)
+go
+
+create unique index door_commands_id_uindex
+	on door_commands (id)
+go
+
+create unique index door_commands_door_id_schedule_id_uindex
+	on door_commands (door_id, schedule_id)
+go
+
+create trigger limitDoorCommandsByScheduleId on door_commands after insert as
+    if exists (select schedule_id from door_commands group by schedule_id having count(schedule_id)>10)
+        begin
+            rollback
+        end
+go
+
+create table light_bulb_commands
+(
+	id uniqueidentifier default newid() not null
+		constraint light_bulb_commands_pk
+			primary key nonclustered,
+	light_bulb_id uniqueidentifier not null
+		constraint light_bulb_commands_light_bulbs_id_fk
+			references light_bulbs
+				on update cascade on delete cascade,
+	schedule_id uniqueidentifier not null
+		constraint light_bulb_commands_schedules_id_fk
+			references schedules
+				on update cascade on delete cascade,
+	color int not null,
+	intensity tinyint not null
+)
+go
+
+create unique index light_bulb_commands_id_uindex
+	on light_bulb_commands (id)
+go
+
+create unique index light_bulb_commands_light_bulb_id_schedule_id_uindex
+	on light_bulb_commands (light_bulb_id, schedule_id)
+go
+
+create trigger limitLightBulbCommandsByScheduleId on light_bulb_commands after insert as
+    if exists (select schedule_id from light_bulb_commands group by schedule_id having count(schedule_id)>10)
+        begin
+            rollback
+        end
+go
+
+create unique index schedules_id_uindex
+	on schedules (id)
+go
+
+create unique index schedules_email_name_uindex
+	on schedules (email, name)
+go
+
+create trigger limitSchedulesByEmail on schedules after insert as
+    if exists (select email from schedules group by email having count(email)>20)
+        begin
+            rollback
+        end
+go
+
+create table subscriptions
+(
+	id uniqueidentifier default newid() not null
+		constraint subscriptions_pk
+			primary key nonclustered,
+	name varchar(128),
+	description varchar(256),
+	price int not null
+		constraint subscriptions_price_ck
+			check ([price]>0),
+	houses int default 1,
+	rooms int default 1,
+	light_bulbs int default 1,
+	doors int default 1,
+	thermostats int default 1,
+	schedules int default 1,
+	light_bulb_commands int default 1,
+	door_commands int default 1,
+	thermostat_commands int default 1
+)
+go
+
+create unique index subscriptions_id_uindex
+	on subscriptions (id)
+go
+
+create unique index subscriptions_name_uindex
+	on subscriptions (name)
+go
+
+create table thermostats
+(
+	id uniqueidentifier default newid() not null
+		constraint thermostats_pk
+			primary key nonclustered,
+	room_id uniqueidentifier not null
+		constraint thermostats_rooms_id_fk
+			references rooms
+				on update cascade on delete cascade,
+	name nvarchar(128) not null,
+	status bit default 0,
+	temperature decimal(3,1)
+		constraint thermostats_temperature_ck
+			check ([temperature]>=7.0 AND [temperature]<=30.0)
+)
+go
+
+create table thermostat_commands
+(
+	id uniqueidentifier default newid() not null
+		constraint thermostat_commands_pk
+			primary key nonclustered,
+	thermostat_id uniqueidentifier not null
+		constraint thermostat_commands_thermostats_id_fk
+			references thermostats
+				on update cascade on delete cascade,
+	schedule_id uniqueidentifier not null
+		constraint thermostat_commands_schedules_id_fk
+			references schedules
+				on update cascade on delete cascade,
+	temperature decimal(3,1) not null
+		constraint thermostat_commands_temperature_ck
+			check ([temperature]>=7.0 AND [temperature]<=30.0)
+)
+go
+
+create unique index thermostat_commands_id_uindex
+	on thermostat_commands (id)
+go
+
+create unique index thermostat_commands_thermostat_id_schedule_id_uindex
+	on thermostat_commands (thermostat_id, schedule_id)
+go
+
+create trigger limitThermostatCommandsByScheduleId on thermostat_commands after insert as
+    if exists (select schedule_id from thermostat_commands group by schedule_id having count(schedule_id)>10)
+        begin
+            rollback
+        end
+go
+
+create unique index thermostats_id_uindex
+	on thermostats (id)
+go
+
+create unique index thermostats_room_id_name_uindex
+	on thermostats (room_id, name)
+go
+
+create trigger limitThermostatsByRoomId on thermostats after insert as
+    if exists (select room_id from thermostats group by room_id having count(room_id)>10)
+        begin
+            rollback
+        end
+go
+
+create table user_subscriptions
+(
+	email varchar(256) not null
+		constraint user_subscriptions_pk
+			primary key nonclustered,
+	subscription_id uniqueidentifier not null
+		constraint user_subscriptions_subscriptions_id_fk
+			references subscriptions
+				on delete cascade
+)
+go
+
+create unique index user_subscriptions_email_uindex
+	on user_subscriptions (email)
+go
+

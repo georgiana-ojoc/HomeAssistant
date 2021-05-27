@@ -81,13 +81,40 @@ namespace API.Repositories
             return thermostatCommandResponses;
         }
 
-        public async Task<ThermostatCommand> GetThermostatCommandByIdAsync(string email, Guid scheduleId, Guid id)
+        public async Task<ThermostatCommandResponse> GetThermostatCommandByIdAsync(string email, Guid scheduleId,
+            Guid id)
         {
             CheckString(email, "email");
             CheckGuid(scheduleId, "schedule id");
             CheckGuid(id, "id");
 
-            return await GetThermostatCommandInternalAsync(email, scheduleId, id);
+            var result = await Context.ThermostatCommands
+                .Join(Context.Thermostats,
+                    tc => tc.ThermostatId,
+                    t => t.Id,
+                    (tc, t) => new
+                    {
+                        tc.Id,
+                        tc.ScheduleId,
+                        tc.ThermostatId,
+                        ThermostatName = t.Name,
+                        tc.Temperature
+                    }).Where(tc => tc.ScheduleId == scheduleId).FirstOrDefaultAsync(tc =>
+                    tc.Id == id);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            return new ThermostatCommandResponse()
+            {
+                Id = result.Id,
+                ScheduleId = result.ScheduleId,
+                ThermostatId = result.ThermostatId,
+                ThermostatName = result.ThermostatName,
+                Temperature = result.Temperature
+            };
         }
 
         public async Task<ThermostatCommand> CreateThermostatCommandAsync(string email, Guid scheduleId,

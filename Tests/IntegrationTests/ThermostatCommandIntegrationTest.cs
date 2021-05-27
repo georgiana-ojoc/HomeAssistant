@@ -35,35 +35,35 @@ namespace Tests.IntegrationTests
 
         #region GET_THERMOSTAT_COMMANDS
 
-        // [Fact]
-        // public async Task GivenThermostatCommands_WhenScheduleExists_ThenGetAsyncShouldReturnOkStatusCode()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.GetAsync(_thermostatCommandsApiUrl);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // }
+        [Fact]
+        public async Task GivenThermostatCommands_WhenScheduleExists_ThenGetAsyncShouldReturnOkStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.GetAsync(_thermostatCommandsApiUrl);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
 
         #endregion
 
         #region GET_THERMOSTAT_COMMAND
 
-        // [Fact]
-        // public async Task GivenThermostatCommand_WhenThermostatCommandExists_ThenGetAsyncShouldReturnThermostatCommand()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("e0e835fc-bd16-4698-b2af-00b960df7e04");
-        //
-        //     HttpResponseMessage response = await client.GetAsync($"{_thermostatCommandsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     ThermostatCommand thermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommand>();
-        //
-        //     thermostatCommand.Should().NotBeNull();
-        //     thermostatCommand?.ThermostatId.Should().Be(Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"));
-        // }
+        [Fact]
+        public async Task GivenThermostatCommand_WhenThermostatCommandExists_ThenGetAsyncShouldReturnThermostatCommand()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("e0e835fc-bd16-4698-b2af-00b960df7e04");
+
+            HttpResponseMessage response = await client.GetAsync($"{_thermostatCommandsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            ThermostatCommand thermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommand>();
+
+            thermostatCommand.Should().NotBeNull();
+            thermostatCommand?.ThermostatId.Should().Be(Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"));
+        }
 
         [Fact]
         public async Task
@@ -81,26 +81,26 @@ namespace Tests.IntegrationTests
 
         #region POST_THERMOSTAT_COMMAND
 
-        // [Fact]
-        // public async Task
-        //     GivenNewThermostatCommand_WhenThermostatCommandIsNotEmpty_ThenPostAsyncShouldReturnThermostatCommand()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //
-        //     HttpResponseMessage response = await client.PostAsJsonAsync(_thermostatCommandsApiUrl,
-        //         new ThermostatCommand()
-        //         {
-        //             ThermostatId = Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"),
-        //             Temperature = (decimal) 22.5
-        //         });
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.Created);
-        //
-        //     ThermostatCommand thermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommand>();
-        //
-        //     thermostatCommand.Should().NotBeNull();
-        //     thermostatCommand?.ThermostatId.Should().Be(Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"));
-        // }
+        [Fact]
+        public async Task
+            GivenNewThermostatCommand_WhenThermostatCommandIsNotEmpty_ThenPostAsyncShouldReturnThermostatCommand()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_thermostatCommandsApiUrl,
+                new ThermostatCommand()
+                {
+                    ThermostatId = Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"),
+                    Temperature = (decimal) 22.5
+                });
+
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            ThermostatCommand thermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommand>();
+
+            thermostatCommand.Should().NotBeNull();
+            thermostatCommand?.ThermostatId.Should().Be(Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"));
+        }
 
         [Fact]
         public async Task
@@ -114,59 +114,54 @@ namespace Tests.IntegrationTests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
-        // [Fact]
-        // public async Task
-        //     GivenNewThermostatCommand_WhenThermostatCommandNumberHasBeenReached_ThenPostAsyncShouldReturnForbiddenStatusCode()
-        // {
-        //     using HttpClient client = await GetClient(GetType().Name);
-        //
-        //     for (int index = 0; index < 9; index++)
-        //     {
-        //         HttpResponseMessage createdResponse = await client.PostAsJsonAsync(_thermostatCommandsApiUrl,
-        //             new ThermostatCommand()
-        //             {
-        //                 ThermostatId = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"),
-        //                 Temperature = (decimal) 22.5
-        //             });
-        //
-        //         createdResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-        //     }
-        //
-        //     HttpResponseMessage forbiddenResponse = await client.PostAsJsonAsync(_thermostatCommandsApiUrl,
-        //         new ThermostatCommand()
-        //         {
-        //             ThermostatId = Guid.Parse("ec7c38a2-c391-4294-b436-dd5c0d71494e"),
-        //             Temperature = (decimal) 22.5
-        //         });
-        //
-        //     forbiddenResponse.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-        // }
+        [Fact]
+        public async Task
+            GivenNewThermostatCommand_WhenThermostatCommandNumberHasBeenReached_ThenPostAsyncShouldReturnPaymentRequiredStatusCode()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+
+            await client.PostAsJsonAsync(_thermostatCommandsApiUrl,
+                new ThermostatCommand()
+                {
+                    ThermostatId = Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"),
+                    Temperature = (decimal) 22.5
+                });
+
+            HttpResponseMessage response = await client.PostAsJsonAsync(_thermostatCommandsApiUrl,
+                new ThermostatCommand()
+                {
+                    ThermostatId = Guid.Parse("c207eada-509b-4655-9f99-d3be6786e895"),
+                    Temperature = (decimal) 22.5
+                });
+
+            response.StatusCode.Should().Be(HttpStatusCode.PaymentRequired);
+        }
 
         #endregion
 
         #region PATCH_THERMOSTAT_COMMAND
 
-        // [Fact]
-        // public async Task
-        //     GivenPatchedThermostatCommand_WhenThermostatCommandExists_ThenPatchAsyncShouldReturnPatchedThermostatCommand()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("e0e835fc-bd16-4698-b2af-00b960df7e04");
-        //     IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
-        //     patchList.Add(GenerateTemperaturePatch((decimal) 20.5));
-        //     string serializedObject = JsonConvert.SerializeObject(patchList);
-        //     HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
-        //
-        //     HttpResponseMessage response = await client.PatchAsync($"{_thermostatCommandsApiUrl}/{id}",
-        //         patchBody);
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //
-        //     ThermostatCommand thermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommand>();
-        //
-        //     thermostatCommand.Should().NotBeNull();
-        //     thermostatCommand?.Temperature.Should().Be((decimal) 20.5);
-        // }
+        [Fact]
+        public async Task
+            GivenPatchedThermostatCommand_WhenThermostatCommandExists_ThenPatchAsyncShouldReturnPatchedThermostatCommand()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("e0e835fc-bd16-4698-b2af-00b960df7e04");
+            IList<Dictionary<string, string>> patchList = new List<Dictionary<string, string>>();
+            patchList.Add(GenerateTemperaturePatch((decimal) 20.5));
+            string serializedObject = JsonConvert.SerializeObject(patchList);
+            HttpContent patchBody = new StringContent(serializedObject, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PatchAsync($"{_thermostatCommandsApiUrl}/{id}",
+                patchBody);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            ThermostatCommand thermostatCommand = await response.Content.ReadFromJsonAsync<ThermostatCommand>();
+
+            thermostatCommand.Should().NotBeNull();
+            thermostatCommand?.Temperature.Should().Be((decimal) 20.5);
+        }
 
         [Fact]
         public async Task
@@ -189,16 +184,16 @@ namespace Tests.IntegrationTests
 
         #region DELETE_THERMOSTAT_COMMAND
 
-        // [Fact]
-        // public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
-        // {
-        //     using HttpClient client = await GetClientAsync(GetType().Name);
-        //     Guid id = Guid.Parse("e0e835fc-bd16-4698-b2af-00b960df7e04");
-        //
-        //     HttpResponseMessage response = await client.DeleteAsync($"{_thermostatCommandsApiUrl}/{id}");
-        //
-        //     response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        // }
+        [Fact]
+        public async Task GivenId_WhenIdExists_ThenDeleteAsyncShouldReturnNoContent()
+        {
+            using HttpClient client = await GetClientAsync(GetType().Name);
+            Guid id = Guid.Parse("e0e835fc-bd16-4698-b2af-00b960df7e04");
+
+            HttpResponseMessage response = await client.DeleteAsync($"{_thermostatCommandsApiUrl}/{id}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
 
         [Fact]
         public async Task GivenId_WhenIdDoesNotExist_ThenDeleteAsyncShouldReturnNotFound()

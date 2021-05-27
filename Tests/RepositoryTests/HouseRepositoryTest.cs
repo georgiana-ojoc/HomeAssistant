@@ -16,12 +16,12 @@ namespace Tests.RepositoryTests
 {
     public class HouseRepositoryTest : BaseRepositoryTest
     {
-        #region GET_HOUSE_ASYNC
+        #region GET_HOUSES_ASYNC
 
         [Fact]
         public async void GivenEmail_WhenEmailExists_ThenGetHousesAsyncShouldReturnListOfHouses()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -33,7 +33,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenEmail_WhenEmailDoesNotExist_ThenGetHousesAsyncShouldReturnEmptyListOfHouses()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -45,7 +45,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenEmail_WhenEmailIsEmpty_ThenGetHousesAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -62,7 +62,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenHouse_WhenHouseExists_ThenGetHouseByIdAsyncShouldReturnHouse()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -75,7 +75,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenHouse_WhenHouseDoesNotExist_ThenGetHouseByIdAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -92,7 +92,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewHouse_WhenHouseIsNotEmpty_ThenCreateHouseAsyncShouldReturnNewHouse()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -107,7 +107,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewHouse_WhenHouseIsEmpty_ThenCreateHouseAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -123,7 +123,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewHouse_WhenNameExists_ThenCreateHouseAsyncShouldThrowDuplicateNameException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -147,7 +147,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedHouse_WhenHouseExists_ThenPartialUpdatedHouseAsyncShouldReturnPartialUpdatedHouse()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -164,7 +164,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenPartialUpdatedHouse_WhenHouseDoesNotExist_ThenPartialUpdatedHouseAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -184,7 +184,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenHouse_WhenHouseExists_ThenDeleteHouseAsyncShouldReturnHouse()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 
@@ -197,7 +197,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenHouse_WhenHouseDoesNotExist_ThenDeleteHouseAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             HouseRepository repository = new HouseRepository(context, mapper);
 

@@ -15,12 +15,12 @@ namespace Tests.RepositoryTests
 {
     public class RoomRepositoryTest : BaseRepositoryTest
     {
-        #region GET_ROOM_ASYNC
+        #region GET_ROOMS_ASYNC
 
         [Fact]
         public async void GivenHouseId_WhenHouseIdExists_ThenGetRoomsAsyncShouldReturnListOfRooms()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -33,7 +33,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenHouseId_WhenHouseIdDoesNotExist_ThenGetRoomsAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -46,7 +46,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenHouseId_WhenHouseIdIsEmpty_ThenGetRoomsAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -67,7 +67,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenRoom_WhenRoomExists_ThenGetRoomByIdAsyncShouldReturnRoom()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -81,7 +81,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenRoom_WhenRoomDoesNotExist_ThenGetRoomByIdAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -99,7 +99,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewRoom_WhenRoomIsNotEmpty_ThenCreateRoomAsyncShouldReturnNewRoom()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -115,7 +115,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewRoom_WhenRoomIsEmpty_ThenCreateRoomAsyncShouldThrowArgumentException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -132,7 +132,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenNewRoom_WhenNameExists_ThenCreateRoomAsyncShouldThrowDuplicateNameException()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -157,7 +157,7 @@ namespace Tests.RepositoryTests
         public async void
             GivenPartialUpdatedRoom_WhenRoomExists_ThenPartialUpdatedRoomAsyncShouldReturnPartialUpdatedRoom()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -175,7 +175,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenPartialUpdatedRoom_WhenRoomDoesNotExist_ThenPartialUpdatedRoomAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -196,7 +196,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenRoom_WhenRoomExists_ThenDeleteRoomAsyncShouldReturnRoom()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 
@@ -210,7 +210,7 @@ namespace Tests.RepositoryTests
         [Fact]
         public async void GivenRoom_WhenRoomDoesNotExist_ThenDeleteRoomAsyncShouldReturnNull()
         {
-            await using HomeAssistantContext context = GetContextWithData();
+            await using HomeAssistantContext context = await GetContextWithData();
             IMapper mapper = GetMapper();
             RoomRepository repository = new RoomRepository(context, mapper);
 

@@ -28,10 +28,7 @@ namespace Tests
                     builder.ConfigureServices(services =>
                     {
                         services.RemoveAll(typeof(DbContextOptions<HomeAssistantContext>));
-                        services.AddDbContext<HomeAssistantContext>(options =>
-                        {
-                            options.UseInMemoryDatabase(name);
-                        });
+                        services.AddDbContext<HomeAssistantContext>(options => { options.UseInMemoryDatabase(name); });
                     });
                 });
             using (IServiceScope serviceScope = applicationFactory.Services.CreateScope())
@@ -39,7 +36,6 @@ namespace Tests
                 IServiceProvider serviceProvider = serviceScope.ServiceProvider;
                 HomeAssistantContext context = serviceProvider.GetRequiredService<HomeAssistantContext>();
                 await context.Database.EnsureDeletedAsync();
-                await context.Database.EnsureCreatedAsync();
                 await DatabaseInitializer.InitializeAsync(context);
             }
 
