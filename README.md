@@ -12,7 +12,7 @@
 - can be used by thousands of customers (small families)  
 - each customer has a free subscription or can buy a basic or premium subscription using Stripe  
 ## Functionality
-![Functionality](https://github.com/georgiana-ojoc/HomeAssistant/blob/documentation/Functionality.mp4)  
+[Functionality](https://youtu.be/8iOyzEGKc8k)  
 ## Code quality
 ![Code quality](https://github.com/georgiana-ojoc/HomeAssistant/blob/documentation/SonarQube.png)  
 ## Code coverage
